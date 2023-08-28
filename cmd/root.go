@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	Version string = "0.0.3"
+	Version string = "0.1.0"
 )
 
 var (
@@ -23,7 +23,6 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "query...",
 		Short: "Serves a variety of web-based utilities.",
-		//		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			err := ServePage(args)
 			if err != nil {

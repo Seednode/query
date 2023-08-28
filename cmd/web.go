@@ -8,80 +8,20 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"math/rand"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/yosssi/gohtml"
 )
 
 const (
-	LogDate            string        = `2006-01-02T15:04:05.000-07:00`
-	SourcePrefix       string        = `/source`
-	ImagePrefix        string        = `/view`
 	RedirectStatusCode int           = http.StatusSeeOther
 	Timeout            time.Duration = 10 * time.Second
 )
-
-func realIP(r *http.Request) string {
-	remoteAddr := strings.SplitAfter(r.RemoteAddr, ":")
-
-	if len(remoteAddr) < 1 {
-		return r.RemoteAddr
-	}
-
-	remotePort := remoteAddr[len(remoteAddr)-1]
-
-	cfIP := r.Header.Get("Cf-Connecting-Ip")
-	xRealIp := r.Header.Get("X-Real-Ip")
-
-	switch {
-	case cfIP != "":
-		return cfIP + ":" + remotePort
-	case xRealIp != "":
-		return xRealIp + ":" + remotePort
-	default:
-		return r.RemoteAddr
-	}
-}
-
-func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
-	startTime := time.Now()
-
-	if verbose {
-		fmt.Printf("%s | Invalid request for %s from %s\n",
-			startTime.Format(LogDate),
-			r.URL.Path,
-			r.RemoteAddr,
-		)
-	}
-
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Add("Content-Type", "text/html")
-
-	io.WriteString(w, gohtml.Format(newErrorPage("Server Error", "500 Internal Server Error")))
-}
-
-func serverErrorHandler() func(http.ResponseWriter, *http.Request, interface{}) {
-	return serverError
-}
-
-func newErrorPage(title, body string) string {
-	var htmlBody strings.Builder
-
-	htmlBody.WriteString(`<!DOCTYPE html><html lang="en"><head>`)
-	htmlBody.WriteString(`<style>a{display:block;height:100%;width:100%;text-decoration:none;color:inherit;cursor:auto;}</style>`)
-	htmlBody.WriteString(fmt.Sprintf("<title>%s</title></head>", title))
-	htmlBody.WriteString(fmt.Sprintf("<body><a href=\"/\">%s</a></body></html>", body))
-
-	return htmlBody.String()
-}
 
 func serveVersion() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -121,9 +61,11 @@ func ServePage(args []string) error {
 
 	mux.GET("/", serveVersion())
 
+	mux.GET("/ip/*ip", serveIp())
+
 	mux.GET("/time/*time", serveTime())
 
-	mux.GET("/ip/*time", serveIp())
+	mux.GET("/roll/*roll", rollDice(false))
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
@@ -132,6 +74,8 @@ func ServePage(args []string) error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Minute,
 	}
+
+	fmt.Printf("Server listening on %s...\n", srv.Addr)
 
 	err = srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
