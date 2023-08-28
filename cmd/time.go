@@ -20,7 +20,7 @@ func serveTime() httprouter.Handle {
 
 		tz, err := time.LoadLocation(path)
 
-		if err != nil {
+		if err == nil {
 			t = t.In(tz)
 		}
 
