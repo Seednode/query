@@ -27,7 +27,7 @@ func serveTime() httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(t.String()))
+		w.Write([]byte(t.String() + "\n"))
 
 		fmt.Printf("%s checked the time!\n", realIP(r))
 	}

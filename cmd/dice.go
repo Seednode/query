@@ -16,21 +16,24 @@ import (
 
 func rollDice(verbose bool) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Content-Type", "text/plain")
+
+		c, d, _ := strings.Cut(strings.TrimPrefix(p[0].Value, "/"), "d")
+		if c == "" {
+			c = "1"
+		}
+
+		count, err := strconv.Atoi(c)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		die, err := strconv.Atoi(d)
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		var total int
-
-		roll := strings.TrimPrefix(p[0].Value, "/")
-
-		s := strings.Split(roll, "d")
-
-		count, err := strconv.Atoi(s[0])
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		die, err := strconv.Atoi(s[1])
-		if err != nil {
-			fmt.Println(err)
-		}
 
 		for i := 0; i < count; i++ {
 			v := rand.Intn(die) + 1
@@ -47,9 +50,7 @@ func rollDice(verbose bool) httprouter.Handle {
 			fmt.Println(err)
 		}
 
-		w.Header().Set("Content-Type", "text/plain")
-
-		w.Write([]byte(result))
+		w.Write([]byte(result + "\n"))
 
 		fmt.Printf("%s rolled the dice!\n", realIP(r))
 	}

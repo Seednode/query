@@ -38,7 +38,7 @@ func serveIp() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(realIP(r)))
+		w.Write([]byte(realIP(r) + "\n"))
 
 		fmt.Printf("%s checked their IP!\n", realIP(r))
 	}
