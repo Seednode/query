@@ -20,7 +20,9 @@ func serveTime() httprouter.Handle {
 
 		tz, err := time.LoadLocation(path)
 
-		if err == nil {
+		if err != nil {
+			http.Redirect(w, r, "/time/", RedirectStatusCode)
+		} else {
 			t = t.In(tz)
 		}
 
