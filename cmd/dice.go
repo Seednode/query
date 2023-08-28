@@ -52,6 +52,6 @@ func rollDice(verbose bool) httprouter.Handle {
 
 		w.Write([]byte(result + "\n"))
 
-		fmt.Printf("%s rolled the dice!\n", realIP(r))
+		fmt.Printf("%s rolled the dice!\n", realIP(r, true))
 	}
 }

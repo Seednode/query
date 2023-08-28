@@ -12,25 +12,29 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func realIP(r *http.Request) string {
-	remoteAddr := strings.SplitAfter(r.RemoteAddr, ":")
+func realIP(r *http.Request, includePort bool) string {
+	host, port, _ := strings.Cut(r.RemoteAddr, ":")
 
-	if len(remoteAddr) < 1 {
+	if host == "" {
 		return r.RemoteAddr
 	}
-
-	remotePort := remoteAddr[len(remoteAddr)-1]
 
 	cfIP := r.Header.Get("Cf-Connecting-Ip")
 	xRealIp := r.Header.Get("X-Real-Ip")
 
 	switch {
+	case cfIP != "" && includePort:
+		return cfIP + ":" + port
 	case cfIP != "":
-		return cfIP + ":" + remotePort
+		return cfIP
+	case xRealIp != "" && includePort:
+		return xRealIp + ":" + port
 	case xRealIp != "":
-		return xRealIp + ":" + remotePort
+		return xRealIp
+	case includePort:
+		return host + ":" + port
 	default:
-		return r.RemoteAddr
+		return host
 	}
 }
 
@@ -38,8 +42,8 @@ func serveIp() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(realIP(r) + "\n"))
+		w.Write([]byte(realIP(r, false) + "\n"))
 
-		fmt.Printf("%s checked their IP!\n", realIP(r))
+		fmt.Printf("%s checked their IP!\n", realIP(r, true))
 	}
 }
