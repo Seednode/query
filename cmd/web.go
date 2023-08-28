@@ -19,8 +19,7 @@ import (
 )
 
 const (
-	RedirectStatusCode int           = http.StatusSeeOther
-	Timeout            time.Duration = 10 * time.Second
+	RedirectStatusCode int = http.StatusSeeOther
 )
 
 func serveVersion() httprouter.Handle {
