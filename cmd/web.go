@@ -29,6 +29,28 @@ const (
 	Timeout            time.Duration = 10 * time.Second
 )
 
+func realIP(r *http.Request) string {
+	remoteAddr := strings.SplitAfter(r.RemoteAddr, ":")
+
+	if len(remoteAddr) < 1 {
+		return r.RemoteAddr
+	}
+
+	remotePort := remoteAddr[len(remoteAddr)-1]
+
+	cfIP := r.Header.Get("Cf-Connecting-Ip")
+	xRealIp := r.Header.Get("X-Real-Ip")
+
+	switch {
+	case cfIP != "":
+		return cfIP + ":" + remotePort
+	case xRealIp != "":
+		return xRealIp + ":" + remotePort
+	default:
+		return r.RemoteAddr
+	}
+}
+
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	startTime := time.Now()
 
@@ -100,6 +122,8 @@ func ServePage(args []string) error {
 	mux.GET("/", serveVersion())
 
 	mux.GET("/time/*time", serveTime())
+
+	mux.GET("/ip/*time", serveIp())
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
