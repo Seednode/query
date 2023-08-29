@@ -54,7 +54,7 @@ func ParseMX(ctx *ipisp.BulkClient, host string) string {
 		return retVal.String()
 	}
 
-	retVal.WriteString(fmt.Sprintf("\n%v:\n", host))
+	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 
 	for response := 0; response < len(responses); response++ {
 		r := responses[response]
