@@ -48,7 +48,7 @@ func serveIp() httprouter.Handle {
 		w.Write([]byte(realIP(r, false) + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s checked their IP!\n",
+			fmt.Printf("%s | %s checked their IP\n",
 				startTime.Format(LogDate),
 				realIP(r, true))
 		}

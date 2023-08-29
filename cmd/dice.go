@@ -67,10 +67,13 @@ func rollDice() httprouter.Handle {
 			fmt.Println(err)
 		}
 
+		if wantsVerbose {
+			w.Write([]byte("\nTotal: "))
+		}
 		w.Write([]byte(result + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s rolled %dd%d, resulting in %d!\n",
+			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",
 				startTime.Format(LogDate),
 				realIP(r, true),
 				count,
