@@ -15,20 +15,24 @@ import (
 
 func serveTime() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		t := time.Now()
+		startTime := time.Now()
 
 		tz, err := time.LoadLocation(strings.TrimPrefix(p[0].Value, "/"))
 
 		if err != nil {
 			http.Redirect(w, r, "/time/", RedirectStatusCode)
 		} else {
-			t = t.In(tz)
+			startTime = startTime.In(tz)
 		}
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(t.String() + "\n"))
+		w.Write([]byte(startTime.String() + "\n"))
 
-		fmt.Printf("%s checked the time!\n", realIP(r, true))
+		if verbose {
+			fmt.Printf("%s | %s checked the time!\n",
+				startTime.Format(LogDate),
+				realIP(r, true))
+		}
 	}
 }

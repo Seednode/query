@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	Version string = "0.1.2"
+	Version string = "0.2.0"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 	version bool
 
 	rootCmd = &cobra.Command{
-		Use:   "query...",
+		Use:   "query",
 		Short: "Serves a variety of web-based utilities.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			err := ServePage(args)
@@ -44,7 +44,7 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
-	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log accessed files to stdout")
+	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true

@@ -14,10 +14,6 @@ import (
 	"github.com/yosssi/gohtml"
 )
 
-const (
-	LogDate string = `2006-01-02T15:04:05.000-07:00`
-)
-
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	startTime := time.Now()
 

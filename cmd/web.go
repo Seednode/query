@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	RedirectStatusCode int = http.StatusSeeOther
+	LogDate            string = `2006-01-02T15:04:05.000-07:00`
+	RedirectStatusCode int    = http.StatusSeeOther
 )
 
 func serveVersion() httprouter.Handle {
@@ -64,7 +65,7 @@ func ServePage(args []string) error {
 
 	mux.GET("/time/*time", serveTime())
 
-	mux.GET("/roll/*roll", rollDice(false))
+	mux.GET("/roll/*roll", rollDice())
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),

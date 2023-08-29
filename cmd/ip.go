@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -40,10 +41,16 @@ func realIP(r *http.Request, includePort bool) string {
 
 func serveIp() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		startTime := time.Now()
+
 		w.Header().Set("Content-Type", "text/plain")
 
 		w.Write([]byte(realIP(r, false) + "\n"))
 
-		fmt.Printf("%s checked their IP!\n", realIP(r, true))
+		if verbose {
+			fmt.Printf("%s | %s checked their IP!\n",
+				startTime.Format(LogDate),
+				realIP(r, true))
+		}
 	}
 }
