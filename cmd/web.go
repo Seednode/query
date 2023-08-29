@@ -89,6 +89,12 @@ func ServePage(args []string) error {
 
 	mux.GET("/roll/*roll", rollDice())
 
+	mux.GET("/dns/a/*host", getARecord())
+
+	mux.GET("/dns/mx/*host", getMXRecord())
+
+	mux.GET("/dns/ns/*host", getNSRecord())
+
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
 		Handler:      mux,

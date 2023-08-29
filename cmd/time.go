@@ -37,7 +37,6 @@ func serveTime(TimeFormats map[string]string) httprouter.Handle {
 		}
 
 		tz, err := time.LoadLocation(strings.TrimPrefix(p[0].Value, "/"))
-
 		if err != nil {
 			http.Redirect(w, r, "/time/", RedirectStatusCode)
 		} else {

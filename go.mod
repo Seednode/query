@@ -3,6 +3,7 @@ module seedno.de/seednode/query
 go 1.21
 
 require (
+	github.com/ammario/ipisp/v2 v2.0.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/spf13/cobra v1.7.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
