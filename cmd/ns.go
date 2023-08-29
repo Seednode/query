@@ -16,16 +16,14 @@ import (
 )
 
 func GetNS(host string) []string {
-	records, err := net.LookupNS(host)
-	if err != nil {
-		fmt.Println("\nNo NS records exist for host " + host + ".")
-	}
-
 	var hosts []string
 
-	for h := 0; h < len(records); h++ {
-		record := records[h]
-		hosts = append(hosts, record.Host)
+	records, err := net.LookupNS(host)
+	if err == nil {
+		for h := 0; h < len(records); h++ {
+			record := records[h]
+			hosts = append(hosts, record.Host)
+		}
 	}
 
 	return hosts
@@ -35,7 +33,7 @@ func ParseNS(ctx *ipisp.BulkClient, host string) string {
 	hosts := GetNS(host)
 
 	if len(hosts) == 0 {
-		return ""
+		return "No NS records found for specified host.\n"
 	}
 
 	var ips []net.IP
@@ -43,14 +41,12 @@ func ParseNS(ctx *ipisp.BulkClient, host string) string {
 		ips = append(ips, GetIP(hosts[h]))
 	}
 
-	var retVal strings.Builder
-
 	responses, err := ctx.LookupIPs(ips...)
 	if err != nil {
-		retVal.WriteString("Lookup failed.\n")
-
-		return retVal.String()
+		return "Lookup failed.\n"
 	}
+
+	var retVal strings.Builder
 
 	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 

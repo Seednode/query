@@ -16,13 +16,10 @@ import (
 )
 
 func GetMX(host string) ([]string, []uint16) {
-	records, err := net.LookupMX(host)
-	if err != nil {
-		fmt.Println("\nNo MX records exist for host " + host + ".")
-	}
-
 	var hosts []string
 	var priorities []uint16
+
+	records, _ := net.LookupMX(host)
 
 	for h := 0; h < len(records); h++ {
 		record := records[h]
@@ -37,7 +34,7 @@ func ParseMX(ctx *ipisp.BulkClient, host string) string {
 	hosts, priorities := GetMX(host)
 
 	if len(hosts) == 0 {
-		return ""
+		return "No MX records found for specified host.\n"
 	}
 
 	var ips []net.IP
@@ -45,14 +42,12 @@ func ParseMX(ctx *ipisp.BulkClient, host string) string {
 		ips = append(ips, GetIP(hosts[h]))
 	}
 
-	var retVal strings.Builder
-
 	responses, err := ctx.LookupIPs(ips...)
 	if err != nil {
-		retVal.WriteString("Lookup failed.\n")
-
-		return retVal.String()
+		return "Lookup failed.\n"
 	}
+
+	var retVal strings.Builder
 
 	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 

@@ -16,10 +16,7 @@ import (
 )
 
 func GetA(host string) []string {
-	hosts, err := net.LookupHost(host)
-	if err != nil {
-		fmt.Println("\nNo A records exist for host " + host + ".")
-	}
+	hosts, _ := net.LookupHost(host)
 
 	return hosts
 }
@@ -28,7 +25,7 @@ func ParseA(ctx *ipisp.BulkClient, host string) string {
 	hosts := GetA(host)
 
 	if len(hosts) == 0 {
-		return ""
+		return "No A records found for specified host.\n"
 	}
 
 	var ips []net.IP
@@ -37,16 +34,12 @@ func ParseA(ctx *ipisp.BulkClient, host string) string {
 		ips = append(ips, ipAddr)
 	}
 
-	var retVal strings.Builder
-
 	responses, err := ctx.LookupIPs(ips...)
 	if err != nil {
-		retVal.WriteString("No information found for provided addresses.")
-		for i := 0; i < len(ips); i++ {
-			retVal.WriteString(fmt.Sprintf("IP: %s\n", ips[i]))
-		}
-		return retVal.String()
+		return "Lookup failed.\n"
 	}
+
+	var retVal strings.Builder
 
 	for response := 0; response < len(responses); response++ {
 		r := responses[response]
