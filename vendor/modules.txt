@@ -13,10 +13,3 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
-## explicit
-github.com/yosssi/gohtml
-# golang.org/x/net v0.14.0
-## explicit; go 1.17
-golang.org/x/net/html
-golang.org/x/net/html/atom

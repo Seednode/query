@@ -6,12 +6,8 @@ package cmd
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/yosssi/gohtml"
 )
 
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
@@ -26,22 +22,11 @@ func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Add("Content-Type", "text/html")
+	w.Header().Add("Content-Type", "text/plain")
 
-	io.WriteString(w, gohtml.Format(newErrorPage("Server Error", "500 Internal Server Error")))
+	w.Write([]byte("500 Internal Server Error\n"))
 }
 
 func serverErrorHandler() func(http.ResponseWriter, *http.Request, interface{}) {
 	return serverError
-}
-
-func newErrorPage(title, body string) string {
-	var htmlBody strings.Builder
-
-	htmlBody.WriteString(`<!DOCTYPE html><html lang="en"><head>`)
-	htmlBody.WriteString(`<style>a{display:block;height:100%;width:100%;text-decoration:none;color:inherit;cursor:auto;}</style>`)
-	htmlBody.WriteString(fmt.Sprintf("<title>%s</title></head>", title))
-	htmlBody.WriteString(fmt.Sprintf("<body><a href=\"/\">%s</a></body></html>", body))
-
-	return htmlBody.String()
 }

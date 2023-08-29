@@ -53,29 +53,9 @@ func ServePage(args []string) error {
 		return errors.New("invalid bind address provided")
 	}
 
-	TimeFormats := map[string]string{
-		"ANSIC":       `Mon Jan _2 15:04:05 2006`,
-		"DateOnly":    `2006-01-02`,
-		"DateTime":    `2006-01-02 15:04:05`,
-		"Kitchen":     `3:04PM`,
-		"Layout":      `01/02 03:04:05PM '06 -0700`,
-		"RFC1123":     `Mon, 02 Jan 2006 15:04:05 MST`,
-		"RFC1123Z":    `Mon, 02 Jan 2006 15:04:05 -0700`,
-		"RFC3339":     `2006-01-02T15:04:05Z07:00`,
-		"RFC3339Nano": `2006-01-02T15:04:05.999999999Z07:00`,
-		"RFC822":      `02 Jan 06 15:04 MST`,
-		"RFC822Z":     `02 Jan 06 15:04 -0700`,
-		"RFC850":      `Monday, 02-Jan-06 15:04:05 MST`,
-		"RubyDate":    `Mon Jan 02 15:04:05 -0700 2006`,
-		"Stamp":       `Jan _2 15:04:05`,
-		"StampMicro":  `Jan _2 15:04:05.000000`,
-		"StampMilli":  `Jan _2 15:04:05.000`,
-		"StampNano":   `Jan _2 15:04:05.000000000`,
-		"TimeOnly":    `15:04:05`,
-		"UnixDate":    `Mon Jan _2 15:04:05 MST 2006`,
-	}
-
 	rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	TimeFormats := timeFormats()
 
 	mux := httprouter.New()
 
