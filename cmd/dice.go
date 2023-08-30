@@ -64,7 +64,9 @@ func rollDice() httprouter.Handle {
 
 		result := strconv.FormatInt(total, 10)
 		if err != nil {
-			fmt.Println(err)
+			w.Write([]byte("An error occurred while calculating sum of all rolls.\n"))
+
+			return
 		}
 
 		if wantsVerbose {

@@ -69,7 +69,11 @@ func ServePage(args []string) error {
 
 	mux.GET("/roll/*roll", rollDice())
 
-	mux.GET("/dns/a/*host", getARecord())
+	mux.GET("/dns/a/*host", getHostRecord("ip4"))
+
+	mux.GET("/dns/aaaa/*host", getHostRecord("ip6"))
+
+	mux.GET("/dns/host/*host", getHostRecord("ip"))
 
 	mux.GET("/dns/mx/*host", getMXRecord())
 
