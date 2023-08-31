@@ -15,34 +15,26 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func GetNS(host string) []string {
-	var hosts []string
-
+func parseNS(ctx *ipisp.BulkClient, host string) string {
 	records, err := net.LookupNS(host)
-	if err == nil {
-		for h := 0; h < len(records); h++ {
-			record := records[h]
-			hosts = append(hosts, record.Host)
-		}
+	if len(records) == 0 || err != nil {
+		return "No NS records retrieved for specified host.\n"
 	}
 
-	return hosts
-}
+	var hosts []string
 
-func ParseNS(ctx *ipisp.BulkClient, host string) string {
-	hosts := GetNS(host)
-
-	if len(hosts) == 0 {
-		return "No NS records found for specified host.\n"
+	for h := 0; h < len(records); h++ {
+		record := records[h]
+		hosts = append(hosts, record.Host)
 	}
 
 	var ips []net.IP
 	for h := 0; h < len(hosts); h++ {
-		ips = append(ips, GetIP(hosts[h]))
+		ips = append(ips, getIP(hosts[h]))
 	}
 
 	responses, err := ctx.LookupIPs(ips...)
-	if err != nil {
+	if len(responses) == 0 || err != nil {
 		return "Lookup failed.\n"
 	}
 
@@ -69,15 +61,15 @@ func getNSRecord() httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		ctx := GetBulkClient()
+		ctx := getBulkClient()
 
 		host := strings.TrimPrefix(p[0].Value, "/")
 
-		w.Write([]byte(ParseNS(ctx, host) + "\n"))
+		w.Write([]byte(parseNS(ctx, host) + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s looked up NS records for %s\n",
-				startTime.Format(LogDate),
+				startTime.Format(logDate),
 				realIP(r, true),
 				host)
 		}

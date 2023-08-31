@@ -12,7 +12,7 @@ import (
 	"github.com/ammario/ipisp/v2"
 )
 
-func GetBulkClient() *ipisp.BulkClient {
+func getBulkClient() *ipisp.BulkClient {
 	c, err := ipisp.DialBulkClient(context.Background())
 	if err != nil {
 		panic(err)
@@ -20,7 +20,7 @@ func GetBulkClient() *ipisp.BulkClient {
 	return c
 }
 
-func GetHostname(host net.IP) string {
+func getHostname(host net.IP) string {
 	hosts, err := net.LookupAddr(host.String())
 	if err != nil {
 		return "n/a"
@@ -33,7 +33,7 @@ func GetHostname(host net.IP) string {
 	return hostname
 }
 
-func GetIP(host string) net.IP {
+func getIP(host string) net.IP {
 	hosts, err := net.LookupHost(host)
 	if err != nil {
 		panic(err)

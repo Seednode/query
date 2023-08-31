@@ -76,7 +76,7 @@ func rollDice() httprouter.Handle {
 
 		if verbose {
 			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",
-				startTime.Format(LogDate),
+				startTime.Format(logDate),
 				realIP(r, true),
 				count,
 				die,

@@ -15,11 +15,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func GetMX(host string) ([]string, []uint16) {
+func parseMX(ctx *ipisp.BulkClient, host string) string {
+	records, err := net.LookupMX(host)
+	if len(records) == 0 || err != nil {
+		return "No MX records retrieved for specified host.\n"
+	}
+
 	var hosts []string
 	var priorities []uint16
-
-	records, _ := net.LookupMX(host)
 
 	for h := 0; h < len(records); h++ {
 		record := records[h]
@@ -27,23 +30,13 @@ func GetMX(host string) ([]string, []uint16) {
 		priorities = append(priorities, record.Pref)
 	}
 
-	return hosts, priorities
-}
-
-func ParseMX(ctx *ipisp.BulkClient, host string) string {
-	hosts, priorities := GetMX(host)
-
-	if len(hosts) == 0 {
-		return "No MX records found for specified host.\n"
-	}
-
 	var ips []net.IP
 	for h := 0; h < len(hosts); h++ {
-		ips = append(ips, GetIP(hosts[h]))
+		ips = append(ips, getIP(hosts[h]))
 	}
 
 	responses, err := ctx.LookupIPs(ips...)
-	if err != nil {
+	if len(responses) == 0 || err != nil {
 		return "Lookup failed.\n"
 	}
 
@@ -71,15 +64,15 @@ func getMXRecord() httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		ctx := GetBulkClient()
+		ctx := getBulkClient()
 
 		host := strings.TrimPrefix(p[0].Value, "/")
 
-		w.Write([]byte(ParseMX(ctx, host) + "\n"))
+		w.Write([]byte(parseMX(ctx, host) + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s looked up MX records for %s\n",
-				startTime.Format(LogDate),
+				startTime.Format(logDate),
 				realIP(r, true),
 				host)
 		}

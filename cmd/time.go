@@ -62,7 +62,7 @@ func serveTime(TimeFormats map[string]string) httprouter.Handle {
 
 		tz, err := time.LoadLocation(strings.TrimPrefix(p[0].Value, "/"))
 		if err != nil {
-			http.Redirect(w, r, "/time/", RedirectStatusCode)
+			http.Redirect(w, r, "/time/", redirectStatusCode)
 		} else {
 			startTime = startTime.In(tz)
 		}
@@ -73,7 +73,7 @@ func serveTime(TimeFormats map[string]string) httprouter.Handle {
 
 		if verbose {
 			fmt.Printf("%s | %s checked the time\n",
-				startTime.Format(LogDate),
+				startTime.Format(logDate),
 				realIP(r, true))
 		}
 	}

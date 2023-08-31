@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	LogDate            string = `2006-01-02T15:04:05.000-07:00`
-	RedirectStatusCode int    = http.StatusSeeOther
+	logDate            string = `2006-01-02T15:04:05.000-07:00`
+	redirectStatusCode int    = http.StatusSeeOther
 )
 
 func serveVersion() httprouter.Handle {

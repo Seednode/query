@@ -16,10 +16,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func ParseHost(ctx *ipisp.BulkClient, host, protocol string) string {
-	ips, _ := net.DefaultResolver.LookupIP(context.Background(), protocol, host)
-
-	if len(ips) == 0 {
+func parseHost(ctx *ipisp.BulkClient, host, protocol string) string {
+	ips, err := net.DefaultResolver.LookupIP(context.Background(), protocol, host)
+	if len(ips) == 0 || err != nil {
 		return "No records found for specified host.\n"
 	}
 
@@ -35,7 +34,7 @@ func ParseHost(ctx *ipisp.BulkClient, host, protocol string) string {
 	for response := 0; response < len(responses); response++ {
 		r := responses[response]
 		ip := r.IP
-		hostname := strings.TrimRight(GetHostname(ip), ".")
+		hostname := strings.TrimRight(getHostname(ip), ".")
 		asn := r.ASN
 		provider := r.ISPName
 		subnet := r.Range
@@ -53,15 +52,15 @@ func getHostRecord(protocol string) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		ctx := GetBulkClient()
+		ctx := getBulkClient()
 
 		host := strings.TrimPrefix(p[0].Value, "/")
 
-		w.Write([]byte(ParseHost(ctx, host, protocol) + "\n"))
+		w.Write([]byte(parseHost(ctx, host, protocol) + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s looked up host records for %s\n",
-				startTime.Format(LogDate),
+				startTime.Format(logDate),
 				realIP(r, true),
 				host)
 		}
