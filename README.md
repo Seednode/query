@@ -8,7 +8,7 @@ Static binary builds available [here](https://cdn.seedno.de/builds/query).
 
 x86_64 and ARM Docker images of latest version: `oci.seedno.de/seednode/query:latest`.
 
-Dockerfile available [here](https://git.seedno.de/seednode/query/docker/Dockerfile).
+Dockerfile available [here](https://git.seedno.de/seednode/query/raw/branch/master/docker/Dockerfile).
 
 ## Currently available tools
 
