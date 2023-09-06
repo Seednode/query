@@ -11,12 +11,13 @@ import (
 )
 
 const (
-	Version string = "0.5.2"
+	Version string = "0.5.3"
 )
 
 var (
 	bind    string
 	port    uint16
+	profile bool
 	verbose bool
 	version bool
 
@@ -44,6 +45,7 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
+	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 

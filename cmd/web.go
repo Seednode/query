@@ -15,7 +15,7 @@ import (
 	"strconv"
 	"time"
 
-	_ "net/http/pprof"
+	"net/http/pprof"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -80,6 +80,14 @@ func ServePage(args []string) error {
 	mux.GET("/dns/mx/*host", getMXRecord())
 
 	mux.GET("/dns/ns/*host", getNSRecord())
+
+	if profile {
+		mux.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
+		mux.HandlerFunc("GET", "/debug/pprof/cmdline", pprof.Cmdline)
+		mux.HandlerFunc("GET", "/debug/pprof/profile", pprof.Profile)
+		mux.HandlerFunc("GET", "/debug/pprof/symbol", pprof.Symbol)
+		mux.HandlerFunc("GET", "/debug/pprof/trace", pprof.Trace)
+	}
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
