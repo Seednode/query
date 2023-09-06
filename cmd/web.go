@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"time"
 
+	_ "net/http/pprof"
+
 	"github.com/julienschmidt/httprouter"
 )
 
