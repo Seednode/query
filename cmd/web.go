@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -21,8 +22,7 @@ import (
 )
 
 const (
-	logDate            string = `2006-01-02T15:04:05.000-07:00`
-	redirectStatusCode int    = http.StatusSeeOther
+	redirectStatusCode int = http.StatusSeeOther
 )
 
 func serveVersion() httprouter.Handle {
@@ -57,29 +57,33 @@ func ServePage(args []string) error {
 
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	TimeFormats := timeFormats()
-
 	mux := httprouter.New()
 
 	mux.PanicHandler = serverErrorHandler()
+
+	errorChannel := make(chan error)
+
+	mux.GET("/", serveVersion())
 
 	mux.GET("/", serveVersion())
 
 	mux.GET("/ip/*ip", serveIp())
 
-	mux.GET("/time/*time", serveTime(TimeFormats))
+	mux.GET("/time/*time", serveTime(errorChannel))
 
-	mux.GET("/roll/*roll", rollDice())
+	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
 
-	mux.GET("/dns/a/*host", getHostRecord("ip4"))
+	mux.GET("/qr/*qr", serveQRCode())
 
-	mux.GET("/dns/aaaa/*host", getHostRecord("ip6"))
+	mux.GET("/dns/a/*host", getHostRecord("ip4", errorChannel))
 
-	mux.GET("/dns/host/*host", getHostRecord("ip"))
+	mux.GET("/dns/aaaa/*host", getHostRecord("ip6", errorChannel))
 
-	mux.GET("/dns/mx/*host", getMXRecord())
+	mux.GET("/dns/host/*host", getHostRecord("ip", errorChannel))
 
-	mux.GET("/dns/ns/*host", getNSRecord())
+	mux.GET("/dns/mx/*host", getMXRecord(errorChannel))
+
+	mux.GET("/dns/ns/*host", getNSRecord(errorChannel))
 
 	if profile {
 		mux.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
@@ -98,6 +102,18 @@ func ServePage(args []string) error {
 	}
 
 	fmt.Printf("Server listening on %s...\n", srv.Addr)
+
+	go func() {
+		for err := range errorChannel {
+			fmt.Printf("%s | Error: %v\n", time.Now().Format(timeFormats["RFC3339"]), err)
+
+			if exitOnError {
+				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
+
+				srv.Shutdown(context.Background())
+			}
+		}
+	}()
 
 	err = srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {

@@ -15,10 +15,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func parseNS(ctx *ipisp.BulkClient, host string) string {
+func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 	records, err := net.LookupNS(host)
 	if len(records) == 0 || err != nil {
-		return "No NS records retrieved for specified host.\n"
+		return "", err
 	}
 
 	var hosts []string
@@ -30,12 +30,17 @@ func parseNS(ctx *ipisp.BulkClient, host string) string {
 
 	var ips []net.IP
 	for h := 0; h < len(hosts); h++ {
-		ips = append(ips, getIP(hosts[h]))
+		ip, err := getIP(hosts[h])
+		if err != nil {
+			return "", err
+		}
+
+		ips = append(ips, ip)
 	}
 
 	responses, err := ctx.LookupIPs(ips...)
 	if len(responses) == 0 || err != nil {
-		return "Lookup failed.\n"
+		return "", err
 	}
 
 	var retVal strings.Builder
@@ -52,24 +57,36 @@ func parseNS(ctx *ipisp.BulkClient, host string) string {
 			host, ip, asn, provider))
 	}
 
-	return retVal.String()
+	return retVal.String(), nil
 }
 
-func getNSRecord() httprouter.Handle {
+func getNSRecord(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		ctx := getBulkClient()
+		ctx, err := getBulkClient()
+		if err != nil {
+			errorChannel <- err
+
+			return
+		}
 
 		host := strings.TrimPrefix(p[0].Value, "/")
 
-		w.Write([]byte(parseNS(ctx, host) + "\n"))
+		parsedHost, err := parseNS(ctx, host)
+		if err != nil {
+			errorChannel <- err
+
+			return
+		}
+
+		w.Write([]byte(parsedHost + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s looked up NS records for %s\n",
-				startTime.Format(logDate),
+				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)
 		}

@@ -6,38 +6,34 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"net"
 
 	"github.com/ammario/ipisp/v2"
 )
 
-func getBulkClient() *ipisp.BulkClient {
+func getBulkClient() (*ipisp.BulkClient, error) {
 	c, err := ipisp.DialBulkClient(context.Background())
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return c
+
+	return c, nil
 }
 
-func getHostname(host net.IP) string {
+func getHostname(host net.IP) (string, error) {
 	hosts, err := net.LookupAddr(host.String())
 	if err != nil {
-		return "n/a"
+		return "", err
 	}
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	hostname := hosts[0]
-	return hostname
+
+	return hosts[0], nil
 }
 
-func getIP(host string) net.IP {
+func getIP(host string) (net.IP, error) {
 	hosts, err := net.LookupHost(host)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	ip := net.ParseIP(hosts[0])
-	return ip
+
+	return net.ParseIP(hosts[0]), nil
 }

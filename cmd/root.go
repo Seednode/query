@@ -11,15 +11,16 @@ import (
 )
 
 const (
-	Version string = "0.5.3"
+	Version string = "0.6.0"
 )
 
 var (
-	bind    string
-	port    uint16
-	profile bool
-	verbose bool
-	version bool
+	bind        string
+	exitOnError bool
+	port        uint16
+	profile     bool
+	verbose     bool
+	version     bool
 
 	rootCmd = &cobra.Command{
 		Use:   "query",
@@ -44,6 +45,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
+	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")

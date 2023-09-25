@@ -15,7 +15,7 @@ func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 
 	if verbose {
 		fmt.Printf("%s | Invalid request for %s from %s\n",
-			startTime.Format(logDate),
+			startTime.Format(timeFormats["RFC3339"]),
 			r.URL.Path,
 			r.RemoteAddr,
 		)

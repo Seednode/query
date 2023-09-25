@@ -16,7 +16,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func rollDice() httprouter.Handle {
+func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -31,14 +31,14 @@ func rollDice() httprouter.Handle {
 
 		count, err := strconv.ParseInt(c, 10, 64)
 		if err != nil {
-			w.Write([]byte("Invalid format: valid option regex '^[0-9]+?d[0-9]+$'\n"))
+			errorChannel <- err
 
 			return
 		}
 
 		die, err := strconv.ParseInt(d, 10, 64)
 		if err != nil {
-			w.Write([]byte("Invalid format: valid option regex '^[0-9]+?d[0-9]+$'\n"))
+			errorChannel <- err
 
 			return
 		}
@@ -48,7 +48,7 @@ func rollDice() httprouter.Handle {
 		for i = 0; i < count; i++ {
 			v, err := rand.Int(rand.Reader, big.NewInt(die))
 			if err != nil {
-				w.Write([]byte("Invalid format: valid option regex '^[0-9]+?d[0-9]+$'\n"))
+				errorChannel <- err
 
 				return
 			}
@@ -76,7 +76,7 @@ func rollDice() httprouter.Handle {
 
 		if verbose {
 			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",
-				startTime.Format(logDate),
+				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				count,
 				die,

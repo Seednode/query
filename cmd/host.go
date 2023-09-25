@@ -16,15 +16,15 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func parseHost(ctx *ipisp.BulkClient, host, protocol string) string {
+func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 	ips, err := net.DefaultResolver.LookupIP(context.Background(), protocol, host)
 	if len(ips) == 0 || err != nil {
-		return "No records found for specified host.\n"
+		return "", err
 	}
 
 	responses, err := ctx.LookupIPs(ips...)
 	if err != nil {
-		return "Lookup failed.\n"
+		return "", err
 	}
 
 	var retVal strings.Builder
@@ -34,7 +34,13 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) string {
 	for response := 0; response < len(responses); response++ {
 		r := responses[response]
 		ip := r.IP
-		hostname := strings.TrimRight(getHostname(ip), ".")
+
+		hostname, err := getHostname(ip)
+		if err != nil {
+			return "", err
+		}
+
+		hostname = strings.TrimRight(hostname, ".")
 		asn := r.ASN
 		provider := r.ISPName
 		subnet := r.Range
@@ -43,24 +49,36 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) string {
 			ip, asn, provider, hostname, subnet))
 	}
 
-	return retVal.String()
+	return retVal.String(), nil
 }
 
-func getHostRecord(protocol string) httprouter.Handle {
+func getHostRecord(protocol string, errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		ctx := getBulkClient()
+		ctx, err := getBulkClient()
+		if err != nil {
+			errorChannel <- err
+
+			return
+		}
 
 		host := strings.TrimPrefix(p[0].Value, "/")
 
-		w.Write([]byte(parseHost(ctx, host, protocol) + "\n"))
+		parsedHost, err := parseHost(ctx, host, protocol)
+		if err != nil {
+			errorChannel <- err
+
+			return
+		}
+
+		w.Write([]byte(parsedHost + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s looked up host records for %s\n",
-				startTime.Format(logDate),
+				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)
 		}

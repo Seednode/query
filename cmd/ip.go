@@ -49,7 +49,7 @@ func serveIp() httprouter.Handle {
 
 		if verbose {
 			fmt.Printf("%s | %s checked their IP\n",
-				startTime.Format(logDate),
+				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true))
 		}
 	}
