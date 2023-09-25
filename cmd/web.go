@@ -65,8 +65,6 @@ func ServePage(args []string) error {
 
 	mux.GET("/", serveVersion())
 
-	mux.GET("/", serveVersion())
-
 	mux.GET("/ip/*ip", serveIp())
 
 	mux.GET("/time/*time", serveTime(errorChannel))
