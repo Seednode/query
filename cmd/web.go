@@ -71,7 +71,7 @@ func ServePage(args []string) error {
 
 	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
 
-	mux.GET("/qr/*qr", serveQRCode())
+	mux.GET("/qr/*qr", serveQRCode(errorChannel))
 
 	mux.GET("/dns/a/*host", getHostRecord("ip4", errorChannel))
 

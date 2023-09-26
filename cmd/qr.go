@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -14,13 +15,23 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 )
 
-func serveQRCode() httprouter.Handle {
+func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "image/png")
 
 		value := strings.TrimPrefix(p[0].Value, "/")
+		if value == "" {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				errorChannel <- err
+
+				return
+			}
+
+			value = string(body)
+		}
 
 		png, err := qrcode.Encode(value, qrcode.Medium, 256)
 		if err != nil {
