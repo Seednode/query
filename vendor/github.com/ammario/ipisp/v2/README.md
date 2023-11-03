@@ -11,6 +11,7 @@ go get github.com/ammario/ipisp/v2
 ## Features
 - 0 external dependencies
 - Bulk and single lookups
+- Query ISP name, ASN, country, registry and CIDR range
 
 ## Basic usage
 Running
@@ -24,5 +25,5 @@ fmt.Printf("ISP: %s\n", resp.ISPName)
 ```
 displays
 ```
-ISP: CTNOSC-ASN-666, US
+ISP: LEVEL3, US
 ```
