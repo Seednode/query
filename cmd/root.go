@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	Version string = "0.6.1"
+	ReleaseVersion string = "0.7.0"
 )
 
 var (
@@ -51,6 +51,8 @@ func init() {
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 
+	rootCmd.Flags().SetInterspersed(true)
+
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 
 	rootCmd.SilenceErrors = true
@@ -59,5 +61,5 @@ func init() {
 	})
 
 	rootCmd.SetVersionTemplate("query v{{.Version}}\n")
-	rootCmd.Version = Version
+	rootCmd.Version = ReleaseVersion
 }
