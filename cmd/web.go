@@ -65,14 +65,6 @@ func ServePage(args []string) error {
 
 	mux.GET("/", serveVersion())
 
-	mux.GET("/ip/*ip", serveIp())
-
-	mux.GET("/time/*time", serveTime(errorChannel))
-
-	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
-
-	mux.GET("/qr/*qr", serveQRCode(errorChannel))
-
 	mux.GET("/dns/a/*host", getHostRecord("ip4", errorChannel))
 
 	mux.GET("/dns/aaaa/*host", getHostRecord("ip6", errorChannel))
@@ -82,6 +74,14 @@ func ServePage(args []string) error {
 	mux.GET("/dns/mx/*host", getMXRecord(errorChannel))
 
 	mux.GET("/dns/ns/*host", getNSRecord(errorChannel))
+
+	mux.GET("/ip/*ip", serveIp())
+
+	mux.GET("/qr/*qr", serveQRCode(errorChannel))
+
+	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
+
+	mux.GET("/time/*time", serveTime(errorChannel))
 
 	if profile {
 		mux.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
