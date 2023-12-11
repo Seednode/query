@@ -53,6 +53,10 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 				sizeAsInt = 256
 			}
 
+			if sizeAsInt > 2048 || sizeAsInt < 256 {
+				sizeAsInt = 256
+			}
+
 			png, err := qrCode.PNG(sizeAsInt)
 			if err != nil {
 				errorChannel <- err
