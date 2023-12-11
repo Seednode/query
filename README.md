@@ -36,6 +36,13 @@ View your current public IP
 Examples:
 - `/ip/`
 
+### QR Codes
+Encode a string as a QR code (either a PNG or an ASCII string)
+
+Examples:
+- `/qr/Test`
+- `/qr/Test?string`
+
 ### Time
 Look up the current time in a given timezone
 
@@ -56,11 +63,16 @@ Usage:
   query [flags]
 
 Flags:
-  -b, --bind string   address to bind to (default "0.0.0.0")
-  -h, --help          help for query
-  -p, --port uint16   port to listen on (default 8080)
-  -v, --verbose       log tool usage to stdout
-  -V, --version       display version and exit
+  -b, --bind string          address to bind to (default "0.0.0.0")
+      --exit-on-error        shut down webserver on error, instead of just printing the error
+  -h, --help                 help for query
+      --max-dice-rolls int   maximum number of dice per roll (default 1024)
+      --max-dice-sides int   maximum number of sides per die (default 1024)
+  -p, --port uint16          port to listen on (default 8080)
+      --profile              register net/http/pprof handlers
+      --qr-size int          height/width of PNG-encoded QR codes (in pixels) (default 256)
+  -v, --verbose              log tool usage to stdout
+  -V, --version              display version and exit
 ```
 
 ## Building the Docker container
