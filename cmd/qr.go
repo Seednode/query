@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -45,7 +46,14 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 		if r.URL.Query().Has("string") {
 			w.Write([]byte(qrCode.ToString(false)))
 		} else {
-			png, err := qrCode.PNG(256)
+			size := r.URL.Query().Get("size")
+
+			sizeAsInt, err := strconv.Atoi(size)
+			if err != nil || size == "" {
+				sizeAsInt = 256
+			}
+
+			png, err := qrCode.PNG(sizeAsInt)
 			if err != nil {
 				errorChannel <- err
 
