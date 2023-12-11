@@ -20,8 +20,6 @@ import (
 var (
 	ErrInvalidMaxDiceCount = errors.New("max dice roll count must be a positive integer")
 	ErrInvalidMaxDiceSides = errors.New("max dice side count must be a positive integer")
-	ErrInvalidDiceCount    = fmt.Errorf("dice roll count must be below %d", maxDiceRolls)
-	ErrInvalidDiceSides    = fmt.Errorf("dice side count must be below %d", maxDiceSides)
 )
 
 func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
@@ -51,17 +49,13 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 			return
 		}
 
-		if count > int64(maxDiceRolls) {
-			w.Write([]byte(ErrInvalidDiceCount.Error()))
-		}
-
 		switch {
 		case count > int64(maxDiceRolls):
-			w.Write([]byte(ErrInvalidDiceCount.Error()))
+			w.Write([]byte(fmt.Sprintf("Dice roll count must be below %d", maxDiceRolls)))
 
 			return
 		case die > int64(maxDiceSides):
-			w.Write([]byte(ErrInvalidDiceSides.Error()))
+			w.Write([]byte(fmt.Sprintf("Dice side count must be below %d", maxDiceSides)))
 
 			return
 		}
