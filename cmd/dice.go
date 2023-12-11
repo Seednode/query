@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -14,6 +15,13 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	ErrInvalidMaxDiceCount = errors.New("max dice roll count must be a positive integer")
+	ErrInvalidMaxDiceSides = errors.New("max dice side count must be a positive integer")
+	ErrInvalidDiceCount    = fmt.Errorf("dice roll count must be below %d", maxDiceRolls)
+	ErrInvalidDiceSides    = fmt.Errorf("dice side count must be below %d", maxDiceSides)
 )
 
 func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
@@ -39,6 +47,21 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 		die, err := strconv.ParseInt(d, 10, 64)
 		if err != nil {
 			errorChannel <- err
+
+			return
+		}
+
+		if count > int64(maxDiceRolls) {
+			w.Write([]byte(ErrInvalidDiceCount.Error()))
+		}
+
+		switch {
+		case count > int64(maxDiceRolls):
+			w.Write([]byte(ErrInvalidDiceCount.Error()))
+
+			return
+		case die > int64(maxDiceSides):
+			w.Write([]byte(ErrInvalidDiceSides.Error()))
 
 			return
 		}

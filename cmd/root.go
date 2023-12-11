@@ -11,20 +11,35 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.9.1"
+	ReleaseVersion string = "0.10.0"
 )
 
 var (
-	bind        string
-	exitOnError bool
-	port        uint16
-	profile     bool
-	verbose     bool
-	version     bool
+	bind         string
+	exitOnError  bool
+	maxDiceRolls int
+	maxDiceSides int
+	port         uint16
+	profile      bool
+	qrSize       int
+	verbose      bool
+	version      bool
 
 	rootCmd = &cobra.Command{
 		Use:   "query",
 		Short: "Serves a variety of web-based utilities.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			switch {
+			case qrSize < 256 || qrSize > 2048:
+				return ErrInvalidQRSize
+			case maxDiceRolls < 1:
+				return ErrInvalidMaxDiceCount
+			case maxDiceSides < 1:
+				return ErrInvalidMaxDiceSides
+			}
+
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			err := ServePage(args)
 			if err != nil {
@@ -46,8 +61,11 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
+	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
+	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
+	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 
