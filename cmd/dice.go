@@ -51,11 +51,11 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 
 		switch {
 		case count > int64(maxDiceRolls):
-			w.Write([]byte(fmt.Sprintf("Dice roll count must be below %d", maxDiceRolls)))
+			w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
 
 			return
 		case die > int64(maxDiceSides):
-			w.Write([]byte(fmt.Sprintf("Dice side count must be below %d", maxDiceSides)))
+			w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
 
 			return
 		}
