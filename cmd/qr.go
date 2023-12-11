@@ -33,14 +33,25 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 			value = string(body)
 		}
 
-		png, err := qrcode.Encode(value, qrcode.Medium, 256)
+		qrCode, err := qrcode.New(value, qrcode.Medium)
 		if err != nil {
 			w.Write([]byte("Failed to encode string.\n"))
 
 			return
 		}
 
-		w.Write([]byte(png))
+		asString := r.URL.Query().Has("string")
+
+		if asString {
+			w.Write([]byte(qrCode.ToString(false)))
+		} else {
+			png, err := qrCode.PNG(256)
+			if err != nil {
+				w.Write(png)
+
+				return
+			}
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s encoded %q as a QR code\n",
