@@ -5,7 +5,6 @@ Copyright © 2023 Seednode <seednode@seedno.de>
 package cmd
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -13,11 +12,9 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
+	"strings"
 	"time"
-
-	"net/http/pprof"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -25,16 +22,6 @@ import (
 const (
 	redirectStatusCode int = http.StatusSeeOther
 )
-
-func serveVersion() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		data := []byte(fmt.Sprintf("query v%s\n", ReleaseVersion))
-
-		w.Header().Write(bytes.NewBufferString("Content-Length: " + strconv.Itoa(len(data))))
-
-		w.Write(data)
-	}
-}
 
 func ServePage(args []string) error {
 	timeZone := os.Getenv("TZ")
@@ -64,37 +51,39 @@ func ServePage(args []string) error {
 
 	errorChannel := make(chan error)
 
-	re := regexp.MustCompile(`\s+`)
-
-	mux.GET("/", serveVersion())
-
-	mux.GET("/dns/a/*host", getHostRecord("ip4", errorChannel))
-
-	mux.GET("/dns/aaaa/*host", getHostRecord("ip6", errorChannel))
-
-	mux.GET("/dns/host/*host", getHostRecord("ip", errorChannel))
-
-	mux.GET("/dns/mx/*host", getMXRecord(errorChannel))
-
-	mux.GET("/dns/ns/*host", getNSRecord(errorChannel))
-
-	mux.GET("/ip/*ip", serveIp())
-
-	mux.GET("/oui/*oui", getOuiFromMac(re, errorChannel))
-
-	mux.GET("/qr/*qr", serveQRCode(errorChannel))
-
-	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
-
-	mux.GET("/time/*time", serveTime(errorChannel))
+	var helpText strings.Builder
 
 	if profile {
-		mux.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
-		mux.HandlerFunc("GET", "/debug/pprof/cmdline", pprof.Cmdline)
-		mux.HandlerFunc("GET", "/debug/pprof/profile", pprof.Profile)
-		mux.HandlerFunc("GET", "/debug/pprof/symbol", pprof.Symbol)
-		mux.HandlerFunc("GET", "/debug/pprof/trace", pprof.Trace)
+		registerProfileHandlers(mux, &helpText, errorChannel)
 	}
+
+	if !noDNS {
+		registerDNSHandlers(mux, &helpText, errorChannel)
+	}
+
+	registerHelpHandlers(mux, &helpText, errorChannel)
+
+	if !noIP {
+		registerIPHandlers(mux, &helpText, errorChannel)
+	}
+
+	if !noOUI {
+		registerOUIHandlers(mux, &helpText, errorChannel)
+	}
+
+	if !noQR {
+		registerQRHandlers(mux, &helpText, errorChannel)
+	}
+
+	if !noDice {
+		registerRollHandlers(mux, &helpText, errorChannel)
+	}
+
+	if !noTime {
+		registerTimeHandlers(mux, &helpText, errorChannel)
+	}
+
+	registerVersionHandlers(mux, &helpText, errorChannel)
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),

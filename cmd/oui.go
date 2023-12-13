@@ -165,7 +165,7 @@ func trim(oui string) string {
 	return firstN(oui, 6)
 }
 
-func getOuiFromMac(re *regexp.Regexp, errorChannel chan<- error) httprouter.Handle {
+func serveOui(re *regexp.Regexp, errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -193,4 +193,13 @@ func getOuiFromMac(re *regexp.Regexp, errorChannel chan<- error) httprouter.Hand
 				mac)
 		}
 	}
+}
+
+func registerOUIHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+	whiteSpaceRegex := regexp.MustCompile(`\s+`)
+
+	mux.GET("/oui/*oui", serveOui(whiteSpaceRegex, errorChannel))
+	helpText.WriteString("/oui/00:00:08\n")
+	helpText.WriteString("/oui/00-50-C2\n")
+	helpText.WriteString("/oui/70b3d5\n")
 }

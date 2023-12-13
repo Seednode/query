@@ -58,7 +58,7 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func getNSRecord(errorChannel chan<- error) httprouter.Handle {
+func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 

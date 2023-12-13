@@ -54,7 +54,7 @@ Examples:
 - `/qr/Test?string`
 
 ### Time
-Look up the current time in a given.
+Look up the current time in a given timezone and format.
 
 Values can optionally be formatted via the `?format=` query parameter by specifying any layout from the Go [time package](https://pkg.go.dev/time#pkg-constants).
 

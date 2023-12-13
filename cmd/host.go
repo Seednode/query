@@ -52,7 +52,7 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 	return retVal.String(), nil
 }
 
-func getHostRecord(protocol string, errorChannel chan<- error) httprouter.Handle {
+func serveHostRecord(protocol string, errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 

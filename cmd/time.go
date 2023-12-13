@@ -78,3 +78,10 @@ func serveTime(errorChannel chan<- error) httprouter.Handle {
 		}
 	}
 }
+
+func registerTimeHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+	mux.GET("/time/*time", serveTime(errorChannel))
+	helpText.WriteString("/time/America/Chicago\n")
+	helpText.WriteString("/time/EST\n")
+	helpText.WriteString("/time/UTC?format=kitchen\n")
+}

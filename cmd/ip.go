@@ -14,7 +14,10 @@ import (
 )
 
 func realIP(r *http.Request, includePort bool) string {
-	host, port, _ := strings.Cut(r.RemoteAddr, ":")
+	fields := strings.SplitAfter(r.RemoteAddr, ":")
+
+	host := strings.TrimSuffix(strings.Join(fields[:len(fields)-1], ""), ":")
+	port := fields[len(fields)-1]
 
 	if host == "" {
 		return r.RemoteAddr
@@ -53,4 +56,10 @@ func serveIp() httprouter.Handle {
 				realIP(r, true))
 		}
 	}
+}
+
+func registerIPHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+	mux.GET("/ip", serveIp())
+	mux.GET("/ip/*ip", serveIp())
+	helpText.WriteString("/ip/\n")
 }

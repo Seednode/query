@@ -7,8 +7,10 @@ package cmd
 import (
 	"context"
 	"net"
+	"strings"
 
 	"github.com/ammario/ipisp/v2"
+	"github.com/julienschmidt/httprouter"
 )
 
 func getBulkClient() (*ipisp.BulkClient, error) {
@@ -36,4 +38,21 @@ func getIP(host string) (net.IP, error) {
 	}
 
 	return net.ParseIP(hosts[0]), nil
+}
+
+func registerDNSHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+	mux.GET("/dns/a/*host", serveHostRecord("ip4", errorChannel))
+	helpText.WriteString("/dns/a/google.com\n")
+
+	mux.GET("/dns/aaaa/*host", serveHostRecord("ip6", errorChannel))
+	helpText.WriteString("/dns/aaaa/google.com\n")
+
+	mux.GET("/dns/host/*host", serveHostRecord("ip", errorChannel))
+	helpText.WriteString("/dns/host/google.com\n")
+
+	mux.GET("/dns/mx/*host", serveMXRecord(errorChannel))
+	helpText.WriteString("/dns/mx/google.com\n")
+
+	mux.GET("/dns/ns/*host", serveNSRecord(errorChannel))
+	helpText.WriteString("/dns/ns/google.com\n")
 }

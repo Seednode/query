@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.12.0"
+	ReleaseVersion string = "0.13.0"
 )
 
 var (
@@ -20,6 +20,12 @@ var (
 	maxDiceRolls int
 	maxDiceSides int
 	ouiFile      string
+	noDice       bool
+	noDNS        bool
+	noIP         bool
+	noOUI        bool
+	noQR         bool
+	noTime       bool
 	port         uint16
 	profile      bool
 	qrSize       int
@@ -64,6 +70,12 @@ func init() {
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
+	rootCmd.Flags().BoolVar(&noDice, "no-dice", false, "disable dice rolling functionality")
+	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable dns lookup functionality")
+	rootCmd.Flags().BoolVar(&noIP, "no-ip", false, "disable IP lookup functionality")
+	rootCmd.Flags().BoolVar(&noOUI, "no-oui", false, "disable OUI lookup functionality")
+	rootCmd.Flags().BoolVar(&noQR, "no-qr", false, "disable QR code generation functionality")
+	rootCmd.Flags().BoolVar(&noTime, "no-time", false, "disable time lookup functionality")
 	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")

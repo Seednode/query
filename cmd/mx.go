@@ -62,7 +62,7 @@ func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func getMXRecord(errorChannel chan<- error) httprouter.Handle {
+func serveMXRecord(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
