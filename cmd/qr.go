@@ -48,7 +48,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 		}
 
 		if r.URL.Query().Has("string") {
-			w.Write([]byte(qrCode.ToString(false)))
+			w.Write([]byte(qrCode.ToString(false) + "\n"))
 		} else {
 			png, err := qrCode.PNG(qrSize)
 			if err != nil {

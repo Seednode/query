@@ -163,6 +163,10 @@ func getOuiFromMac(errorChannel chan<- error) httprouter.Handle {
 			return
 		}
 
+		if oui == "" {
+			oui = fmt.Sprintf("No OUI found for MAC %s\n", mac)
+		}
+
 		w.Write([]byte(oui + "\n"))
 
 		if verbose {
