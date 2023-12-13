@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.11.4"
+	ReleaseVersion string = "0.12.0"
 )
 
 var (
@@ -19,6 +19,7 @@ var (
 	exitOnError  bool
 	maxDiceRolls int
 	maxDiceSides int
+	ouiFile      string
 	port         uint16
 	profile      bool
 	qrSize       int
@@ -63,6 +64,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
+	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
 	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")

@@ -8,7 +8,9 @@ import (
 	"bufio"
 	"embed"
 	"fmt"
+	"io/fs"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -124,7 +126,15 @@ func prettify(s string, re *regexp.Regexp) string {
 }
 
 func scan() (func(), *bufio.Scanner, error) {
-	readFile, err := ouis.Open("oui.txt")
+	var readFile fs.File
+	var err error
+
+	if ouiFile == "" {
+		readFile, err = ouis.Open("oui.txt")
+	} else {
+		readFile, err = os.Open(ouiFile)
+	}
+
 	if err != nil {
 		return func() {}, nil, err
 	}
