@@ -39,7 +39,7 @@ Examples:
 ### OUI Lookup
 Look up the vendor associated with any MAC address.
 
-The Wireshark manufacturer database is embedded in the generated binary, but a local version can be used inside by providing the `--oui-file` argument.
+The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used inside by providing the `--oui-file` argument.
 
 Examples:
 - `/oui/00:00:08`
