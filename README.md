@@ -36,6 +36,14 @@ View your current public IP
 Examples:
 - `/ip/`
 
+### OUI Lookup
+Look up the vendor associated with any MAC address
+
+Examples:
+- `/oui/00:00:08`
+- `/oui/00-50-C2`
+- `/oui/70b3d5`
+
 ### QR Codes
 Encode a string as a QR code (either a PNG or an ASCII string)
 
