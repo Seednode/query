@@ -15,14 +15,14 @@ Dockerfile available [here](https://git.seedno.de/seednode/query/raw/branch/mast
 ### Dice roll
 Roll a specified number of dice.
 
-Optionally display individual roll results, as well as total, by appending `?verbose`
+Optionally display individual roll results, as well as total, by appending `?verbose`.
 
 Examples:
 - `/roll/5d20`
 - `/roll/d6?verbose`
 
 ### DNS
-Look up DNS records for a given host
+Look up DNS records for a given host.
 
 Examples:
 - `/dns/a/<host>`
@@ -31,13 +31,15 @@ Examples:
 - `/dns/ns/<host>`
 
 ### IP address
-View your current public IP
+View your current public IP.
 
 Examples:
 - `/ip/`
 
 ### OUI Lookup
-Look up the vendor associated with any MAC address
+Look up the vendor associated with any MAC address.
+
+The Wireshark manufacturer database is embedded in the generated binary, but a local version can be used inside by providing the `--oui-file` argument.
 
 Examples:
 - `/oui/00:00:08`
@@ -45,14 +47,14 @@ Examples:
 - `/oui/70b3d5`
 
 ### QR Codes
-Encode a string as a QR code (either a PNG or an ASCII string)
+Encode a string as a QR code (either a PNG or an ASCII string).
 
 Examples:
 - `/qr/Test`
 - `/qr/Test?string`
 
 ### Time
-Look up the current time in a given timezone
+Look up the current time in a given.
 
 Values can optionally be formatted via the `?format=` query parameter by specifying any layout from the Go [time package](https://pkg.go.dev/time#pkg-constants).
 
@@ -76,6 +78,7 @@ Flags:
   -h, --help                 help for query
       --max-dice-rolls int   maximum number of dice per roll (default 1024)
       --max-dice-sides int   maximum number of sides per die (default 1024)
+      --oui-file string      path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
   -p, --port uint16          port to listen on (default 8080)
       --profile              register net/http/pprof handlers
       --qr-size int          height/width of PNG-encoded QR codes (in pixels) (default 256)
