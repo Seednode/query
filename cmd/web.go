@@ -77,6 +77,8 @@ func ServePage(args []string) error {
 
 	mux.GET("/ip/*ip", serveIp())
 
+	mux.GET("/oui/*oui", getOuiFromMac(errorChannel))
+
 	mux.GET("/qr/*qr", serveQRCode(errorChannel))
 
 	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
