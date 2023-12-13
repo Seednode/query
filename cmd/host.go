@@ -40,13 +40,12 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 			return "", err
 		}
 
-		hostname = strings.TrimRight(hostname, ".")
-		asn := r.ASN
-		provider := r.ISPName
-		subnet := r.Range
-
 		retVal.WriteString(fmt.Sprintf("  %v:\n    Provider: %v (%v)\n    Hostname: %v\n    Range: %v\n\n",
-			ip, asn, provider, hostname, subnet))
+			ip,
+			r.ASN,
+			r.ISPName,
+			strings.TrimRight(hostname, "."),
+			r.Range))
 	}
 
 	return retVal.String(), nil
