@@ -51,13 +51,12 @@ func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
 
 	for response := 0; response < len(responses); response++ {
 		r := responses[response]
-		host := strings.TrimRight(hosts[response], ".")
-		priority := priorities[response]
-		ip := r.IP
-		asn := r.ASN
-		provider := r.ISPName
 		retVal.WriteString(fmt.Sprintf("\n  (%v) %v:\n    IP: %v\n    Provider: %v (%v)\n",
-			priority, host, ip, asn, provider))
+			priorities[response],
+			strings.TrimRight(hosts[response], "."),
+			r.IP,
+			r.ASN,
+			r.ISPName))
 	}
 
 	return retVal.String(), nil

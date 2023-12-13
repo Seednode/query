@@ -48,13 +48,11 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 
 	for response := 0; response < len(responses); response++ {
-		r := responses[response]
-		host := strings.TrimRight(hosts[response], ".")
-		ip := r.IP
-		asn := r.ASN
-		provider := r.ISPName
 		retVal.WriteString(fmt.Sprintf("\n  %v:\n    IP: %v\n    Provider: %v (%v)\n",
-			host, ip, asn, provider))
+			strings.TrimRight(hosts[response], "."),
+			responses[response].IP,
+			responses[response].ASN,
+			responses[response].ISPName))
 	}
 
 	return retVal.String(), nil
