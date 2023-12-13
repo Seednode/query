@@ -13,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -63,6 +64,8 @@ func ServePage(args []string) error {
 
 	errorChannel := make(chan error)
 
+	re := regexp.MustCompile(`\s+`)
+
 	mux.GET("/", serveVersion())
 
 	mux.GET("/dns/a/*host", getHostRecord("ip4", errorChannel))
@@ -77,7 +80,7 @@ func ServePage(args []string) error {
 
 	mux.GET("/ip/*ip", serveIp())
 
-	mux.GET("/oui/*oui", getOuiFromMac(errorChannel))
+	mux.GET("/oui/*oui", getOuiFromMac(re, errorChannel))
 
 	mux.GET("/qr/*qr", serveQRCode(errorChannel))
 

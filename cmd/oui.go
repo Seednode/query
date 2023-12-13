@@ -9,6 +9,7 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -17,6 +18,13 @@ import (
 
 //go:embed oui.txt
 var ouis embed.FS
+
+func addColons(mac string) string {
+	s := chunks(mac, 2)
+	output := strings.Join(s, ":")
+
+	return output
+}
 
 func chunks(s string, chunkSize int) []string {
 	if len(s) == 0 {
@@ -58,7 +66,7 @@ func firstN(s string, n int) string {
 	return s
 }
 
-func format(mac, line string) string {
+func format(mac, line string, re *regexp.Regexp) string {
 	words := strings.Split(line, "\t")
 
 	var retVal strings.Builder
@@ -68,14 +76,38 @@ func format(mac, line string) string {
 	}
 
 	if len(words) < 3 {
-		retVal.WriteString(strings.Replace(words[1], ",", " ", -1))
+		retVal.WriteString(prettify(words[1], re))
 	} else {
 		for i := 2; i < len(words); i++ {
-			retVal.WriteString(strings.Replace(words[i], ",", " ", -1))
+			retVal.WriteString(prettify(words[i], re))
 		}
 	}
 
 	return retVal.String()
+}
+
+func getOui(mac string, re *regexp.Regexp) (string, error) {
+	normalizedMac := normalize(mac)
+	trimmedMac := trim(normalizedMac)
+
+	closeFile, scanner, err := scan()
+	if err != nil {
+		return "", err
+	}
+	defer closeFile()
+
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if trim(normalize(line)) == trimmedMac {
+			return format(addColons(mac), line, re), nil
+		}
+
+	}
+
+	return "", nil
 }
 
 func normalize(oui string) string {
@@ -85,11 +117,10 @@ func normalize(oui string) string {
 	return oui
 }
 
-func prettify(mac string) string {
-	s := chunks(mac, 2)
-	output := strings.Join(s, ":")
+func prettify(s string, re *regexp.Regexp) string {
+	s = strings.Replace(s, ",", " ", -1)
 
-	return output
+	return re.ReplaceAllString(s, " ")
 }
 
 func scan() (func(), *bufio.Scanner, error) {
@@ -124,31 +155,7 @@ func trim(oui string) string {
 	return firstN(oui, 6)
 }
 
-func getOui(mac string) (string, error) {
-	normalizedMac := normalize(mac)
-	trimmedMac := trim(normalizedMac)
-
-	closeFile, scanner, err := scan()
-	if err != nil {
-		return "", err
-	}
-	defer closeFile()
-
-	scanner.Split(bufio.ScanLines)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if trim(normalize(line)) == trimmedMac {
-			return format(prettify(mac), line), nil
-		}
-
-	}
-
-	return "", nil
-}
-
-func getOuiFromMac(errorChannel chan<- error) httprouter.Handle {
+func getOuiFromMac(re *regexp.Regexp, errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -156,7 +163,7 @@ func getOuiFromMac(errorChannel chan<- error) httprouter.Handle {
 
 		mac := strings.TrimPrefix(p[0].Value, "/")
 
-		oui, err := getOui(mac)
+		oui, err := getOui(mac, re)
 		if err != nil {
 			errorChannel <- err
 
