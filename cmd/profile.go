@@ -6,20 +6,23 @@ package cmd
 
 import (
 	"net/http/pprof"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func registerProfileHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+func registerProfileHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
 	mux.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
 	mux.HandlerFunc("GET", "/debug/pprof/cmdline", pprof.Cmdline)
 	mux.HandlerFunc("GET", "/debug/pprof/profile", pprof.Profile)
 	mux.HandlerFunc("GET", "/debug/pprof/symbol", pprof.Symbol)
 	mux.HandlerFunc("GET", "/debug/pprof/trace", pprof.Trace)
-	helpText.WriteString("/debug/pprof/\n")
-	helpText.WriteString("/debug/pprof/cmdline\n")
-	helpText.WriteString("/debug/pprof/profile\n")
-	helpText.WriteString("/debug/pprof/symbol\n")
-	helpText.WriteString("/debug/pprof/trace\n")
+
+	var usage []string
+	usage = append(usage, "/debug/pprof/")
+	usage = append(usage, "/debug/pprof/cmdline")
+	usage = append(usage, "/debug/pprof/profile")
+	usage = append(usage, "/debug/pprof/symbol")
+	usage = append(usage, "/debug/pprof/trace")
+
+	return usage
 }

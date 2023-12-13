@@ -13,13 +13,21 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func serveHelp(helpText *strings.Builder) httprouter.Handle {
+func serveHelp(usage []string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(helpText.String() + "\n"))
+		var output strings.Builder
+
+		output.WriteString("Examples:\n")
+
+		for _, line := range usage {
+			output.WriteString(fmt.Sprintf("- %s\n", line))
+		}
+
+		w.Write([]byte(output.String()))
 
 		if verbose {
 			fmt.Printf("%s | %s requested usage info\n",
@@ -29,9 +37,6 @@ func serveHelp(helpText *strings.Builder) httprouter.Handle {
 	}
 }
 
-func registerHelpHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
-	mux.GET("/", serveHelp(helpText))
-	mux.GET("/help", serveHelp(helpText))
-	mux.GET("/help/*help", serveHelp(helpText))
-	helpText.WriteString("/help/\n")
+func registerHelpHandlers(mux *httprouter.Router, usage []string, errorChannel chan<- error) {
+	mux.GET("/", serveHelp(usage))
 }

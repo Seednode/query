@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -24,8 +23,12 @@ func serveVersion() httprouter.Handle {
 	}
 }
 
-func registerVersionHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+func registerVersionHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
 	mux.GET("/version", serveVersion())
 	mux.GET("/version/*version", serveVersion())
-	helpText.WriteString("/version/\n")
+
+	var usage []string
+	usage = append(usage, "/version/")
+
+	return usage
 }

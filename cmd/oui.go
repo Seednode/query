@@ -195,11 +195,15 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerOUIHandlers(mux *httprouter.Router, helpText *strings.Builder, errorChannel chan<- error) {
+func registerOUIHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
 	whiteSpaceRegex := regexp.MustCompile(`\s+`)
 
 	mux.GET("/oui/*oui", serveOui(whiteSpaceRegex, errorChannel))
-	helpText.WriteString("/oui/00:00:08\n")
-	helpText.WriteString("/oui/00-50-C2\n")
-	helpText.WriteString("/oui/70b3d5\n")
+
+	var usage []string
+	usage = append(usage, "/oui/00:00:08")
+	usage = append(usage, "/oui/00-50-C2")
+	usage = append(usage, "/oui/70b3d5")
+
+	return usage
 }

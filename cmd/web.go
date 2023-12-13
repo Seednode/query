@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -51,39 +50,39 @@ func ServePage(args []string) error {
 
 	errorChannel := make(chan error)
 
-	var helpText strings.Builder
+	var usage []string
 
 	if profile {
-		registerProfileHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerProfileHandlers(mux, errorChannel)...)
 	}
 
 	if !noDNS {
-		registerDNSHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerDNSHandlers(mux, errorChannel)...)
 	}
 
-	registerHelpHandlers(mux, &helpText, errorChannel)
-
 	if !noIP {
-		registerIPHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerIPHandlers(mux, errorChannel)...)
 	}
 
 	if !noOUI {
-		registerOUIHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerOUIHandlers(mux, errorChannel)...)
 	}
 
 	if !noQR {
-		registerQRHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerQRHandlers(mux, errorChannel)...)
 	}
 
 	if !noDice {
-		registerRollHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerRollHandlers(mux, errorChannel)...)
 	}
 
 	if !noTime {
-		registerTimeHandlers(mux, &helpText, errorChannel)
+		usage = append(usage, registerTimeHandlers(mux, errorChannel)...)
 	}
 
-	registerVersionHandlers(mux, &helpText, errorChannel)
+	usage = append(usage, registerVersionHandlers(mux, errorChannel)...)
+
+	registerHelpHandlers(mux, usage, errorChannel)
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
