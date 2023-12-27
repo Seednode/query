@@ -21,6 +21,8 @@ func serveHelp(usage []string) httprouter.Handle {
 
 		var output strings.Builder
 
+		output.WriteString(fmt.Sprintf("query v%s\n\n", ReleaseVersion))
+
 		output.WriteString("Examples:\n")
 
 		for _, line := range usage {
