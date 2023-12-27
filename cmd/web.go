@@ -96,7 +96,9 @@ func ServePage(args []string) error {
 		WriteTimeout: 5 * time.Minute,
 	}
 
-	fmt.Printf("Server listening on %s...\n", srv.Addr)
+	fmt.Printf("%s | Server listening on %s...\n",
+		time.Now().Format(timeFormats["RFC3339"]),
+		srv.Addr)
 
 	go func() {
 		for err := range errorChannel {
