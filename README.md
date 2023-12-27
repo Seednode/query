@@ -25,23 +25,24 @@ Examples:
 Look up DNS records for a given host.
 
 Examples:
-- `/dns/a/<host>`
-- `/dns/aaaa/<host>`
-- `/dns/mx/<host>`
-- `/dns/ns/<host>`
+- `/dns/a/google.com`
+- `/dns/aaaa/google.com`
+- `/dns/host/google.com`
+- `/dns/mx/google.com`
+- `/dns/ns/google.com`
 
 ### Hashing
 Hash the provided string using the requested algorithm.
 
 Examples:
-`/hash/md5/<string>`
-`/hash/sha1/<string>`
-`/hash/sha224/<string>`
-`/hash/sha256/<string>`
-`/hash/sha384/<string>`
-`/hash/sha512/<string>`
-`/hash/sha512-224/<string>`
-`/hash/sha512-256/<string>`
+- `/hash/md5/foo`
+- `/hash/sha1/foo`
+- `/hash/sha224/foo`
+- `/hash/sha256/foo`
+- `/hash/sha384/foo`
+- `/hash/sha512/foo`
+- `/hash/sha512-224/foo`
+- `/hash/sha512-256/foo`
 
 ### HTTP Status Codes
 Receive the requested HTTP response status code.

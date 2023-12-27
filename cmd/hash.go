@@ -92,14 +92,14 @@ func registerHashHandlers(mux *httprouter.Router, errorChannel chan<- error) []s
 	mux.GET("/hash/sha512-256/*string", serveHash("SHA-512/256", errorChannel))
 
 	var usage []string
-	usage = append(usage, "/hash/md5/<string>")
-	usage = append(usage, "/hash/sha1/<string>")
-	usage = append(usage, "/hash/sha224/<string>")
-	usage = append(usage, "/hash/sha256/<string>")
-	usage = append(usage, "/hash/sha384/<string>")
-	usage = append(usage, "/hash/sha512/<string>")
-	usage = append(usage, "/hash/sha512-224/<string>")
-	usage = append(usage, "/hash/sha512-256/<string>")
+	usage = append(usage, "/hash/md5/foo")
+	usage = append(usage, "/hash/sha1/foo")
+	usage = append(usage, "/hash/sha224/foo")
+	usage = append(usage, "/hash/sha256/foo")
+	usage = append(usage, "/hash/sha384/foo")
+	usage = append(usage, "/hash/sha512/foo")
+	usage = append(usage, "/hash/sha512-224/foo")
+	usage = append(usage, "/hash/sha512-256/foo")
 
 	return usage
 }
