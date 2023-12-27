@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.17.5"
+	ReleaseVersion string = "0.18.0"
 )
 
 var (
@@ -22,6 +22,7 @@ var (
 	ouiFile      string
 	noDice       bool
 	noDNS        bool
+	noDraw       bool
 	noHash       bool
 	noHttpStatus bool
 	noIP         bool
@@ -74,6 +75,7 @@ func init() {
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().BoolVar(&noDice, "no-dice", false, "disable dice rolling functionality")
 	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable dns lookup functionality")
+	rootCmd.Flags().BoolVar(&noDraw, "no-draw", false, "disable drawing functionality")
 	rootCmd.Flags().BoolVar(&noHash, "no-hash", false, "disable hashing functionality")
 	rootCmd.Flags().BoolVar(&noHttpStatus, "no-http-status", false, "disable http response status code functionality")
 	rootCmd.Flags().BoolVar(&noIP, "no-ip", false, "disable IP lookup functionality")

@@ -31,6 +31,14 @@ Examples:
 - `/dns/mx/google.com`
 - `/dns/ns/google.com`
 
+### Draw
+Outputs a rectangle with the specified width and height. The color can be specified as either a hex value (without the leading `#`) or any [HTML color name](https://www.w3schools.com/tags/ref_colornames.asp).
+
+Examples:
+- `/draw/gif/beige/640/480`
+- `/draw/jpeg/white/320/240`
+- `/draw/png/fafafa/1024/768`
+
 ### Hashing
 Hash the provided string using the requested algorithm.
 
