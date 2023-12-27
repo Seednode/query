@@ -177,37 +177,31 @@ func isValidHex(s string) bool {
 	return false
 }
 
-func getColor(requestedColor string, errorChannel chan<- error) color.Color {
+func getColor(requestedColor string) (color.Color, error) {
 	r := chunks(requestedColor, 2)
 
 	for _, val := range r {
 		if !isValidHex(val) {
-			return EmptyColor
+			return EmptyColor, nil
 		}
 	}
 
 	red, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[0]))
 	if err != nil {
-		errorChannel <- err
-
-		return EmptyColor
+		return EmptyColor, err
 	}
 
 	green, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[1]))
 	if err != nil {
-		errorChannel <- err
-
-		return EmptyColor
+		return EmptyColor, err
 	}
 
 	blue, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[2]))
 	if err != nil {
-		errorChannel <- err
-
-		return EmptyColor
+		return EmptyColor, err
 	}
 
-	return color.RGBA{uint8(red), uint8(blue), uint8(green), 0xff}
+	return color.RGBA{uint8(red), uint8(blue), uint8(green), 0xff}, nil
 }
 
 func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
@@ -217,6 +211,7 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 		w.Header().Set("Content-Type", "text/plain")
 
 		var colorToUse color.Color
+		var err error
 
 		requested := p.ByName("color")[:6]
 
@@ -224,7 +219,11 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 		if found {
 			colorToUse = c
 		} else {
-			colorToUse = getColor(requested, errorChannel)
+			colorToUse, err = getColor(requested)
+			if err != nil {
+				errorChannel <- err
+			}
+
 			requested = "#" + requested
 		}
 
@@ -252,7 +251,10 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 			return
 		}
 
-		img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
+		img := image.NewRGBA(image.Rectangle{
+			image.Point{0, 0},
+			image.Point{width, height},
+		})
 
 		for x := 0; x < width; x++ {
 			for y := 0; y < height; y++ {
@@ -262,13 +264,36 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 		switch format {
 		case "GIF":
-			gif.Encode(w, img, nil)
+			err := gif.Encode(w, img, nil)
+			if err != nil {
+				errorChannel <- err
+
+				w.Write([]byte("Failed to encode GIF.\n"))
+
+				return
+			}
 		case "JPEG":
-			jpeg.Encode(w, img, nil)
+			err := jpeg.Encode(w, img, nil)
+			if err != nil {
+				errorChannel <- err
+
+				w.Write([]byte("Failed to encode JPEG.\n"))
+
+				return
+			}
 		case "PNG":
-			png.Encode(w, img)
+			err := png.Encode(w, img)
+			if err != nil {
+				errorChannel <- err
+
+				w.Write([]byte("Failed to encode PNG.\n"))
+
+				return
+			}
 		default:
 			w.Write([]byte("Invalid image format requested.\n"))
+
+			return
 		}
 
 		if verbose {
