@@ -264,6 +264,8 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 		switch format {
 		case "GIF":
+			w.Header().Set("Content-Type", "image/gif")
+
 			err := gif.Encode(w, img, nil)
 			if err != nil {
 				errorChannel <- err
@@ -273,6 +275,8 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 				return
 			}
 		case "JPEG":
+			w.Header().Set("Content-Type", "image/jpeg")
+
 			err := jpeg.Encode(w, img, nil)
 			if err != nil {
 				errorChannel <- err
@@ -282,6 +286,8 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 				return
 			}
 		case "PNG":
+			w.Header().Set("Content-Type", "image/png")
+
 			err := png.Encode(w, img)
 			if err != nil {
 				errorChannel <- err
