@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+type Error struct {
+	Message error
+	Host    string
+	Path    string
+}
+
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	startTime := time.Now()
 

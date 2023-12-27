@@ -78,7 +78,7 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveHostRecord(protocol string, errorChannel chan<- error) httprouter.Handle {
+func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -86,7 +86,7 @@ func serveHostRecord(protocol string, errorChannel chan<- error) httprouter.Hand
 
 		ctx, err := getBulkClient()
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -95,7 +95,7 @@ func serveHostRecord(protocol string, errorChannel chan<- error) httprouter.Hand
 
 		parsedHost, err := parseHost(ctx, host, protocol)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -158,7 +158,7 @@ func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveMXRecord(errorChannel chan<- error) httprouter.Handle {
+func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -166,7 +166,7 @@ func serveMXRecord(errorChannel chan<- error) httprouter.Handle {
 
 		ctx, err := getBulkClient()
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -175,7 +175,7 @@ func serveMXRecord(errorChannel chan<- error) httprouter.Handle {
 
 		parsedHost, err := parseMX(ctx, host)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -234,7 +234,7 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
+func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -242,7 +242,7 @@ func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
 
 		ctx, err := getBulkClient()
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -251,7 +251,7 @@ func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
 
 		parsedHost, err := parseNS(ctx, host)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -267,7 +267,7 @@ func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerDNSHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerDNSHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/dns/a/*host", serveHostRecord("ip4", errorChannel))
 	mux.GET("/dns/aaaa/*host", serveHostRecord("ip6", errorChannel))
 	mux.GET("/dns/host/*host", serveHostRecord("ip", errorChannel))

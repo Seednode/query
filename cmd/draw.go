@@ -14,13 +14,14 @@ import (
 	"image/png"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 var (
-	EmptyColor = color.RGBA{0, 0, 0, 0xff}
+	EmptyColor = color.RGBA{0, 0, 0, 0x0}
 )
 
 var defaultColors = map[string]color.Color{
@@ -204,7 +205,7 @@ func getColor(requestedColor string) (color.Color, error) {
 	return color.RGBA{uint8(red), uint8(blue), uint8(green), 0xff}, nil
 }
 
-func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
+func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -227,7 +228,7 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 		default:
 			colorToUse, err = getColor(requested)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
 
 			requested = "#" + requested
@@ -239,18 +240,20 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 			return
 		}
 
-		width, err := strconv.Atoi(p.ByName("width"))
+		dimensions := strings.SplitN(p.ByName("dimensions"), "x", 2)
+
+		width, err := strconv.Atoi(dimensions[0])
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			w.Write([]byte("Failed to parse width.\n"))
 
 			return
 		}
 
-		height, err := strconv.Atoi(p.ByName("height"))
+		height, err := strconv.Atoi(dimensions[1])
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			w.Write([]byte("Failed to parse height.\n"))
 
@@ -285,7 +288,7 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 			err := gif.Encode(w, img, nil)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to encode GIF.\n"))
 
@@ -296,7 +299,7 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 			err := jpeg.Encode(w, img, nil)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to encode JPEG.\n"))
 
@@ -307,7 +310,7 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 			err := png.Encode(w, img)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to encode PNG.\n"))
 
@@ -331,15 +334,15 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerDrawHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
-	mux.GET("/draw/gif/:color/:width/:height", drawImage("GIF", errorChannel))
-	mux.GET("/draw/jpeg/:color/:width/:height", drawImage("JPEG", errorChannel))
-	mux.GET("/draw/png/:color/:width/:height", drawImage("PNG", errorChannel))
+func registerDrawHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
+	mux.GET("/draw/gif/:color/:dimensions", drawImage("GIF", errorChannel))
+	mux.GET("/draw/jpeg/:color/:dimensions", drawImage("JPEG", errorChannel))
+	mux.GET("/draw/png/:color/:dimensions", drawImage("PNG", errorChannel))
 
 	var usage []string
-	usage = append(usage, "/draw/gif/beige/640/480")
-	usage = append(usage, "/draw/jpeg/white/320/240")
-	usage = append(usage, "/draw/png/fafafa/1024/768")
+	usage = append(usage, "/draw/gif/beige/640x480")
+	usage = append(usage, "/draw/jpeg/white/320x240")
+	usage = append(usage, "/draw/png/fafafa/1024x768")
 
 	return usage
 }

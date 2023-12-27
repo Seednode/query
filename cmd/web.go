@@ -48,7 +48,7 @@ func ServePage(args []string) error {
 
 	mux.PanicHandler = serverErrorHandler()
 
-	errorChannel := make(chan error)
+	errorChannel := make(chan Error)
 
 	var usage []string
 
@@ -110,9 +110,10 @@ func ServePage(args []string) error {
 
 	go func() {
 		for err := range errorChannel {
-			fmt.Printf("%s | Error: %v\n", time.Now().Format(timeFormats["RFC3339"]), err)
+			fmt.Printf("%s | Error: `%v` (%s => %s)\n", time.Now().Format(timeFormats["RFC3339"]), err.Message, err.Host, err.Path)
 
 			if exitOnError {
+				fmt.Printf("%s | Error: `%v` (%s => %s)\n", time.Now().Format(timeFormats["RFC3339"]), err.Message, err.Host, err.Path)
 				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
 
 				srv.Shutdown(context.Background())

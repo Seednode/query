@@ -24,7 +24,7 @@ var (
 	ErrInvalidHashAlgorithm = errors.New("invalid hash algorithm provided")
 )
 
-func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
+func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -32,7 +32,7 @@ func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
 		if value == "" {
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to hash string.\n"))
 
@@ -62,7 +62,7 @@ func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
 		case "SHA-512/256":
 			h = sha512.New512_256()
 		default:
-			errorChannel <- ErrInvalidHashAlgorithm
+			errorChannel <- Error{ErrInvalidHashAlgorithm, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -81,7 +81,7 @@ func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerHashHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerHashHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/hash/md5/*string", serveHash("MD5", errorChannel))
 	mux.GET("/hash/sha1/*string", serveHash("SHA-1", errorChannel))
 	mux.GET("/hash/sha224/*string", serveHash("SHA-224", errorChannel))

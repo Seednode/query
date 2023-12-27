@@ -14,7 +14,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func serveHttpStatusCode(errorChannel chan<- error) httprouter.Handle {
+func serveHttpStatusCode(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -46,7 +46,7 @@ func serveHttpStatusCode(errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerHttpStatusHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerHttpStatusHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/http/status/*status", serveHttpStatusCode(errorChannel))
 
 	var usage []string

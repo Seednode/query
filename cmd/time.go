@@ -35,7 +35,7 @@ var timeFormats = map[string]string{
 	"UnixDate":    `Mon Jan _2 15:04:05 MST 2006`,
 }
 
-func serveTime(errorChannel chan<- error) httprouter.Handle {
+func serveTime(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 		startTime := time.Now()
@@ -60,7 +60,7 @@ func serveTime(errorChannel chan<- error) httprouter.Handle {
 
 		tz, err := time.LoadLocation(strings.TrimPrefix(p[0].Value, "/"))
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			http.Redirect(w, r, "/time/", redirectStatusCode)
 		} else {
@@ -79,7 +79,7 @@ func serveTime(errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerTimeHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerTimeHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/time/*time", serveTime(errorChannel))
 
 	var usage []string

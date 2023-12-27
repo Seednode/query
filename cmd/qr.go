@@ -20,7 +20,7 @@ var (
 	ErrInvalidQRSize = errors.New("qr code size must be between 256 and 2048 pixels")
 )
 
-func serveQRCode(errorChannel chan<- error) httprouter.Handle {
+func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -28,7 +28,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 		if value == "" {
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to encode string.\n"))
 
@@ -40,7 +40,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 
 		qrCode, err := qrcode.New(value, qrcode.Medium)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			w.Write([]byte("Failed to encode string.\n"))
 
@@ -52,7 +52,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 		} else {
 			png, err := qrCode.PNG(qrSize)
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.Write([]byte("Failed to encode string.\n"))
 
@@ -73,7 +73,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerQRHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerQRHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/qr/*qr", serveQRCode(errorChannel))
 
 	var usage []string

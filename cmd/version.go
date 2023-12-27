@@ -29,7 +29,7 @@ func serveVersion() httprouter.Handle {
 	}
 }
 
-func registerVersionHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerVersionHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/version", serveVersion())
 	mux.GET("/version/*version", serveVersion())
 

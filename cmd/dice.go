@@ -22,7 +22,7 @@ var (
 	ErrInvalidMaxDiceSides = errors.New("max dice side count must be a positive integer")
 )
 
-func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
+func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -37,14 +37,14 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 
 		count, err := strconv.ParseInt(c, 10, 64)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
 
 		die, err := strconv.ParseInt(d, 10, 64)
 		if err != nil {
-			errorChannel <- err
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
 		}
@@ -65,7 +65,7 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 		for i = 0; i < count; i++ {
 			v, err := rand.Int(rand.Reader, big.NewInt(die))
 			if err != nil {
-				errorChannel <- err
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				return
 			}
@@ -102,7 +102,7 @@ func serveDiceRoll(errorChannel chan<- error) httprouter.Handle {
 	}
 }
 
-func registerRollHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
+func registerRollHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
 
 	var usage []string
