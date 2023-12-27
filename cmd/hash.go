@@ -9,6 +9,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"errors"
 	"fmt"
 	"hash"
 	"io"
@@ -17,6 +18,10 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	ErrInvalidHashAlgorithm = errors.New("invalid hash algorithm provided")
 )
 
 func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
@@ -56,6 +61,10 @@ func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
 			h = sha512.New512_224()
 		case "SHA-512/256":
 			h = sha512.New512_256()
+		default:
+			errorChannel <- ErrInvalidHashAlgorithm
+
+			return
 		}
 
 		io.WriteString(h, value)
@@ -73,14 +82,14 @@ func serveHash(algorithm string, errorChannel chan<- error) httprouter.Handle {
 }
 
 func registerHashHandlers(mux *httprouter.Router, errorChannel chan<- error) []string {
-	mux.GET("/hash/md5/*md5", serveHash("MD5", errorChannel))
-	mux.GET("/hash/sha1/*sha1", serveHash("SHA-1", errorChannel))
-	mux.GET("/hash/sha224/*sha224", serveHash("SHA-224", errorChannel))
-	mux.GET("/hash/sha256/*sha256", serveHash("SHA-256", errorChannel))
-	mux.GET("/hash/sha384/*sha384", serveHash("SHA-384", errorChannel))
-	mux.GET("/hash/sha512/*sha512", serveHash("SHA-512", errorChannel))
-	mux.GET("/hash/sha512-224/*sha512_224", serveHash("SHA-512/224", errorChannel))
-	mux.GET("/hash/sha512-256/*sha512_256", serveHash("SHA-512/256", errorChannel))
+	mux.GET("/hash/md5/*string", serveHash("MD5", errorChannel))
+	mux.GET("/hash/sha1/*string", serveHash("SHA-1", errorChannel))
+	mux.GET("/hash/sha224/*string", serveHash("SHA-224", errorChannel))
+	mux.GET("/hash/sha256/*string", serveHash("SHA-256", errorChannel))
+	mux.GET("/hash/sha384/*string", serveHash("SHA-384", errorChannel))
+	mux.GET("/hash/sha512/*string", serveHash("SHA-512", errorChannel))
+	mux.GET("/hash/sha512-224/*string", serveHash("SHA-512/224", errorChannel))
+	mux.GET("/hash/sha512-256/*string", serveHash("SHA-512/256", errorChannel))
 
 	var usage []string
 	usage = append(usage, "/hash/md5/<string>")
