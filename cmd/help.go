@@ -7,6 +7,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -24,6 +25,8 @@ func serveHelp(usage []string) httprouter.Handle {
 		output.WriteString(fmt.Sprintf("query v%s\n\n", ReleaseVersion))
 
 		output.WriteString("Examples:\n")
+
+		slices.Sort(usage)
 
 		for _, line := range usage {
 			output.WriteString(fmt.Sprintf("- %s\n", line))
