@@ -37,7 +37,6 @@ var timeFormats = map[string]string{
 
 func serveTime(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
 		startTime := time.Now()
 
 		var format string = ""
@@ -58,18 +57,20 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 			format = timeFormats["RFC822"]
 		}
 
+		adjustedStartTime := startTime
+
 		tz, err := time.LoadLocation(strings.TrimPrefix(p.ByName("time"), "/"))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			http.Redirect(w, r, "/time/", redirectStatusCode)
 		} else {
-			startTime = startTime.In(tz)
+			adjustedStartTime = adjustedStartTime.In(tz)
 		}
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(startTime.Format(format) + "\n"))
+		w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s requested the current time\n",
