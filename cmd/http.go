@@ -31,24 +31,17 @@ func serveHttpStatusCode(errorChannel chan<- error) httprouter.Handle {
 			w.WriteHeader(http.StatusBadRequest)
 
 			w.Write([]byte("Invalid status code requested.\n"))
-
-			if verbose {
-				fmt.Printf("%s | %s requested invalid status code %q\n",
-					startTime.Format(timeFormats["RFC3339"]),
-					realIP(r, true),
-					trimmed)
-			}
 		} else {
 			w.WriteHeader(value)
 
 			w.Write([]byte(text + "\n"))
+		}
 
-			if verbose {
-				fmt.Printf("%s | %s requested status code %q\n",
-					startTime.Format(timeFormats["RFC3339"]),
-					realIP(r, true),
-					trimmed)
-			}
+		if verbose {
+			fmt.Printf("%s | %s requested status code %q\n",
+				startTime.Format(timeFormats["RFC3339"]),
+				realIP(r, true),
+				trimmed)
 		}
 	}
 }
