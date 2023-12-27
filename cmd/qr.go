@@ -65,7 +65,7 @@ func serveQRCode(errorChannel chan<- error) httprouter.Handle {
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested %q as a QR code\n",
+			fmt.Printf("%s | %s requested QR code of %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				value)
