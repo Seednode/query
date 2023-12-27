@@ -42,14 +42,15 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 		var format string = ""
 
 		requestedFormat := r.URL.Query().Get("format")
+		if requestedFormat == "" {
+			requestedFormat = "RFC822"
+		}
 
-		if requestedFormat != "" {
-			for k, v := range timeFormats {
-				if strings.EqualFold(requestedFormat, k) {
-					format = v
+		for k, v := range timeFormats {
+			if strings.EqualFold(requestedFormat, k) {
+				format = v
 
-					break
-				}
+				break
 			}
 		}
 
@@ -59,7 +60,9 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 
 		adjustedStartTime := startTime
 
-		tz, err := time.LoadLocation(strings.TrimPrefix(p.ByName("time"), "/"))
+		location := strings.TrimPrefix(p.ByName("time"), "/")
+
+		tz, err := time.LoadLocation(location)
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
@@ -73,9 +76,11 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 		w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s requested the current time\n",
+			fmt.Printf("%s | %s requested the current time for %q in %s format\n",
 				startTime.Format(timeFormats["RFC3339"]),
-				realIP(r, true))
+				realIP(r, true),
+				location,
+				requestedFormat)
 		}
 	}
 }
