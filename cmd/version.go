@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -19,6 +20,12 @@ func serveVersion() httprouter.Handle {
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
 		w.Write(data)
+
+		if verbose {
+			fmt.Printf("%s | %s checked query's version\n",
+				time.Now().Format(timeFormats["RFC3339"]),
+				realIP(r, true))
+		}
 	}
 }
 
