@@ -103,25 +103,28 @@ Usage:
   query [flags]
 
 Flags:
-  -b, --bind string          address to bind to (default "0.0.0.0")
-      --exit-on-error        shut down webserver on error, instead of just printing the error
-  -h, --help                 help for query
-      --max-dice-rolls int   maximum number of dice per roll (default 1024)
-      --max-dice-sides int   maximum number of sides per die (default 1024)
-      --no-dice              disable dice rolling functionality
-      --no-dns               disable dns lookup functionality
-      --no-hash              disable hashing functionality
-      --no-http-status       disable http response status code functionality
-      --no-ip                disable IP lookup functionality
-      --no-oui               disable OUI lookup functionality
-      --no-qr                disable QR code generation functionality
-      --no-time              disable time lookup functionality
-      --oui-file string      path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
-  -p, --port uint16          port to listen on (default 8080)
-      --profile              register net/http/pprof handlers
-      --qr-size int          height/width of PNG-encoded QR codes (in pixels) (default 256)
-  -v, --verbose              log tool usage to stdout
-  -V, --version              display version and exit
+  -b, --bind string            address to bind to (default "0.0.0.0")
+      --exit-on-error          shut down webserver on error, instead of just printing the error
+  -h, --help                   help for query
+      --max-dice-rolls int     maximum number of dice per roll (default 1024)
+      --max-dice-sides int     maximum number of sides per die (default 1024)
+      --max-image-height int   maximum height of generated images (default 1024)
+      --max-image-width int    maximum width of generated images (default 1024)
+      --no-dice                disable dice rolling functionality
+      --no-dns                 disable dns lookup functionality
+      --no-draw                disable drawing functionality
+      --no-hash                disable hashing functionality
+      --no-http-status         disable http response status code functionality
+      --no-ip                  disable IP lookup functionality
+      --no-oui                 disable OUI lookup functionality
+      --no-qr                  disable QR code generation functionality
+      --no-time                disable time lookup functionality
+      --oui-file string        path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
+  -p, --port uint16            port to listen on (default 8080)
+      --profile                register net/http/pprof handlers
+      --qr-size int            height/width of PNG-encoded QR codes (in pixels) (default 256)
+  -v, --verbose                log tool usage to stdout
+  -V, --version                display version and exit
 ```
 
 ## Building the Docker container

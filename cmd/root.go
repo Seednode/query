@@ -11,29 +11,31 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.18.3"
+	ReleaseVersion string = "0.18.4"
 )
 
 var (
-	bind         string
-	exitOnError  bool
-	maxDiceRolls int
-	maxDiceSides int
-	ouiFile      string
-	noDice       bool
-	noDNS        bool
-	noDraw       bool
-	noHash       bool
-	noHttpStatus bool
-	noIP         bool
-	noOUI        bool
-	noQR         bool
-	noTime       bool
-	port         uint16
-	profile      bool
-	qrSize       int
-	verbose      bool
-	version      bool
+	bind           string
+	exitOnError    bool
+	maxDiceRolls   int
+	maxDiceSides   int
+	maxImageHeight int
+	maxImageWidth  int
+	ouiFile        string
+	noDice         bool
+	noDNS          bool
+	noDraw         bool
+	noHash         bool
+	noHttpStatus   bool
+	noIP           bool
+	noOUI          bool
+	noQR           bool
+	noTime         bool
+	port           uint16
+	profile        bool
+	qrSize         int
+	verbose        bool
+	version        bool
 
 	rootCmd = &cobra.Command{
 		Use:   "query",
@@ -73,6 +75,8 @@ func init() {
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
+	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
+	rootCmd.Flags().IntVar(&maxImageWidth, "max-image-width", 1024, "maximum width of generated images")
 	rootCmd.Flags().BoolVar(&noDice, "no-dice", false, "disable dice rolling functionality")
 	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable dns lookup functionality")
 	rootCmd.Flags().BoolVar(&noDraw, "no-draw", false, "disable drawing functionality")

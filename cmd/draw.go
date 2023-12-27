@@ -257,6 +257,17 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 			return
 		}
 
+		switch {
+		case width > maxImageWidth:
+			w.Write([]byte(fmt.Sprintf("Image width must be no greater than %d", maxImageWidth)))
+
+			return
+		case height > maxImageHeight:
+			w.Write([]byte(fmt.Sprintf("Image height must be no greater than %d", maxImageHeight)))
+
+			return
+		}
+
 		img := image.NewRGBA(image.Rectangle{
 			image.Point{0, 0},
 			image.Point{width, height},
