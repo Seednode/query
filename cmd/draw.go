@@ -210,15 +210,21 @@ func drawImage(format string, errorChannel chan<- error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
+		requested := p.ByName("color")
+
+		c, found := defaultColors[requested]
+
 		var colorToUse color.Color
 		var err error
 
-		requested := p.ByName("color")[:6]
-
-		c, found := defaultColors[requested]
-		if found {
+		switch {
+		case found:
 			colorToUse = c
-		} else {
+		case len(requested) != 6:
+			w.Write([]byte("Color codes must be six hex characters.\n"))
+
+			return
+		default:
 			colorToUse, err = getColor(requested)
 			if err != nil {
 				errorChannel <- err
