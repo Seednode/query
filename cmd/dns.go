@@ -103,7 +103,7 @@ func serveHostRecord(protocol string, errorChannel chan<- error) httprouter.Hand
 		w.Write([]byte(parsedHost + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s looked up host records for %s\n",
+			fmt.Printf("%s | %s looked up host records for %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)
@@ -183,7 +183,7 @@ func serveMXRecord(errorChannel chan<- error) httprouter.Handle {
 		w.Write([]byte(parsedHost + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s looked up MX records for %s\n",
+			fmt.Printf("%s | %s looked up MX records for %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)
@@ -259,7 +259,7 @@ func serveNSRecord(errorChannel chan<- error) httprouter.Handle {
 		w.Write([]byte(parsedHost + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s looked up NS records for %s\n",
+			fmt.Printf("%s | %s looked up NS records for %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)

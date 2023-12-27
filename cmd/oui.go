@@ -187,7 +187,7 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- error) httprouter.Handle {
 		w.Write([]byte(oui + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s looked up OUI for %s\n",
+			fmt.Printf("%s | %s looked up OUI for %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				mac)
