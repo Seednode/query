@@ -64,6 +64,10 @@ func ServePage(args []string) error {
 		usage = append(usage, registerDNSHandlers(mux, errorChannel)...)
 	}
 
+	if !noHash {
+		usage = append(usage, registerHashHandlers(mux, errorChannel)...)
+	}
+
 	if !noHttpStatus {
 		usage = append(usage, registerHttpStatusHandlers(mux, errorChannel)...)
 	}

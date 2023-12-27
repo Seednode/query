@@ -30,6 +30,19 @@ Examples:
 - `/dns/mx/<host>`
 - `/dns/ns/<host>`
 
+### Hashing
+Hash the provided string using the requested algorithm.
+
+Examples:
+`/hash/md5/<string>`
+`/hash/sha1/<string>`
+`/hash/sha224/<string>`
+`/hash/sha256/<string>`
+`/hash/sha384/<string>`
+`/hash/sha512/<string>`
+`/hash/sha512-224/<string>`
+`/hash/sha512-256/<string>`
+
 ### HTTP Status Codes
 Receive the requested HTTP response status code.
 
@@ -88,6 +101,7 @@ Flags:
       --max-dice-sides int   maximum number of sides per die (default 1024)
       --no-dice              disable dice rolling functionality
       --no-dns               disable dns lookup functionality
+      --no-hash              disable hashing functionality
       --no-http-status       disable http response status code functionality
       --no-ip                disable IP lookup functionality
       --no-oui               disable OUI lookup functionality
