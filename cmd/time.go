@@ -72,7 +72,7 @@ func serveTime(errorChannel chan<- error) httprouter.Handle {
 		w.Write([]byte(startTime.Format(format) + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s checked the time\n",
+			fmt.Printf("%s | %s requested the current time\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true))
 		}
