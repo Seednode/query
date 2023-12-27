@@ -18,14 +18,12 @@ func serveHttpStatusCode(errorChannel chan<- error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		var text string
+		var text string = ""
 
 		trimmed := strings.TrimSuffix(strings.TrimPrefix(p[0].Value, "/"), "/")
 
 		value, err := strconv.Atoi(trimmed)
-		if err != nil {
-			text = ""
-		} else {
+		if err == nil {
 			text = http.StatusText(value)
 		}
 
