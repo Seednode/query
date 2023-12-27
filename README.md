@@ -39,7 +39,7 @@ Examples:
 ### OUI Lookup
 Look up the vendor associated with any MAC address.
 
-The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used inside by providing the `--oui-file` argument.
+The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used instead by providing the `--oui-file` argument.
 
 Examples:
 - `/oui/00:00:08`
@@ -52,6 +52,14 @@ Encode a string as a QR code (either a PNG or an ASCII string).
 Examples:
 - `/qr/Test`
 - `/qr/Test?string`
+
+### Status Codes
+Receive an arbitrary HTTP response status code.
+
+Examples:
+- `/http/status/200`
+- `/http/status/404`
+- `/http/status/500`
 
 ### Time
 Look up the current time in a given timezone and format.
@@ -78,6 +86,13 @@ Flags:
   -h, --help                 help for query
       --max-dice-rolls int   maximum number of dice per roll (default 1024)
       --max-dice-sides int   maximum number of sides per die (default 1024)
+      --no-dice              disable dice rolling functionality
+      --no-dns               disable dns lookup functionality
+      --no-http-status       disable http response status code functionality
+      --no-ip                disable IP lookup functionality
+      --no-oui               disable OUI lookup functionality
+      --no-qr                disable QR code generation functionality
+      --no-time              disable time lookup functionality
       --oui-file string      path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
   -p, --port uint16          port to listen on (default 8080)
       --profile              register net/http/pprof handlers
