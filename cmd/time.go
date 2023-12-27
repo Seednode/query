@@ -58,7 +58,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 			format = timeFormats["RFC822"]
 		}
 
-		tz, err := time.LoadLocation(strings.TrimPrefix(p[0].Value, "/"))
+		tz, err := time.LoadLocation(strings.TrimPrefix(p.ByName("time"), "/"))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 

@@ -30,7 +30,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		c, d, _ := strings.Cut(strings.TrimPrefix(p[0].Value, "/"), "d")
+		c, d, _ := strings.Cut(strings.TrimPrefix(p.ByName("roll"), "/"), "d")
 		if c == "" {
 			c = "1"
 		}

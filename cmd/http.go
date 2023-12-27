@@ -20,7 +20,7 @@ func serveHttpStatusCode(errorChannel chan<- Error) httprouter.Handle {
 
 		var text string = ""
 
-		trimmed := strings.TrimSuffix(strings.TrimPrefix(p[0].Value, "/"), "/")
+		trimmed := strings.TrimSuffix(strings.TrimPrefix(p.ByName("status"), "/"), "/")
 
 		value, err := strconv.Atoi(trimmed)
 		if err == nil {

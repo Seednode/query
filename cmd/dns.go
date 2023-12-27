@@ -91,7 +91,7 @@ func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Hand
 			return
 		}
 
-		host := strings.TrimPrefix(p[0].Value, "/")
+		host := strings.TrimPrefix(p.ByName("host"), "/")
 
 		parsedHost, err := parseHost(ctx, host, protocol)
 		if err != nil {
@@ -171,7 +171,7 @@ func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
-		host := strings.TrimPrefix(p[0].Value, "/")
+		host := strings.TrimPrefix(p.ByName("host"), "/")
 
 		parsedHost, err := parseMX(ctx, host)
 		if err != nil {
@@ -247,7 +247,7 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
-		host := strings.TrimPrefix(p[0].Value, "/")
+		host := strings.TrimPrefix(p.ByName("host"), "/")
 
 		parsedHost, err := parseNS(ctx, host)
 		if err != nil {

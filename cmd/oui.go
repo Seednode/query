@@ -142,7 +142,7 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		mac := strings.TrimPrefix(p[0].Value, "/")
+		mac := strings.TrimPrefix(p.ByName("oui"), "/")
 
 		oui, err := getOui(mac, re)
 		if err != nil {
