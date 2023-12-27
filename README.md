@@ -30,6 +30,14 @@ Examples:
 - `/dns/mx/<host>`
 - `/dns/ns/<host>`
 
+### HTTP Status Codes
+Receive the requested HTTP response status code.
+
+Examples:
+- `/http/status/200`
+- `/http/status/404`
+- `/http/status/500`
+
 ### IP address
 View your current public IP.
 
@@ -52,14 +60,6 @@ Encode a string as a QR code (either a PNG or an ASCII string).
 Examples:
 - `/qr/Test`
 - `/qr/Test?string`
-
-### Status Codes
-Receive an arbitrary HTTP response status code.
-
-Examples:
-- `/http/status/200`
-- `/http/status/404`
-- `/http/status/500`
 
 ### Time
 Look up the current time in a given timezone and format.
