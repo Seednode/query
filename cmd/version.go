@@ -22,7 +22,7 @@ func serveVersion() httprouter.Handle {
 		w.Write(data)
 
 		if verbose {
-			fmt.Printf("%s | %s requested version info for query\n",
+			fmt.Printf("%s | %s requested version info\n",
 				time.Now().Format(timeFormats["RFC3339"]),
 				realIP(r, true))
 		}
