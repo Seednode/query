@@ -113,7 +113,6 @@ func ServePage(args []string) error {
 			fmt.Printf("%s | Error: `%v` (%s => %s)\n", time.Now().Format(timeFormats["RFC3339"]), err.Message, err.Host, err.Path)
 
 			if exitOnError {
-				fmt.Printf("%s | Error: `%v` (%s => %s)\n", time.Now().Format(timeFormats["RFC3339"]), err.Message, err.Host, err.Path)
 				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
 
 				srv.Shutdown(context.Background())
