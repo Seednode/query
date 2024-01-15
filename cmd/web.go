@@ -103,7 +103,7 @@ func ServePage(args []string) error {
 		Handler:      mux,
 		IdleTimeout:  10 * time.Minute,
 		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Minute,
+		WriteTimeout: 5 * time.Second,
 	}
 
 	if verbose {
