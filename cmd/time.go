@@ -60,7 +60,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 
 		adjustedStartTime := startTime
 
-		location := strings.TrimPrefix(p.ByName("time"), "/")
+		location := strings.TrimPrefix(p.ByName("time"), "/") + p.ByName("rest")
 
 		tz, err := time.LoadLocation(location)
 		if err != nil {
@@ -87,6 +87,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 
 func registerTimeHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/time/:time", serveTime(errorChannel))
+	mux.GET("/time/:time/*rest", serveTime(errorChannel))
 	mux.GET("/time/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
