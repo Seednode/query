@@ -267,25 +267,25 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDNSHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	mux.GET("/dns/", serveUsage("dns", usage))
+func registerDNSHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/dns/", serveUsage(module, usage))
 
 	mux.GET("/dns/a/:host", serveHostRecord("ip4", errorChannel))
-	mux.GET("/dns/a/", serveUsage("dns", usage))
+	mux.GET("/dns/a/", serveUsage(module, usage))
 
 	mux.GET("/dns/aaaa/:host", serveHostRecord("ip6", errorChannel))
-	mux.GET("/dns/aaaa/", serveUsage("dns", usage))
+	mux.GET("/dns/aaaa/", serveUsage(module, usage))
 
 	mux.GET("/dns/host/:host", serveHostRecord("ip", errorChannel))
-	mux.GET("/dns/host/", serveUsage("dns", usage))
+	mux.GET("/dns/host/", serveUsage(module, usage))
 
 	mux.GET("/dns/mx/:host", serveMXRecord(errorChannel))
-	mux.GET("/dns/mx/", serveUsage("dns", usage))
+	mux.GET("/dns/mx/", serveUsage(module, usage))
 
 	mux.GET("/dns/ns/:host", serveNSRecord(errorChannel))
-	mux.GET("/dns/ns/", serveUsage("dns", usage))
+	mux.GET("/dns/ns/", serveUsage(module, usage))
 
-	var examples []string
+	examples := make([]string, 5)
 	examples = append(examples, "/dns/a/google.com")
 	examples = append(examples, "/dns/aaaa/google.com")
 	examples = append(examples, "/dns/host/google.com")

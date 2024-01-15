@@ -29,11 +29,11 @@ func serveVersion() httprouter.Handle {
 	}
 }
 
-func registerVersionHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerVersionHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/version/", serveVersion())
 	mux.GET("/version/:version", serveVersion())
 
-	var examples []string
+	examples := make([]string, 1)
 	examples = append(examples, "/version/")
 
 	return examples

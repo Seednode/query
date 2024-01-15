@@ -334,19 +334,19 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDrawHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	mux.GET("/draw/", serveUsage("draw", usage))
+func registerDrawHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/draw/", serveUsage(module, usage))
 
 	mux.GET("/draw/gif/:color/:dimensions", drawImage("GIF", errorChannel))
-	mux.GET("/draw/gif/", serveUsage("draw", usage))
+	mux.GET("/draw/gif/", serveUsage(module, usage))
 
 	mux.GET("/draw/jpeg/:color/:dimensions", drawImage("JPEG", errorChannel))
-	mux.GET("/draw/jpeg", serveUsage("draw", usage))
+	mux.GET("/draw/jpeg", serveUsage(module, usage))
 
 	mux.GET("/draw/png/:color/:dimensions", drawImage("PNG", errorChannel))
-	mux.GET("/draw/png/", serveUsage("draw", usage))
+	mux.GET("/draw/png/", serveUsage(module, usage))
 
-	var examples []string
+	examples := make([]string, 3)
 	examples = append(examples, "/draw/gif/beige/640x480")
 	examples = append(examples, "/draw/jpeg/white/320x240")
 	examples = append(examples, "/draw/png/fafafa/1024x768")

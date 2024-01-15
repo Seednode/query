@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -43,8 +42,6 @@ func ServePage(args []string) error {
 		return errors.New("invalid bind address provided")
 	}
 
-	rand.New(rand.NewSource(time.Now().UnixNano()))
-
 	mux := httprouter.New()
 
 	mux.PanicHandler = serverErrorHandler()
@@ -53,47 +50,47 @@ func ServePage(args []string) error {
 
 	usage := make(map[string][]string)
 
-	if profile {
-		usage["profile"] = registerProfileHandlers(mux, usage, errorChannel)
-	}
-
-	if !noRoll {
-		usage["roll"] = registerRollHandlers(mux, usage, errorChannel)
-	}
-
 	if !noDns {
-		usage["dns"] = registerDNSHandlers(mux, usage, errorChannel)
+		usage["dns"] = registerDNSHandlers("dns", mux, usage, errorChannel)
 	}
 
 	if !noDraw {
-		usage["draw"] = registerDrawHandlers(mux, usage, errorChannel)
+		usage["draw"] = registerDrawHandlers("draw", mux, usage, errorChannel)
 	}
 
 	if !noHash {
-		usage["hash"] = registerHashHandlers(mux, usage, errorChannel)
+		usage["hash"] = registerHashHandlers("hash", mux, usage, errorChannel)
 	}
 
 	if !noHttpStatus {
-		usage["status"] = registerHttpStatusHandlers(mux, usage, errorChannel)
+		usage["http"] = registerHttpStatusHandlers("http", mux, usage, errorChannel)
 	}
 
 	if !noIp {
-		usage["ip"] = registerIPHandlers(mux, usage, errorChannel)
+		usage["ip"] = registerIPHandlers("ip", mux, usage, errorChannel)
 	}
 
 	if !noMac {
-		usage["mac"] = registerOUIHandlers(mux, usage, errorChannel)
+		usage["mac"] = registerOUIHandlers("mac", mux, usage, errorChannel)
+	}
+
+	if profile {
+		usage["profile"] = registerProfileHandlers("profile", mux, usage, errorChannel)
 	}
 
 	if !noQr {
-		usage["qr"] = registerQRHandlers(mux, usage, errorChannel)
+		usage["qr"] = registerQRHandlers("qr", mux, usage, errorChannel)
+	}
+
+	if !noRoll {
+		usage["roll"] = registerRollHandlers("roll", mux, usage, errorChannel)
 	}
 
 	if !noTime {
-		usage["time"] = registerTimeHandlers(mux, usage, errorChannel)
+		usage["time"] = registerTimeHandlers("time", mux, usage, errorChannel)
 	}
 
-	usage["version"] = registerVersionHandlers(mux, usage, errorChannel)
+	usage["version"] = registerVersionHandlers("version", mux, usage, errorChannel)
 
 	help := getUsage(usage)
 

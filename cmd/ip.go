@@ -58,11 +58,11 @@ func serveIp() httprouter.Handle {
 	}
 }
 
-func registerIPHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerIPHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/ip/", serveIp())
 	mux.GET("/ip/:ip", serveIp())
 
-	var examples []string
+	examples := make([]string, 1)
 	examples = append(examples, "/ip/")
 
 	return examples

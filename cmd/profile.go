@@ -10,14 +10,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func registerProfileHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerProfileHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.HandlerFunc("GET", "/pprof/", pprof.Index)
 	mux.HandlerFunc("GET", "/pprof/cmdline", pprof.Cmdline)
 	mux.HandlerFunc("GET", "/pprof/profile", pprof.Profile)
 	mux.HandlerFunc("GET", "/pprof/symbol", pprof.Symbol)
 	mux.HandlerFunc("GET", "/pprof/trace", pprof.Trace)
 
-	var examples []string
+	examples := make([]string, 5)
 	examples = append(examples, "/pprof/")
 	examples = append(examples, "/pprof/cmdline")
 	examples = append(examples, "/pprof/profile")

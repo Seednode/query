@@ -166,13 +166,13 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerOUIHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	whiteSpaceRegex := regexp.MustCompile(`\s+`)
 
 	mux.GET("/mac/:mac", serveOui(whiteSpaceRegex, errorChannel))
-	mux.GET("/mac/", serveUsage("mac", usage))
+	mux.GET("/mac/", serveUsage(module, usage))
 
-	var examples []string
+	examples := make([]string, 3)
 	examples = append(examples, "/mac/00:00:08")
 	examples = append(examples, "/mac/00-50-C2")
 	examples = append(examples, "/mac/70b3d5")
