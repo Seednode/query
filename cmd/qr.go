@@ -78,8 +78,8 @@ func registerQRHandlers(module string, mux *httprouter.Router, usage map[string]
 	mux.GET("/qr/", serveUsage(module, usage))
 
 	examples := make([]string, 2)
-	examples = append(examples, "/qr/Test")
-	examples = append(examples, "/qr/Test?string")
+	examples[0] = "/qr/Test"
+	examples[1] = "/qr/Test?string"
 
 	return examples
 }

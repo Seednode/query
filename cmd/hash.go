@@ -118,14 +118,14 @@ func registerHashHandlers(module string, mux *httprouter.Router, usage map[strin
 	mux.GET("/hash/sha512-256", serveUsage(module, usage))
 
 	examples := make([]string, 8)
-	examples = append(examples, "/hash/md5/foo")
-	examples = append(examples, "/hash/sha1/foo")
-	examples = append(examples, "/hash/sha224/foo")
-	examples = append(examples, "/hash/sha256/foo")
-	examples = append(examples, "/hash/sha384/foo")
-	examples = append(examples, "/hash/sha512/foo")
-	examples = append(examples, "/hash/sha512-224/foo")
-	examples = append(examples, "/hash/sha512-256/foo")
+	examples[0] = "/hash/md5/foo"
+	examples[1] = "/hash/sha1/foo"
+	examples[2] = "/hash/sha224/foo"
+	examples[3] = "/hash/sha256/foo"
+	examples[4] = "/hash/sha384/foo"
+	examples[5] = "/hash/sha512/foo"
+	examples[6] = "/hash/sha512-224/foo"
+	examples[7] = "/hash/sha512-256/foo"
 
 	return examples
 }

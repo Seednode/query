@@ -286,11 +286,11 @@ func registerDNSHandlers(module string, mux *httprouter.Router, usage map[string
 	mux.GET("/dns/ns/", serveUsage(module, usage))
 
 	examples := make([]string, 5)
-	examples = append(examples, "/dns/a/google.com")
-	examples = append(examples, "/dns/aaaa/google.com")
-	examples = append(examples, "/dns/host/google.com")
-	examples = append(examples, "/dns/mx/google.com")
-	examples = append(examples, "/dns/ns/google.com")
+	examples[0] = "/dns/a/google.com"
+	examples[1] = "/dns/aaaa/google.com"
+	examples[2] = "/dns/host/google.com"
+	examples[3] = "/dns/mx/google.com"
+	examples[4] = "/dns/ns/google.com"
 
 	return examples
 }

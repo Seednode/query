@@ -107,8 +107,8 @@ func registerRollHandlers(module string, mux *httprouter.Router, usage map[strin
 	mux.GET("/roll/", serveUsage(module, usage))
 
 	examples := make([]string, 2)
-	examples = append(examples, "/roll/5d20")
-	examples = append(examples, "/roll/d6?verbose")
+	examples[0] = "/roll/5d20"
+	examples[1] = "/roll/d6?verbose"
 
 	return examples
 }

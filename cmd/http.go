@@ -53,9 +53,9 @@ func registerHttpStatusHandlers(module string, mux *httprouter.Router, usage map
 	mux.GET("/http/status/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
-	examples = append(examples, "/http/status/200")
-	examples = append(examples, "/http/status/404")
-	examples = append(examples, "/http/status/500")
+	examples[0] = "/http/status/200"
+	examples[1] = "/http/status/404"
+	examples[2] = "/http/status/500"
 
 	return examples
 }

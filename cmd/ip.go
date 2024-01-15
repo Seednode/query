@@ -63,7 +63,7 @@ func registerIPHandlers(module string, mux *httprouter.Router, usage map[string]
 	mux.GET("/ip/:ip", serveIp())
 
 	examples := make([]string, 1)
-	examples = append(examples, "/ip/")
+	examples[0] = "/ip/"
 
 	return examples
 }

@@ -347,9 +347,9 @@ func registerDrawHandlers(module string, mux *httprouter.Router, usage map[strin
 	mux.GET("/draw/png/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
-	examples = append(examples, "/draw/gif/beige/640x480")
-	examples = append(examples, "/draw/jpeg/white/320x240")
-	examples = append(examples, "/draw/png/fafafa/1024x768")
+	examples[0] = "/draw/gif/beige/640x480"
+	examples[1] = "/draw/jpeg/white/320x240"
+	examples[2] = "/draw/png/fafafa/1024x768"
 
 	return examples
 }

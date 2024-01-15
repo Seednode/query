@@ -90,9 +90,9 @@ func registerTimeHandlers(module string, mux *httprouter.Router, usage map[strin
 	mux.GET("/time/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
-	examples = append(examples, "/time/America/Chicago")
-	examples = append(examples, "/time/EST")
-	examples = append(examples, "/time/UTC?format=kitchen")
+	examples[0] = "/time/America/Chicago"
+	examples[1] = "/time/EST"
+	examples[2] = "/time/UTC?format=kitchen"
 
 	return examples
 }

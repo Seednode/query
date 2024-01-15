@@ -173,9 +173,9 @@ func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string
 	mux.GET("/mac/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
-	examples = append(examples, "/mac/00:00:08")
-	examples = append(examples, "/mac/00-50-C2")
-	examples = append(examples, "/mac/70b3d5")
+	examples[0] = "/mac/00:00:08"
+	examples[1] = "/mac/00-50-C2"
+	examples[2] = "/mac/70b3d5"
 
 	return examples
 }

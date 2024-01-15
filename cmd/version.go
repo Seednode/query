@@ -34,7 +34,7 @@ func registerVersionHandlers(module string, mux *httprouter.Router, usage map[st
 	mux.GET("/version/:version", serveVersion())
 
 	examples := make([]string, 1)
-	examples = append(examples, "/version/")
+	examples[0] = "/version/"
 
 	return examples
 }

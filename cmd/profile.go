@@ -18,11 +18,11 @@ func registerProfileHandlers(module string, mux *httprouter.Router, usage map[st
 	mux.HandlerFunc("GET", "/pprof/trace", pprof.Trace)
 
 	examples := make([]string, 5)
-	examples = append(examples, "/pprof/")
-	examples = append(examples, "/pprof/cmdline")
-	examples = append(examples, "/pprof/profile")
-	examples = append(examples, "/pprof/symbol")
-	examples = append(examples, "/pprof/trace")
+	examples[0] = "/pprof/"
+	examples[1] = "/pprof/cmdline"
+	examples[2] = "/pprof/profile"
+	examples[3] = "/pprof/symbol"
+	examples[4] = "/pprof/trace"
 
 	return examples
 }
