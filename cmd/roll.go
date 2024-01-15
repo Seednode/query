@@ -102,12 +102,13 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerRollHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
-	mux.GET("/roll/*roll", serveDiceRoll(errorChannel))
+func registerRollHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/roll/:roll", serveDiceRoll(errorChannel))
+	mux.GET("/roll/", serveUsage("roll", usage))
 
-	var usage []string
-	usage = append(usage, "/roll/5d20")
-	usage = append(usage, "/roll/d6?verbose")
+	var examples []string
+	examples = append(examples, "/roll/5d20")
+	examples = append(examples, "/roll/d6?verbose")
 
-	return usage
+	return examples
 }

@@ -46,13 +46,16 @@ func serveHttpStatusCode(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerHttpStatusHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
-	mux.GET("/http/status/*status", serveHttpStatusCode(errorChannel))
+func registerHttpStatusHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/http/", serveUsage("http", usage))
 
-	var usage []string
-	usage = append(usage, "/http/status/200")
-	usage = append(usage, "/http/status/404")
-	usage = append(usage, "/http/status/500")
+	mux.GET("/http/status/:status", serveHttpStatusCode(errorChannel))
+	mux.GET("/http/status/", serveUsage("http", usage))
 
-	return usage
+	var examples []string
+	examples = append(examples, "/http/status/200")
+	examples = append(examples, "/http/status/404")
+	examples = append(examples, "/http/status/500")
+
+	return examples
 }

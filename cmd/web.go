@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
 	"time"
 
@@ -50,51 +51,55 @@ func ServePage(args []string) error {
 
 	errorChannel := make(chan Error)
 
-	var usage []string
+	usage := make(map[string][]string)
 
 	if profile {
-		usage = append(usage, registerProfileHandlers(mux, errorChannel)...)
+		usage["profile"] = registerProfileHandlers(mux, usage, errorChannel)
 	}
 
-	if !noDice {
-		usage = append(usage, registerRollHandlers(mux, errorChannel)...)
+	if !noRoll {
+		usage["roll"] = registerRollHandlers(mux, usage, errorChannel)
 	}
 
 	if !noDns {
-		usage = append(usage, registerDNSHandlers(mux, errorChannel)...)
+		usage["dns"] = registerDNSHandlers(mux, usage, errorChannel)
 	}
 
 	if !noDraw {
-		usage = append(usage, registerDrawHandlers(mux, errorChannel)...)
+		usage["draw"] = registerDrawHandlers(mux, usage, errorChannel)
 	}
 
 	if !noHash {
-		usage = append(usage, registerHashHandlers(mux, errorChannel)...)
+		usage["hash"] = registerHashHandlers(mux, usage, errorChannel)
 	}
 
 	if !noHttpStatus {
-		usage = append(usage, registerHttpStatusHandlers(mux, errorChannel)...)
+		usage["status"] = registerHttpStatusHandlers(mux, usage, errorChannel)
 	}
 
 	if !noIp {
-		usage = append(usage, registerIPHandlers(mux, errorChannel)...)
+		usage["ip"] = registerIPHandlers(mux, usage, errorChannel)
 	}
 
 	if !noMac {
-		usage = append(usage, registerOUIHandlers(mux, errorChannel)...)
+		usage["mac"] = registerOUIHandlers(mux, usage, errorChannel)
 	}
 
 	if !noQr {
-		usage = append(usage, registerQRHandlers(mux, errorChannel)...)
+		usage["qr"] = registerQRHandlers(mux, usage, errorChannel)
 	}
 
 	if !noTime {
-		usage = append(usage, registerTimeHandlers(mux, errorChannel)...)
+		usage["time"] = registerTimeHandlers(mux, usage, errorChannel)
 	}
 
-	usage = append(usage, registerVersionHandlers(mux, errorChannel)...)
+	usage["version"] = registerVersionHandlers(mux, usage, errorChannel)
 
-	registerHelpHandlers(mux, usage, errorChannel)
+	help := getUsage(usage)
+
+	slices.Sort(help)
+
+	registerHelpHandlers(mux, help, errorChannel)
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),

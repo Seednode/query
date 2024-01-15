@@ -73,12 +73,13 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerQRHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
-	mux.GET("/qr/*string", serveQRCode(errorChannel))
+func registerQRHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/qr/:string", serveQRCode(errorChannel))
+	mux.GET("/qr/", serveUsage("qr", usage))
 
-	var usage []string
-	usage = append(usage, "/qr/Test")
-	usage = append(usage, "/qr/Test?string")
+	var examples []string
+	examples = append(examples, "/qr/Test")
+	examples = append(examples, "/qr/Test?string")
 
-	return usage
+	return examples
 }

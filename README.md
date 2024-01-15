@@ -110,7 +110,6 @@ Flags:
       --max-dice-sides int     maximum number of sides per die (default 1024)
       --max-image-height int   maximum height of generated images (default 1024)
       --max-image-width int    maximum width of generated images (default 1024)
-      --no-dice                disable dice rolling functionality
       --no-dns                 disable dns lookup functionality
       --no-draw                disable drawing functionality
       --no-hash                disable hashing functionality
@@ -118,6 +117,7 @@ Flags:
       --no-ip                  disable IP lookup functionality
       --no-mac                 disable MAC lookup functionality
       --no-qr                  disable QR code generation functionality
+      --no-roll                disable dice rolling functionality
       --no-time                disable time lookup functionality
       --oui-file string        path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
   -p, --port uint16            port to listen on (default 8080)

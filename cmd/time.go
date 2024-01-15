@@ -85,13 +85,14 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerTimeHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
-	mux.GET("/time/*time", serveTime(errorChannel))
+func registerTimeHandlers(mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/time/:time", serveTime(errorChannel))
+	mux.GET("/time/", serveUsage("time", usage))
 
-	var usage []string
-	usage = append(usage, "/time/America/Chicago")
-	usage = append(usage, "/time/EST")
-	usage = append(usage, "/time/UTC?format=kitchen")
+	var examples []string
+	examples = append(examples, "/time/America/Chicago")
+	examples = append(examples, "/time/EST")
+	examples = append(examples, "/time/UTC?format=kitchen")
 
-	return usage
+	return examples
 }
