@@ -106,13 +106,23 @@ func ServePage(args []string) error {
 		WriteTimeout: 5 * time.Minute,
 	}
 
-	fmt.Printf("%s | Server listening on %s\n",
-		time.Now().Format(timeFormats["RFC3339"]),
-		srv.Addr)
+	if verbose {
+		fmt.Printf("%s | query v%s\n",
+			time.Now().Format(timeFormats["RFC3339"]),
+			ReleaseVersion)
+
+		fmt.Printf("%s | Listening on http://%s/\n",
+			time.Now().Format(timeFormats["RFC3339"]),
+			srv.Addr)
+	}
 
 	go func() {
 		for err := range errorChannel {
-			fmt.Printf("%s | Error: `%v` (%s => %s)\n", time.Now().Format(timeFormats["RFC3339"]), err.Message, err.Host, err.Path)
+			fmt.Printf("%s | Error: `%v` (%s => %s)\n",
+				time.Now().Format(timeFormats["RFC3339"]),
+				err.Message,
+				err.Host,
+				err.Path)
 
 			if exitOnError {
 				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
