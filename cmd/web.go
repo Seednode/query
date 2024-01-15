@@ -60,7 +60,7 @@ func ServePage(args []string) error {
 		usage = append(usage, registerRollHandlers(mux, errorChannel)...)
 	}
 
-	if !noDNS {
+	if !noDns {
 		usage = append(usage, registerDNSHandlers(mux, errorChannel)...)
 	}
 
@@ -76,15 +76,15 @@ func ServePage(args []string) error {
 		usage = append(usage, registerHttpStatusHandlers(mux, errorChannel)...)
 	}
 
-	if !noIP {
+	if !noIp {
 		usage = append(usage, registerIPHandlers(mux, errorChannel)...)
 	}
 
-	if !noOUI {
+	if !noMac {
 		usage = append(usage, registerOUIHandlers(mux, errorChannel)...)
 	}
 
-	if !noQR {
+	if !noQr {
 		usage = append(usage, registerQRHandlers(mux, errorChannel)...)
 	}
 

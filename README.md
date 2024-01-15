@@ -66,15 +66,15 @@ View your current public IP.
 Examples:
 - `/ip/`
 
-### OUI Lookup
+### MAC Lookup
 Look up the vendor associated with any MAC address.
 
 The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used instead by providing the `--oui-file` argument.
 
 Examples:
-- `/oui/00:00:08`
-- `/oui/00-50-C2`
-- `/oui/70b3d5`
+- `/mac/00:00:08`
+- `/mac/00-50-C2`
+- `/mac/70b3d5`
 
 ### QR Codes
 Encode a string as a QR code (either a PNG or an ASCII string).
@@ -116,7 +116,7 @@ Flags:
       --no-hash                disable hashing functionality
       --no-http-status         disable http response status code functionality
       --no-ip                  disable IP lookup functionality
-      --no-oui                 disable OUI lookup functionality
+      --no-mac                 disable MAC lookup functionality
       --no-qr                  disable QR code generation functionality
       --no-time                disable time lookup functionality
       --oui-file string        path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)

@@ -142,7 +142,7 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		mac := strings.TrimPrefix(p.ByName("oui"), "/")
+		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 
 		oui, err := getOui(mac, re)
 		if err != nil {
@@ -158,7 +158,7 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 		w.Write([]byte(oui + "\n"))
 
 		if verbose {
-			fmt.Printf("%s | %s requested vendor info for OUI %q\n",
+			fmt.Printf("%s | %s requested vendor info for MAC %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				mac)
@@ -169,12 +169,12 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 func registerOUIHandlers(mux *httprouter.Router, errorChannel chan<- Error) []string {
 	whiteSpaceRegex := regexp.MustCompile(`\s+`)
 
-	mux.GET("/oui/*oui", serveOui(whiteSpaceRegex, errorChannel))
+	mux.GET("/mac/*mac", serveOui(whiteSpaceRegex, errorChannel))
 
 	var usage []string
-	usage = append(usage, "/oui/00:00:08")
-	usage = append(usage, "/oui/00-50-C2")
-	usage = append(usage, "/oui/70b3d5")
+	usage = append(usage, "/mac/00:00:08")
+	usage = append(usage, "/mac/00-50-C2")
+	usage = append(usage, "/mac/70b3d5")
 
 	return usage
 }
