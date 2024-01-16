@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.27.0"
+	ReleaseVersion string = "0.27.1"
 )
 
 var (
@@ -77,16 +77,16 @@ func init() {
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
 	rootCmd.Flags().IntVar(&maxImageWidth, "max-image-width", 1024, "maximum width of generated images")
-	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable dns lookup functionality")
+	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable DNS lookup functionality")
 	rootCmd.Flags().BoolVar(&noDraw, "no-draw", false, "disable drawing functionality")
 	rootCmd.Flags().BoolVar(&noHash, "no-hash", false, "disable hashing functionality")
-	rootCmd.Flags().BoolVar(&noHTTPStatus, "no-http-status", false, "disable http response status code functionality")
+	rootCmd.Flags().BoolVar(&noHTTPStatus, "no-http-status", false, "disable HTTP response status code functionality")
 	rootCmd.Flags().BoolVar(&noIP, "no-ip", false, "disable IP lookup functionality")
 	rootCmd.Flags().BoolVar(&noMAC, "no-mac", false, "disable MAC lookup functionality")
 	rootCmd.Flags().BoolVar(&noQR, "no-qr", false, "disable QR code generation functionality")
 	rootCmd.Flags().BoolVar(&noRoll, "no-roll", false, "disable dice rolling functionality")
 	rootCmd.Flags().BoolVar(&noTime, "no-time", false, "disable time lookup functionality")
-	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
+	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
 	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")

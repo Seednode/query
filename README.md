@@ -116,7 +116,7 @@ Flags:
       --max-dice-sides int     maximum number of sides per die (default 1024)
       --max-image-height int   maximum height of generated images (default 1024)
       --max-image-width int    maximum width of generated images (default 1024)
-      --no-dns                 disable dns lookup functionality
+      --no-dns                 disable DNS lookup functionality
       --no-draw                disable drawing functionality
       --no-hash                disable hashing functionality
       --no-http-status         disable HTTP response status code functionality
