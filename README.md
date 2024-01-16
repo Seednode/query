@@ -10,6 +10,8 @@ x86_64 and ARM Docker images of latest version: `oci.seedno.de/seednode/query:la
 
 Dockerfile available [here](https://git.seedno.de/seednode/query/raw/branch/master/docker/Dockerfile).
 
+An example instance with all features enabled can be found [here](https://q.seedno.de/).
+
 ## Currently available tools
 
 ### Dice roll
