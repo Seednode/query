@@ -21,13 +21,6 @@ import (
 //go:embed oui.txt
 var ouis embed.FS
 
-func addColons(mac string) string {
-	s := chunks(mac, 2)
-	output := strings.Join(s, ":")
-
-	return output
-}
-
 func firstN(s string, n int) string {
 	i := 0
 	for j := range s {
@@ -39,17 +32,57 @@ func firstN(s string, n int) string {
 	return s
 }
 
-func normalize(oui string) string {
-	oui = strings.ToUpper(oui)
-	oui = strip(oui)
+func strip(s string) string {
+	var result strings.Builder
+	for i := 0; i < len(s); i++ {
+		b := s[i]
 
-	return oui
+		if ('a' <= b && b <= 'z') ||
+			('A' <= b && b <= 'Z') ||
+			('0' <= b && b <= '9') {
+			result.WriteByte(b)
+		}
+	}
+
+	return result.String()
 }
 
-func prettify(s string, re *regexp.Regexp) string {
-	s = strings.Replace(s, ",", " ", -1)
+func format(line string, re *regexp.Regexp) ([]string, string) {
+	ouis := []string{}
 
-	return re.ReplaceAllString(s, " ")
+	words := strings.Split(line, "\t")
+
+	if len(words) < 2 {
+		return ouis, ""
+	}
+
+	var s strings.Builder
+
+	if len(words) < 3 {
+		s.WriteString(words[1])
+	} else {
+		for i := 2; i < len(words); i++ {
+			s.WriteString(words[i])
+		}
+	}
+
+	oui, _, isRange := strings.Cut(strings.TrimSpace(words[0]), "/")
+
+	if isRange {
+		for i := 0; i < 16; i++ {
+			s := strings.Split(oui, "")
+			s[len(s)-1] = strings.ToUpper(fmt.Sprintf("%x", i))
+			ouis = append(ouis, strings.Join(s, ""))
+		}
+	} else {
+		ouis = append(ouis, oui)
+	}
+
+	vendor := strings.Replace(s.String(), ",", " ", -1)
+
+	re.ReplaceAllString(vendor, " ")
+
+	return ouis, vendor
 }
 
 func scan() (func(), *bufio.Scanner, error) {
@@ -71,55 +104,6 @@ func scan() (func(), *bufio.Scanner, error) {
 	fileScanner.Buffer(buffer, 1024*1024)
 
 	return func() { _ = readFile.Close() }, fileScanner, nil
-}
-
-func strip(s string) string {
-	var result strings.Builder
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-
-		if ('a' <= b && b <= 'z') ||
-			('A' <= b && b <= 'Z') ||
-			('0' <= b && b <= '9') {
-			result.WriteByte(b)
-		}
-	}
-
-	return result.String()
-}
-
-func format(line string, re *regexp.Regexp) ([]string, string) {
-	retVal := []string{}
-
-	words := strings.Split(line, "\t")
-
-	if len(words) < 2 {
-		return retVal, ""
-	}
-
-	var vendor strings.Builder
-
-	if len(words) < 3 {
-		vendor.WriteString(prettify(words[1], re))
-	} else {
-		for i := 2; i < len(words); i++ {
-			vendor.WriteString(prettify(words[i], re))
-		}
-	}
-
-	oui, _, isRange := strings.Cut(strings.TrimSpace(words[0]), "/")
-
-	if isRange {
-		for i := 0; i < 16; i++ {
-			s := strings.Split(oui, "")
-			s[len(s)-1] = strings.ToUpper(fmt.Sprintf("%x", i))
-			retVal = append(retVal, strings.Join(s, ""))
-		}
-	} else {
-		retVal = append(retVal, oui)
-	}
-
-	return retVal, vendor.String()
 }
 
 func ouiMap() (map[string]string, error) {
@@ -156,12 +140,11 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 
 		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 
-		normalized := normalize(mac)
-
 		val := ""
 
 		for i := 12; i >= 6; i -= 2 {
-			m := addColons(firstN(normalized, i))
+			s := chunks(firstN(strip(strings.ToUpper(mac)), i), 2)
+			m := strings.Join(s, ":")
 
 			v, ok := ouis[m]
 
