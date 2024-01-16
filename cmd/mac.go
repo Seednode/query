@@ -85,7 +85,13 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	return ouis, vendor
 }
 
-func scan() (func(), *bufio.Scanner, error) {
+func parseOuis() (map[string]string, error) {
+	startTime := time.Now()
+
+	whiteSpace := regexp.MustCompile(`\s+`)
+
+	retVal := make(map[string]string)
+
 	var readFile fs.File
 	var err error
 
@@ -94,29 +100,14 @@ func scan() (func(), *bufio.Scanner, error) {
 	} else {
 		readFile, err = os.Open(ouiFile)
 	}
-
-	if err != nil {
-		return func() {}, nil, err
-	}
-
-	fileScanner := bufio.NewScanner(readFile)
-	buffer := make([]byte, 0, 64*1024)
-	fileScanner.Buffer(buffer, 1024*1024)
-
-	return func() { _ = readFile.Close() }, fileScanner, nil
-}
-
-func ouiMap() (map[string]string, error) {
-	whiteSpace := regexp.MustCompile(`\s+`)
-
-	retVal := make(map[string]string)
-
-	closeFile, scanner, err := scan()
+	defer readFile.Close()
 	if err != nil {
 		return retVal, err
 	}
-	defer closeFile()
 
+	scanner := bufio.NewScanner(readFile)
+	buffer := make([]byte, 0, 64*1024)
+	scanner.Buffer(buffer, 1024*1024)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
@@ -127,6 +118,12 @@ func ouiMap() (map[string]string, error) {
 		for i := 0; i < len(oui); i++ {
 			retVal[oui[i]] = vendor
 		}
+	}
+
+	if verbose {
+		fmt.Printf("%s | Loaded OUI database in %dms\n",
+			startTime.Format(timeFormats["RFC3339"]),
+			time.Since(startTime).Milliseconds())
 	}
 
 	return retVal, err
@@ -143,10 +140,7 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 		val := ""
 
 		for i := 12; i >= 6; i -= 2 {
-			s := chunks(firstN(strip(strings.ToUpper(mac)), i), 2)
-			m := strings.Join(s, ":")
-
-			v, ok := ouis[m]
+			v, ok := ouis[strings.Join(chunks(firstN(strip(strings.ToUpper(mac)), i), 2), ":")]
 
 			if ok {
 				val = v
@@ -171,12 +165,12 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 }
 
 func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) ([]string, error) {
-	ouiMap, err := ouiMap()
+	ouis, err := parseOuis()
 	if err != nil {
 		return []string{}, err
 	}
 
-	mux.GET("/mac/:mac", serveOui(ouiMap, errorChannel))
+	mux.GET("/mac/:mac", serveOui(ouis, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
 
 	examples := make([]string, 3)

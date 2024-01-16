@@ -32,6 +32,12 @@ func ServePage(args []string) error {
 		}
 	}
 
+	if verbose {
+		fmt.Printf("%s | query v%s\n",
+			time.Now().Format(timeFormats["RFC3339"]),
+			ReleaseVersion)
+	}
+
 	bindHost, err := net.LookupHost(bind)
 	if err != nil {
 		return err
@@ -110,10 +116,6 @@ func ServePage(args []string) error {
 	}
 
 	if verbose {
-		fmt.Printf("%s | query v%s\n",
-			time.Now().Format(timeFormats["RFC3339"]),
-			ReleaseVersion)
-
 		fmt.Printf("%s | Listening on http://%s/\n",
 			time.Now().Format(timeFormats["RFC3339"]),
 			srv.Addr)
