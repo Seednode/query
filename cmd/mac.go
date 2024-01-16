@@ -88,28 +88,38 @@ func strip(s string) string {
 	return result.String()
 }
 
-func trim(oui string) string {
-	return firstN(oui, 6)
-}
+func format(line string, re *regexp.Regexp) ([]string, string) {
+	retVal := []string{}
 
-func format(line string, re *regexp.Regexp) (string, string) {
 	words := strings.Split(line, "\t")
 
-	var retVal strings.Builder
-
 	if len(words) < 2 {
-		return "", ""
+		return retVal, ""
 	}
 
+	var vendor strings.Builder
+
 	if len(words) < 3 {
-		retVal.WriteString(prettify(words[1], re))
+		vendor.WriteString(prettify(words[1], re))
 	} else {
 		for i := 2; i < len(words); i++ {
-			retVal.WriteString(prettify(words[i], re))
+			vendor.WriteString(prettify(words[i], re))
 		}
 	}
 
-	return strings.TrimSpace(words[0]), retVal.String()
+	oui, _, isRange := strings.Cut(strings.TrimSpace(words[0]), "/")
+
+	if isRange {
+		for i := 0; i < 16; i++ {
+			s := strings.Split(oui, "")
+			s[len(s)-1] = strings.ToUpper(fmt.Sprintf("%x", i))
+			retVal = append(retVal, strings.Join(s, ""))
+		}
+	} else {
+		retVal = append(retVal, oui)
+	}
+
+	return retVal, vendor.String()
 }
 
 func ouiMap() (map[string]string, error) {
@@ -128,9 +138,11 @@ func ouiMap() (map[string]string, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		k, v := format(line, whiteSpace)
+		oui, vendor := format(line, whiteSpace)
 
-		retVal[k] = v
+		for i := 0; i < len(oui); i++ {
+			retVal[oui[i]] = vendor
+		}
 	}
 
 	return retVal, err
@@ -144,11 +156,23 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 
 		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 
-		oui := addColons(normalize(trim(mac)))
+		normalized := normalize(mac)
 
-		val, ok := ouis[oui]
+		val := ""
 
-		if !ok {
+		for i := 12; i >= 6; i -= 2 {
+			m := addColons(firstN(normalized, i))
+
+			v, ok := ouis[m]
+
+			if ok {
+				val = v
+
+				break
+			}
+		}
+
+		if val == "" {
 			val = fmt.Sprintf("No OUI found for MAC %q\n", mac)
 		}
 
@@ -163,19 +187,19 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 	}
 }
 
-func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) ([]string, error) {
 	ouiMap, err := ouiMap()
 	if err != nil {
-		return []string{}
+		return []string{}, err
 	}
 
 	mux.GET("/mac/:mac", serveOui(ouiMap, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
-	examples[0] = "/mac/00:00:08"
-	examples[1] = "/mac/00-50-C2"
-	examples[2] = "/mac/70b3d5"
+	examples[0] = "/mac/3c-7c-3f-1e-b9-a0"
+	examples[1] = "/mac/e0:00:84:aa:aa:bb"
+	examples[2] = "/mac/4C445BAABBCC"
 
-	return examples
+	return examples, nil
 }

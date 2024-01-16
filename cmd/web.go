@@ -71,7 +71,10 @@ func ServePage(args []string) error {
 	}
 
 	if !noMac {
-		usage["mac"] = registerOUIHandlers("mac", mux, usage, errorChannel)
+		usage["mac"], err = registerOUIHandlers("mac", mux, usage, errorChannel)
+		if err != nil {
+			return err
+		}
 	}
 
 	if profile {

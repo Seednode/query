@@ -72,9 +72,9 @@ Look up the vendor associated with any MAC address.
 The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used instead by providing the `--oui-file` argument.
 
 Examples:
-- `/mac/00:00:08`
-- `/mac/00-50-C2`
-- `/mac/70b3d5`
+- `/mac/3c-7c-3f-1e-b9-a0`
+- `/mac/e0:00:84:aa:aa:bb`
+- `/mac/4C445BAABBCC`
 
 ### QR Codes
 Encode a string as a QR code (either a PNG or an ASCII string).
