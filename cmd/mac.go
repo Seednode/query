@@ -150,7 +150,7 @@ func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 		}
 
 		if val == "" {
-			val = fmt.Sprintf("No OUI found for MAC %q\n", mac)
+			val = fmt.Sprintf("No OUI found for MAC %q", mac)
 		}
 
 		w.Write([]byte(val + "\n"))
