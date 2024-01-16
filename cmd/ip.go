@@ -24,17 +24,17 @@ func realIP(r *http.Request, includePort bool) string {
 	}
 
 	cfIP := r.Header.Get("Cf-Connecting-Ip")
-	xRealIp := r.Header.Get("X-Real-Ip")
+	xRealIP := r.Header.Get("X-Real-Ip")
 
 	switch {
 	case cfIP != "" && includePort:
 		return cfIP + ":" + port
 	case cfIP != "":
 		return cfIP
-	case xRealIp != "" && includePort:
-		return xRealIp + ":" + port
-	case xRealIp != "":
-		return xRealIp
+	case xRealIP != "" && includePort:
+		return xRealIP + ":" + port
+	case xRealIP != "":
+		return xRealIP
 	case includePort:
 		return host + ":" + port
 	default:
@@ -42,7 +42,7 @@ func realIP(r *http.Request, includePort bool) string {
 	}
 }
 
-func serveIp() httprouter.Handle {
+func serveIP() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -58,9 +58,9 @@ func serveIp() httprouter.Handle {
 	}
 }
 
-func registerIPHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	mux.GET("/ip/", serveIp())
-	mux.GET("/ip/:ip", serveIp())
+func registerIP(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	mux.GET("/ip/", serveIP())
+	mux.GET("/ip/:ip", serveIP())
 
 	examples := make([]string, 1)
 	examples[0] = "/ip/"

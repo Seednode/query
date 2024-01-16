@@ -56,56 +56,56 @@ func ServePage(args []string) error {
 
 	usage := make(map[string][]string)
 
-	if !noDns {
-		usage["dns"] = registerDNSHandlers("dns", mux, usage, errorChannel)
+	if !noDNS {
+		usage["dns"] = registerDNS("dns", mux, usage, errorChannel)
 	}
 
 	if !noDraw {
-		usage["draw"] = registerDrawHandlers("draw", mux, usage, errorChannel)
+		usage["draw"] = registerDraw("draw", mux, usage, errorChannel)
 	}
 
 	if !noHash {
-		usage["hash"] = registerHashHandlers("hash", mux, usage, errorChannel)
+		usage["hash"] = registerHash("hash", mux, usage, errorChannel)
 	}
 
-	if !noHttpStatus {
-		usage["http"] = registerHttpStatusHandlers("http", mux, usage, errorChannel)
+	if !noHTTPStatus {
+		usage["http"] = registerHTTPStatus("http", mux, usage, errorChannel)
 	}
 
-	if !noIp {
-		usage["ip"] = registerIPHandlers("ip", mux, usage, errorChannel)
+	if !noIP {
+		usage["ip"] = registerIP("ip", mux, usage, errorChannel)
 	}
 
-	if !noMac {
-		usage["mac"], err = registerOUIHandlers("mac", mux, usage, errorChannel)
+	if !noMAC {
+		usage["mac"], err = registerMAC("mac", mux, usage, errorChannel)
 		if err != nil {
 			return err
 		}
 	}
 
 	if profile {
-		usage["profile"] = registerProfileHandlers("profile", mux, usage, errorChannel)
+		usage["profile"] = registerProfile("profile", mux, usage, errorChannel)
 	}
 
-	if !noQr {
-		usage["qr"] = registerQRHandlers("qr", mux, usage, errorChannel)
+	if !noQR {
+		usage["qr"] = registerQR("qr", mux, usage, errorChannel)
 	}
 
 	if !noRoll {
-		usage["roll"] = registerRollHandlers("roll", mux, usage, errorChannel)
+		usage["roll"] = registerRoll("roll", mux, usage, errorChannel)
 	}
 
 	if !noTime {
-		usage["time"] = registerTimeHandlers("time", mux, usage, errorChannel)
+		usage["time"] = registerTime("time", mux, usage, errorChannel)
 	}
 
-	usage["version"] = registerVersionHandlers("version", mux, usage, errorChannel)
+	usage["version"] = registerVersion("version", mux, usage, errorChannel)
 
 	help := getUsage(usage)
 
 	slices.Sort(help)
 
-	registerHelpHandlers(mux, help, errorChannel)
+	registerHelp(mux, help, errorChannel)
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),

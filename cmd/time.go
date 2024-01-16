@@ -85,7 +85,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerTimeHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerTime(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/time/:time", serveTime(errorChannel))
 	mux.GET("/time/:time/*rest", serveTime(errorChannel))
 	mux.GET("/time/", serveUsage(module, usage))

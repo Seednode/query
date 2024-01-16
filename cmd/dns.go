@@ -267,7 +267,7 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDNSHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerDNS(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/dns/", serveUsage(module, usage))
 
 	mux.GET("/dns/a/:host", serveHostRecord("ip4", errorChannel))

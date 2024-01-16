@@ -71,7 +71,7 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	if isRange {
 		for i := 0; i < 16; i++ {
 			s := strings.Split(oui, "")
-			s[len(s)-1] = strings.ToUpper(fmt.Sprintf("%x", i))
+			s[len(s)-1] = fmt.Sprintf("%X", i)
 			ouis = append(ouis, strings.Join(s, ""))
 		}
 	} else {
@@ -85,7 +85,7 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	return ouis, vendor
 }
 
-func parseOuis() (map[string]string, error) {
+func parseOUIs() (map[string]string, error) {
 	startTime := time.Now()
 
 	whiteSpace := regexp.MustCompile(`\s+`)
@@ -129,7 +129,7 @@ func parseOuis() (map[string]string, error) {
 	return retVal, err
 }
 
-func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Handle {
+func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -164,13 +164,13 @@ func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 	}
 }
 
-func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) ([]string, error) {
-	ouis, err := parseOuis()
+func registerMAC(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) ([]string, error) {
+	ouis, err := parseOUIs()
 	if err != nil {
 		return []string{}, err
 	}
 
-	mux.GET("/mac/:mac", serveOui(ouis, errorChannel))
+	mux.GET("/mac/:mac", serveMAC(ouis, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
 
 	examples := make([]string, 3)

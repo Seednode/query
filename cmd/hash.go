@@ -82,7 +82,7 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerHashHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerHash(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/hash/", serveUsage(module, usage))
 
 	mux.GET("/hash/md5/*string", serveHash("MD5", errorChannel))

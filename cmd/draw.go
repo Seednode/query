@@ -334,7 +334,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDrawHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerDraw(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/draw/", serveUsage(module, usage))
 
 	mux.GET("/draw/gif/:color/:dimensions", drawImage("GIF", errorChannel))

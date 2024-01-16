@@ -10,7 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func registerProfileHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerProfile(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.HandlerFunc("GET", "/pprof/", pprof.Index)
 
 	mux.HandlerFunc("GET", "/pprof/cmdline", pprof.Cmdline)

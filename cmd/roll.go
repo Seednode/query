@@ -102,7 +102,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerRollHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerRoll(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
 	mux.GET("/roll/:roll", serveDiceRoll(errorChannel))
 	mux.GET("/roll/", serveUsage(module, usage))
 

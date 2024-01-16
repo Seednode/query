@@ -74,6 +74,6 @@ func serveHelp(usage []string) httprouter.Handle {
 	}
 }
 
-func registerHelpHandlers(mux *httprouter.Router, usage []string, errorChannel chan<- Error) {
+func registerHelp(mux *httprouter.Router, usage []string, errorChannel chan<- Error) {
 	mux.GET("/", serveHelp(usage))
 }
