@@ -39,50 +39,6 @@ func firstN(s string, n int) string {
 	return s
 }
 
-func format(mac, line string, re *regexp.Regexp) string {
-	words := strings.Split(line, "\t")
-
-	var retVal strings.Builder
-
-	if len(words) < 2 {
-		return ""
-	}
-
-	if len(words) < 3 {
-		retVal.WriteString(prettify(words[1], re))
-	} else {
-		for i := 2; i < len(words); i++ {
-			retVal.WriteString(prettify(words[i], re))
-		}
-	}
-
-	return retVal.String()
-}
-
-func getOui(mac string, re *regexp.Regexp) (string, error) {
-	normalizedMac := normalize(mac)
-	trimmedMac := trim(normalizedMac)
-
-	closeFile, scanner, err := scan()
-	if err != nil {
-		return "", err
-	}
-	defer closeFile()
-
-	scanner.Split(bufio.ScanLines)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if trim(normalize(line)) == trimmedMac {
-			return format(addColons(mac), line, re), nil
-		}
-
-	}
-
-	return "", nil
-}
-
 func normalize(oui string) string {
 	oui = strings.ToUpper(oui)
 	oui = strip(oui)
@@ -136,7 +92,51 @@ func trim(oui string) string {
 	return firstN(oui, 6)
 }
 
-func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
+func format(line string, re *regexp.Regexp) (string, string) {
+	words := strings.Split(line, "\t")
+
+	var retVal strings.Builder
+
+	if len(words) < 2 {
+		return "", ""
+	}
+
+	if len(words) < 3 {
+		retVal.WriteString(prettify(words[1], re))
+	} else {
+		for i := 2; i < len(words); i++ {
+			retVal.WriteString(prettify(words[i], re))
+		}
+	}
+
+	return strings.TrimSpace(words[0]), retVal.String()
+}
+
+func ouiMap() (map[string]string, error) {
+	whiteSpace := regexp.MustCompile(`\s+`)
+
+	retVal := make(map[string]string)
+
+	closeFile, scanner, err := scan()
+	if err != nil {
+		return retVal, err
+	}
+	defer closeFile()
+
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		k, v := format(line, whiteSpace)
+
+		retVal[k] = v
+	}
+
+	return retVal, err
+}
+
+func serveOui(ouis map[string]string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -144,18 +144,15 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 
 		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 
-		oui, err := getOui(mac, re)
-		if err != nil {
-			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+		oui := addColons(normalize(trim(mac)))
 
-			return
+		val, ok := ouis[oui]
+
+		if !ok {
+			val = fmt.Sprintf("No OUI found for MAC %q\n", mac)
 		}
 
-		if oui == "" {
-			oui = fmt.Sprintf("No OUI found for MAC %q\n", mac)
-		}
-
-		w.Write([]byte(oui + "\n"))
+		w.Write([]byte(val + "\n"))
 
 		if verbose {
 			fmt.Printf("%s | %s requested vendor info for MAC %q\n",
@@ -167,9 +164,12 @@ func serveOui(re *regexp.Regexp, errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerOUIHandlers(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	whiteSpaceRegex := regexp.MustCompile(`\s+`)
+	ouiMap, err := ouiMap()
+	if err != nil {
+		return []string{}
+	}
 
-	mux.GET("/mac/:mac", serveOui(whiteSpaceRegex, errorChannel))
+	mux.GET("/mac/:mac", serveOui(ouiMap, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
 
 	examples := make([]string, 3)

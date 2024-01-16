@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.22.3"
+	ReleaseVersion string = "0.23.0"
 )
 
 var (
