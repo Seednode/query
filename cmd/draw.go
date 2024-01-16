@@ -340,15 +340,15 @@ func registerDrawHandlers(module string, mux *httprouter.Router, usage map[strin
 	mux.GET("/draw/gif/:color/:dimensions", drawImage("GIF", errorChannel))
 	mux.GET("/draw/gif/", serveUsage(module, usage))
 
-	mux.GET("/draw/jpeg/:color/:dimensions", drawImage("JPEG", errorChannel))
-	mux.GET("/draw/jpeg", serveUsage(module, usage))
+	mux.GET("/draw/jpg/:color/:dimensions", drawImage("JPEG", errorChannel))
+	mux.GET("/draw/jpg", serveUsage(module, usage))
 
 	mux.GET("/draw/png/:color/:dimensions", drawImage("PNG", errorChannel))
 	mux.GET("/draw/png/", serveUsage(module, usage))
 
 	examples := make([]string, 3)
 	examples[0] = "/draw/gif/beige/640x480"
-	examples[1] = "/draw/jpeg/white/320x240"
+	examples[1] = "/draw/jpg/white/320x240"
 	examples[2] = "/draw/png/fafafa/1024x768"
 
 	return examples

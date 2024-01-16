@@ -36,7 +36,7 @@ Outputs a rectangle with the specified width and height. The color can be specif
 
 Examples:
 - `/draw/gif/beige/640x480`
-- `/draw/jpeg/white/320x240`
+- `/draw/jpg/white/320x240`
 - `/draw/png/fafafa/1024x768`
 
 ### Hashing
