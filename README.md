@@ -52,6 +52,10 @@ Examples:
 - `/hash/sha512-224/foo`
 - `/hash/sha512-256/foo`
 
+In addition to providing the value to be hashed in the URL, you can submit it as the body of a GET request, so long as no value is provided in the URL.
+
+For example, `curl -X GET https://q.seedno.de/hash/sha512-224/ -d "test"` will return the SHA512/224 hash for `test`.
+
 ### HTTP Status Codes
 Receive the requested HTTP response status code.
 
