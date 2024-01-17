@@ -51,11 +51,21 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		switch {
 		case count > int64(maxDiceRolls):
-			w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
+			_, err = w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 
 			return
 		case die > int64(maxDiceSides):
-			w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
+			_, err = w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 
 			return
 		}
@@ -73,7 +83,12 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			v.Add(v, big.NewInt(1))
 
 			if wantsVerbose {
-				w.Write([]byte(fmt.Sprintf("Rolled d%d, result %d\n", die, v)))
+				_, err = w.Write([]byte(fmt.Sprintf("Rolled d%d, result %d\n", die, v)))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+					return
+				}
 			}
 
 			total += v.Int64()
@@ -81,15 +96,33 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		result := strconv.FormatInt(total, 10)
 		if err != nil {
-			w.Write([]byte("An error occurred while calculating sum of all rolls.\n"))
+			errorChannel <- Error{Message: err, Path: "serveDiceRoll()"}
+
+			_, err = w.Write([]byte("An error occurred while calculating sum of all rolls.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 
 			return
 		}
 
 		if wantsVerbose {
-			w.Write([]byte("\nTotal: "))
+			_, err = w.Write([]byte("\nTotal: "))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 		}
-		w.Write([]byte(result + "\n"))
+
+		_, err = w.Write([]byte(result + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",

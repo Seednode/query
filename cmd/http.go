@@ -30,11 +30,21 @@ func serveHTTPStatusCode(errorChannel chan<- Error) httprouter.Handle {
 		if text == "" {
 			w.WriteHeader(http.StatusBadRequest)
 
-			w.Write([]byte("Invalid status code requested.\n"))
+			_, err = w.Write([]byte("Invalid status code requested.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 		} else {
 			w.WriteHeader(value)
 
-			w.Write([]byte(text + "\n"))
+			_, err = w.Write([]byte(text + "\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 		}
 
 		if verbose {

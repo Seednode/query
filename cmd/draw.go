@@ -222,7 +222,10 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		case found:
 			colorToUse = c
 		case len(requested) != 6:
-			w.Write([]byte("Color codes must be six hex characters.\n"))
+			_, err := w.Write([]byte("Color codes must be six hex characters.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		default:
@@ -235,7 +238,10 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if colorToUse == EmptyColor {
-			w.Write([]byte("Failed to parse color.\n"))
+			_, err := w.Write([]byte("Failed to parse color.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -246,7 +252,10 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-			w.Write([]byte("Failed to parse width.\n"))
+			_, err := w.Write([]byte("Failed to parse width.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -255,18 +264,27 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-			w.Write([]byte("Failed to parse height.\n"))
+			_, err := w.Write([]byte("Failed to parse height.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
 
 		switch {
 		case width > maxImageWidth:
-			w.Write([]byte(fmt.Sprintf("Image width must be no greater than %d", maxImageWidth)))
+			_, err := w.Write([]byte(fmt.Sprintf("Image width must be no greater than %d", maxImageWidth)))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		case height > maxImageHeight:
-			w.Write([]byte(fmt.Sprintf("Image height must be no greater than %d", maxImageHeight)))
+			_, err := w.Write([]byte(fmt.Sprintf("Image height must be no greater than %d", maxImageHeight)))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -290,7 +308,10 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-				w.Write([]byte("Failed to encode GIF.\n"))
+				_, err := w.Write([]byte("Failed to encode GIF.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
@@ -301,7 +322,10 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-				w.Write([]byte("Failed to encode JPEG.\n"))
+				_, err := w.Write([]byte("Failed to encode JPEG.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
@@ -312,12 +336,18 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-				w.Write([]byte("Failed to encode PNG.\n"))
+				_, err := w.Write([]byte("Failed to encode PNG.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
 		default:
-			w.Write([]byte("Invalid image format requested.\n"))
+			_, err := w.Write([]byte("Invalid image format requested.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}

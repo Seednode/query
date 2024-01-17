@@ -85,7 +85,7 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	return ouis, vendor
 }
 
-func parseOUIs() (map[string]string, error) {
+func parseOUIs(errorChannel chan<- Error) map[string]string {
 	startTime := time.Now()
 
 	whiteSpace := regexp.MustCompile(`\s+`)
@@ -97,13 +97,25 @@ func parseOUIs() (map[string]string, error) {
 
 	if ouiFile == "" {
 		readFile, err = ouis.Open("oui.txt")
+		if err != nil {
+			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
+
+			return retVal
+		}
 	} else {
 		readFile, err = os.Open(ouiFile)
+		if err != nil {
+			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
+
+			return retVal
+		}
 	}
-	defer readFile.Close()
-	if err != nil {
-		return retVal, err
-	}
+	defer func() {
+		err = readFile.Close()
+		if err != nil {
+			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
+		}
+	}()
 
 	scanner := bufio.NewScanner(readFile)
 	buffer := make([]byte, 0, 64*1024)
@@ -126,7 +138,7 @@ func parseOUIs() (map[string]string, error) {
 			time.Since(startTime).Milliseconds())
 	}
 
-	return retVal, err
+	return retVal
 }
 
 func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Handle {
@@ -153,7 +165,12 @@ func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 			val = fmt.Sprintf("No OUI found for MAC %q", mac)
 		}
 
-		w.Write([]byte(val + "\n"))
+		_, err := w.Write([]byte(val + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested vendor info for MAC %q\n",
@@ -164,11 +181,8 @@ func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 	}
 }
 
-func registerMAC(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) ([]string, error) {
-	ouis, err := parseOUIs()
-	if err != nil {
-		return []string{}, err
-	}
+func registerMAC(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+	ouis := parseOUIs(errorChannel)
 
 	mux.GET("/mac/:mac", serveMAC(ouis, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
@@ -178,5 +192,5 @@ func registerMAC(module string, mux *httprouter.Router, usage map[string][]strin
 	examples[1] = "/mac/e0:00:84:aa:aa:bb"
 	examples[2] = "/mac/4C445BAABBCC"
 
-	return examples, nil
+	return examples
 }

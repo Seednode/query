@@ -13,13 +13,16 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func serveVersion() httprouter.Handle {
+func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		data := []byte(fmt.Sprintf("query v%s\n", ReleaseVersion))
 
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
-		w.Write(data)
+		_, err := w.Write(data)
+		if err != nil {
+			errorChannel <- Error{Message: err, Path: "serveVersion()"}
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested version info\n",
@@ -30,8 +33,8 @@ func serveVersion() httprouter.Handle {
 }
 
 func registerVersion(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	mux.GET("/version/", serveVersion())
-	mux.GET("/version/:version", serveVersion())
+	mux.GET("/version/", serveVersion(errorChannel))
+	// mux.GET("/version/:version", serveVersion(errorChannel))
 
 	examples := make([]string, 1)
 	examples[0] = "/version/"

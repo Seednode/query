@@ -73,7 +73,12 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
+		_, err = w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested the current time for %q in %s format\n",

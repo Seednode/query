@@ -77,7 +77,7 @@ func ServePage(args []string) error {
 	}
 
 	if !noMAC {
-		usage["mac"], err = registerMAC("mac", mux, usage, errorChannel)
+		usage["mac"] = registerMAC("mac", mux, usage, errorChannel)
 		if err != nil {
 			return err
 		}

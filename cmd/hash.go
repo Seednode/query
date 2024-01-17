@@ -68,9 +68,19 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
-		io.WriteString(h, value)
+		_, err := io.WriteString(h, value)
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-		w.Write([]byte(fmt.Sprintf("%x\n", h.Sum(nil))))
+			return
+		}
+
+		_, err = w.Write([]byte(fmt.Sprintf("%x\n", h.Sum(nil))))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested %s hash of %q\n",

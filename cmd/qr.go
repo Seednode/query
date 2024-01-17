@@ -48,7 +48,12 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if r.URL.Query().Has("string") {
-			w.Write([]byte("\n" + qrCode.ToString(false) + "\n"))
+			_, err = w.Write([]byte("\n" + qrCode.ToString(false) + "\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				return
+			}
 		} else {
 			png, err := qrCode.PNG(qrSize)
 			if err != nil {
@@ -61,7 +66,14 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 			w.Header().Set("Content-Type", "image/png")
 
-			w.Write(png)
+			_, err = w.Write(png)
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				w.Write([]byte("Failed to encode string.\n"))
+
+				return
+			}
 		}
 
 		if verbose {

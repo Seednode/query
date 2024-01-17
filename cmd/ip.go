@@ -42,13 +42,18 @@ func realIP(r *http.Request, includePort bool) string {
 	}
 }
 
-func serveIP() httprouter.Handle {
+func serveIP(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain")
 
-		w.Write([]byte(realIP(r, false) + "\n"))
+		_, err := w.Write([]byte(realIP(r, false) + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested their IP\n",
@@ -59,8 +64,8 @@ func serveIP() httprouter.Handle {
 }
 
 func registerIP(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
-	mux.GET("/ip/", serveIP())
-	mux.GET("/ip/:ip", serveIP())
+	mux.GET("/ip/", serveIP(errorChannel))
+	mux.GET("/ip/:ip", serveIP(errorChannel))
 
 	examples := make([]string, 1)
 	examples[0] = "/ip/"

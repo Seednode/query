@@ -12,7 +12,7 @@ import (
 
 type Error struct {
 	Message error
-	Host    string
+	Host    string `default:"local"`
 	Path    string
 }
 

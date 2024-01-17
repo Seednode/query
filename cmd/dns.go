@@ -100,7 +100,12 @@ func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Hand
 			return
 		}
 
-		w.Write([]byte(parsedHost + "\n"))
+		_, err = w.Write([]byte(parsedHost + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested host records for %q\n",
@@ -180,7 +185,12 @@ func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
-		w.Write([]byte(parsedHost + "\n"))
+		_, err = w.Write([]byte(parsedHost + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested MX records for %q\n",
@@ -221,7 +231,10 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 
 	var retVal strings.Builder
 
-	retVal.WriteString(fmt.Sprintf("%v:\n", host))
+	_, err = retVal.WriteString(fmt.Sprintf("%v:\n", host))
+	if err != nil {
+		return "", err
+	}
 
 	for response := 0; response < len(responses); response++ {
 		retVal.WriteString(fmt.Sprintf("\n  %v:\n    IP: %v\n    Provider: %v (%v)\n",
@@ -256,7 +269,12 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
-		w.Write([]byte(parsedHost + "\n"))
+		_, err = w.Write([]byte(parsedHost + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested NS records for %q\n",

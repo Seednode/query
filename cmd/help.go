@@ -48,7 +48,7 @@ func serveUsage(module string, usage map[string][]string) httprouter.Handle {
 	}
 }
 
-func serveHelp(usage []string) httprouter.Handle {
+func serveHelp(usage []string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -64,7 +64,12 @@ func serveHelp(usage []string) httprouter.Handle {
 			output.WriteString(fmt.Sprintf("- %s\n", line))
 		}
 
-		w.Write([]byte(output.String()))
+		_, err := w.Write([]byte(output.String()))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested usage info\n",
@@ -75,5 +80,5 @@ func serveHelp(usage []string) httprouter.Handle {
 }
 
 func registerHelp(mux *httprouter.Router, usage []string, errorChannel chan<- Error) {
-	mux.GET("/", serveHelp(usage))
+	mux.GET("/", serveHelp(usage, errorChannel))
 }
