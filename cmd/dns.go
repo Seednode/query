@@ -287,7 +287,7 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerDNS(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "dns"
+	const module = "dns"
 
 	mux.GET("/dns/", serveUsage(module, usage))
 

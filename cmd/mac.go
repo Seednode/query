@@ -183,7 +183,7 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerMAC(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "mac"
+	const module = "mac"
 
 	ouis := parseOUIs(errorChannel)
 

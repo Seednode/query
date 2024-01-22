@@ -12,7 +12,7 @@ import (
 )
 
 func registerProfile(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "profile"
+	const module = "profile"
 
 	mux.Handler("GET", "/pprof/allocs", pprof.Handler("allocs"))
 	mux.Handler("GET", "/pprof/block", pprof.Handler("block"))

@@ -366,7 +366,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerDraw(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "draw"
+	const module = "draw"
 
 	mux.GET("/draw/", serveUsage(module, usage))
 

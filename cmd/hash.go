@@ -94,7 +94,7 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerHash(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "hash"
+	const module = "hash"
 
 	mux.GET("/hash/", serveUsage(module, usage))
 

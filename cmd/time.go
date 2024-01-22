@@ -92,7 +92,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerTime(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "time"
+	const module = "time"
 
 	mux.GET("/time/:time", serveTime(errorChannel))
 	mux.GET("/time/:time/*rest", serveTime(errorChannel))

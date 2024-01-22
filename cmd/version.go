@@ -34,7 +34,7 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerVersion(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "version"
+	const module = "version"
 
 	mux.GET("/version/", serveVersion(errorChannel))
 

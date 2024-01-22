@@ -58,7 +58,7 @@ func serveHTTPStatusCode(errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerHTTPStatus(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "http"
+	const module = "http"
 
 	mux.GET("/http/", serveUsage(module, usage))
 

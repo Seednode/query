@@ -65,7 +65,7 @@ func serveIP(errorChannel chan<- Error) httprouter.Handle {
 }
 
 func registerIP(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
-	module := "ip"
+	const module = "ip"
 
 	mux.GET("/ip/", serveIP(errorChannel))
 	mux.GET("/ip/:ip", serveIP(errorChannel))
