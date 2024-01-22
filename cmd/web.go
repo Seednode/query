@@ -52,7 +52,37 @@ func ServePage(args []string) error {
 
 	mux.PanicHandler = serverErrorHandler()
 
+	srv := &http.Server{
+		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
+		Handler:      mux,
+		IdleTimeout:  10 * time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Minute,
+	}
+
 	errorChannel := make(chan Error)
+
+	go func() {
+		for err := range errorChannel {
+			if err.Host == "" {
+				err.Host = "local"
+			}
+
+			fmt.Printf("%s | Error: `%v` (%s => %s)\n",
+				time.Now().Format(timeFormats["RFC3339"]),
+				err.Message,
+				err.Host,
+				err.Path)
+
+			if exitOnError {
+				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
+
+				srv.Shutdown(context.Background())
+
+				break
+			}
+		}
+	}()
 
 	usage := sync.Map{}
 
@@ -100,35 +130,11 @@ func ServePage(args []string) error {
 
 	registerHelp(mux, &usage, errorChannel)
 
-	srv := &http.Server{
-		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),
-		Handler:      mux,
-		IdleTimeout:  10 * time.Minute,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Minute,
-	}
-
 	if verbose {
 		fmt.Printf("%s | Listening on http://%s/\n",
 			time.Now().Format(timeFormats["RFC3339"]),
 			srv.Addr)
 	}
-
-	go func() {
-		for err := range errorChannel {
-			fmt.Printf("%s | Error: `%v` (%s => %s)\n",
-				time.Now().Format(timeFormats["RFC3339"]),
-				err.Message,
-				err.Host,
-				err.Path)
-
-			if exitOnError {
-				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))
-
-				srv.Shutdown(context.Background())
-			}
-		}
-	}()
 
 	err = srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
