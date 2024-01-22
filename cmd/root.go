@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	ReleaseVersion string = "0.32.1"
+	ReleaseVersion string = "1.0.0"
 )
 
 var (
+	All            bool
 	bind           string
 	exitOnError    bool
 	maxDiceRolls   int
@@ -22,20 +23,33 @@ var (
 	maxImageHeight int
 	maxImageWidth  int
 	ouiFile        string
-	noDNS          bool
-	noDraw         bool
-	noHash         bool
-	noHTTPStatus   bool
-	noIP           bool
-	noMAC          bool
-	noQR           bool
-	noRoll         bool
-	noTime         bool
+	DNS            bool
+	Draw           bool
+	Hash           bool
+	HTTPStatus     bool
+	IP             bool
+	MAC            bool
+	QR             bool
+	Roll           bool
+	Time           bool
 	port           uint16
 	profile        bool
 	qrSize         int
 	verbose        bool
 	version        bool
+
+	RequiredArgs = []string{
+		"all",
+		"dns",
+		"draw",
+		"hash",
+		"http-status",
+		"ip",
+		"mac",
+		"qr",
+		"roll",
+		"time",
+	}
 
 	rootCmd = &cobra.Command{
 		Use:   "query",
@@ -71,31 +85,34 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Flags().BoolVar(&All, "all", false, "enable all functionality")
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
+	rootCmd.Flags().BoolVar(&DNS, "dns", false, "enable DNS lookup functionality")
+	rootCmd.Flags().BoolVar(&Draw, "draw", false, "enable drawing functionality")
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
+	rootCmd.Flags().BoolVar(&Hash, "hash", false, "enable hashing functionality")
+	rootCmd.Flags().BoolVar(&HTTPStatus, "http-status", false, "enable HTTP response status code functionality")
+	rootCmd.Flags().BoolVar(&IP, "ip", false, "enable IP lookup functionality")
+	rootCmd.Flags().BoolVar(&MAC, "mac", false, "enable MAC lookup functionality")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
 	rootCmd.Flags().IntVar(&maxImageWidth, "max-image-width", 1024, "maximum width of generated images")
-	rootCmd.Flags().BoolVar(&noDNS, "no-dns", false, "disable DNS lookup functionality")
-	rootCmd.Flags().BoolVar(&noDraw, "no-draw", false, "disable drawing functionality")
-	rootCmd.Flags().BoolVar(&noHash, "no-hash", false, "disable hashing functionality")
-	rootCmd.Flags().BoolVar(&noHTTPStatus, "no-http-status", false, "disable HTTP response status code functionality")
-	rootCmd.Flags().BoolVar(&noIP, "no-ip", false, "disable IP lookup functionality")
-	rootCmd.Flags().BoolVar(&noMAC, "no-mac", false, "disable MAC lookup functionality")
-	rootCmd.Flags().BoolVar(&noQR, "no-qr", false, "disable QR code generation functionality")
-	rootCmd.Flags().BoolVar(&noRoll, "no-roll", false, "disable dice rolling functionality")
-	rootCmd.Flags().BoolVar(&noTime, "no-time", false, "disable time lookup functionality")
 	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
+	rootCmd.Flags().BoolVar(&QR, "qr", false, "enable QR code generation functionality")
 	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")
+	rootCmd.Flags().BoolVar(&Roll, "roll", false, "enable dice rolling functionality")
+	rootCmd.Flags().BoolVar(&Time, "time", false, "enable time lookup functionality")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 
 	rootCmd.Flags().SetInterspersed(true)
 
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
+
+	rootCmd.MarkFlagsOneRequired(RequiredArgs...)
 
 	rootCmd.SilenceErrors = true
 	rootCmd.SetHelpCommand(&cobra.Command{
