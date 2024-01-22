@@ -7,23 +7,15 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func getUsage(usage map[string][]string) []string {
-	var help []string
-
-	for _, i := range usage {
-		help = append(help, i...)
-	}
-
-	return help
-}
-
-func serveUsage(module string, usage map[string][]string) httprouter.Handle {
+func serveUsage(module string, usage *sync.Map) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -31,9 +23,21 @@ func serveUsage(module string, usage map[string][]string) httprouter.Handle {
 
 		var output strings.Builder
 
+		var help []string
+
 		output.WriteString("Examples:\n")
 
-		for _, line := range usage[module] {
+		usage.Range(func(key, value interface{}) bool {
+			if key == module {
+				help = append(help, value.([]string)...)
+			}
+
+			return true
+		})
+
+		slices.Sort(help)
+
+		for _, line := range help {
 			output.WriteString(fmt.Sprintf("- %s\n", line))
 		}
 
@@ -48,7 +52,7 @@ func serveUsage(module string, usage map[string][]string) httprouter.Handle {
 	}
 }
 
-func serveHelp(usage []string, errorChannel chan<- Error) httprouter.Handle {
+func serveHelp(usage *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -60,7 +64,17 @@ func serveHelp(usage []string, errorChannel chan<- Error) httprouter.Handle {
 
 		output.WriteString("Examples:\n")
 
-		for _, line := range usage {
+		var help []string
+
+		usage.Range(func(key, value interface{}) bool {
+			help = append(help, value.([]string)...)
+
+			return true
+		})
+
+		slices.Sort(help)
+
+		for _, line := range help {
 			output.WriteString(fmt.Sprintf("- %s\n", line))
 		}
 
@@ -79,6 +93,6 @@ func serveHelp(usage []string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerHelp(mux *httprouter.Router, usage []string, errorChannel chan<- Error) {
+func registerHelp(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	mux.GET("/", serveHelp(usage, errorChannel))
 }

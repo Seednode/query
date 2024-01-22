@@ -11,8 +11,8 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"slices"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -54,58 +54,51 @@ func ServePage(args []string) error {
 
 	errorChannel := make(chan Error)
 
-	usage := make(map[string][]string)
+	usage := sync.Map{}
 
 	if !noDNS {
-		usage["dns"] = registerDNS("dns", mux, usage, errorChannel)
+		usage.Store("dns", registerDNS("dns", mux, &usage, errorChannel))
 	}
 
 	if !noDraw {
-		usage["draw"] = registerDraw("draw", mux, usage, errorChannel)
+		usage.Store("draw", registerDraw("draw", mux, &usage, errorChannel))
 	}
 
 	if !noHash {
-		usage["hash"] = registerHash("hash", mux, usage, errorChannel)
+		usage.Store("hash", registerHash("hash", mux, &usage, errorChannel))
 	}
 
 	if !noHTTPStatus {
-		usage["http"] = registerHTTPStatus("http", mux, usage, errorChannel)
+		usage.Store("http", registerHTTPStatus("http", mux, &usage, errorChannel))
 	}
 
 	if !noIP {
-		usage["ip"] = registerIP("ip", mux, usage, errorChannel)
+		usage.Store("ip", registerIP("ip", mux, &usage, errorChannel))
 	}
 
 	if !noMAC {
-		usage["mac"] = registerMAC("mac", mux, usage, errorChannel)
-		if err != nil {
-			return err
-		}
+		usage.Store("mac", registerMAC("mac", mux, &usage, errorChannel))
 	}
 
 	if profile {
-		usage["profile"] = registerProfile("profile", mux, usage, errorChannel)
+		usage.Store("profile", registerProfile("profile", mux, &usage, errorChannel))
 	}
 
 	if !noQR {
-		usage["qr"] = registerQR("qr", mux, usage, errorChannel)
+		usage.Store("qr", registerQR("qr", mux, &usage, errorChannel))
 	}
 
 	if !noRoll {
-		usage["roll"] = registerRoll("roll", mux, usage, errorChannel)
+		usage.Store("roll", registerRoll("roll", mux, &usage, errorChannel))
 	}
 
 	if !noTime {
-		usage["time"] = registerTime("time", mux, usage, errorChannel)
+		usage.Store("time", registerTime("time", mux, &usage, errorChannel))
 	}
 
-	usage["version"] = registerVersion("version", mux, usage, errorChannel)
+	usage.Store("version", registerVersion("version", mux, &usage, errorChannel))
 
-	help := getUsage(usage)
-
-	slices.Sort(help)
-
-	registerHelp(mux, help, errorChannel)
+	registerHelp(mux, &usage, errorChannel)
 
 	srv := &http.Server{
 		Addr:         net.JoinHostPort(bind, strconv.Itoa(int(port))),

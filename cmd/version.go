@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -32,9 +33,8 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerVersion(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerVersion(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	mux.GET("/version/", serveVersion(errorChannel))
-	// mux.GET("/version/:version", serveVersion(errorChannel))
 
 	examples := make([]string, 1)
 	examples[0] = "/version/"

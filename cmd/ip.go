@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -63,7 +64,7 @@ func serveIP(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerIP(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerIP(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	mux.GET("/ip/", serveIP(errorChannel))
 	mux.GET("/ip/:ip", serveIP(errorChannel))
 

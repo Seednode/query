@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -85,7 +86,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerQR(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerQR(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	mux.GET("/qr/:string", serveQRCode(errorChannel))
 	mux.GET("/qr/", serveUsage(module, usage))
 

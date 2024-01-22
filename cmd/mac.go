@@ -13,6 +13,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -85,12 +86,12 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	return ouis, vendor
 }
 
-func parseOUIs(errorChannel chan<- Error) map[string]string {
+func parseOUIs(errorChannel chan<- Error) *sync.Map {
 	startTime := time.Now()
 
 	whiteSpace := regexp.MustCompile(`\s+`)
 
-	retVal := make(map[string]string)
+	retVal := sync.Map{}
 
 	var readFile fs.File
 	var err error
@@ -100,14 +101,14 @@ func parseOUIs(errorChannel chan<- Error) map[string]string {
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
 
-			return retVal
+			return &retVal
 		}
 	} else {
 		readFile, err = os.Open(ouiFile)
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
 
-			return retVal
+			return &retVal
 		}
 	}
 	defer func() {
@@ -128,7 +129,7 @@ func parseOUIs(errorChannel chan<- Error) map[string]string {
 		oui, vendor := format(line, whiteSpace)
 
 		for i := 0; i < len(oui); i++ {
-			retVal[oui[i]] = vendor
+			retVal.Store(oui[i], vendor)
 		}
 	}
 
@@ -138,10 +139,10 @@ func parseOUIs(errorChannel chan<- Error) map[string]string {
 			time.Since(startTime).Milliseconds())
 	}
 
-	return retVal
+	return &retVal
 }
 
-func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Handle {
+func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -152,10 +153,10 @@ func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 		val := ""
 
 		for i := 12; i >= 6; i -= 2 {
-			v, ok := ouis[strings.Join(chunks(firstN(strip(strings.ToUpper(mac)), i), 2), ":")]
+			v, ok := ouis.Load(strings.Join(chunks(firstN(strip(strings.ToUpper(mac)), i), 2), ":"))
 
 			if ok {
-				val = v
+				val = v.(string)
 
 				break
 			}
@@ -181,7 +182,7 @@ func serveMAC(ouis map[string]string, errorChannel chan<- Error) httprouter.Hand
 	}
 }
 
-func registerMAC(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerMAC(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	ouis := parseOUIs(errorChannel)
 
 	mux.GET("/mac/:mac", serveMAC(ouis, errorChannel))

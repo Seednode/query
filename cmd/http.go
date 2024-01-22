@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -56,7 +57,7 @@ func serveHTTPStatusCode(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerHTTPStatus(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerHTTPStatus(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	mux.GET("/http/", serveUsage(module, usage))
 
 	mux.GET("/http/status/:status", serveHTTPStatusCode(errorChannel))

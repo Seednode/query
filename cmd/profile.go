@@ -6,11 +6,12 @@ package cmd
 
 import (
 	"net/http/pprof"
+	"sync"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func registerProfile(module string, mux *httprouter.Router, usage map[string][]string, errorChannel chan<- Error) []string {
+func registerProfile(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
 	mux.Handler("GET", "/pprof/allocs", pprof.Handler("allocs"))
 	mux.Handler("GET", "/pprof/block", pprof.Handler("block"))
 	mux.Handler("GET", "/pprof/goroutine", pprof.Handler("goroutine"))
