@@ -31,32 +31,32 @@ An alternate DNS resolver can be specified via `--dns-resolver` (e.g. `--dns-res
 This uses Team Cymru's [IP to ASN mapping service](https://www.team-cymru.com/ip-asn-mapping), so please be considerate about traffic volume.
 
 Examples:
-- `/dns/a/google.com`
-- `/dns/aaaa/google.com`
-- `/dns/host/google.com`
-- `/dns/mx/google.com`
-- `/dns/ns/google.com`
+- [/dns/a/google.com](https://q.seedno.de/dns/a/google.com)
+- [/dns/aaaa/google.com](https://q.seedno.de/dns/aaaa/google.com)
+- [/dns/host/google.com](https://q.seedno.de/dns/host/google.com)
+- [/dns/mx/google.com](https://q.seedno.de/dns/mx/google.com)
+- [/dns/ns/google.com](https://q.seedno.de/dns/ns/google.com)
 
 ### Draw
 Outputs a rectangle with the specified width and height. The color can be specified as either a hex value (without the leading `#`) or any [HTML color name](https://www.w3schools.com/tags/ref_colornames.asp).
 
 Examples:
-- `/draw/gif/beige/640x480`
-- `/draw/jpg/white/320x240`
-- `/draw/png/fafafa/1024x768`
+- [/draw/gif/beige/640x480](https://q.seedno.de/draw/gif/beige/640x480)
+- [/draw/jpg/white/320x240](https://q.seedno.de/draw/jpg/white/320x240)
+- [/draw/png/fafafa/1024x768](https://q.seedno.de/draw/png/fafafa/1024x768)
 
 ### Hashing
 Hash the provided string using the requested algorithm.
 
 Examples:
-- `/hash/md5/foo`
-- `/hash/sha1/foo`
-- `/hash/sha224/foo`
-- `/hash/sha256/foo`
-- `/hash/sha384/foo`
-- `/hash/sha512/foo`
-- `/hash/sha512-224/foo`
-- `/hash/sha512-256/foo`
+- [/hash/md5/foo](https://q.seedno.de/hash/md5/foo)
+- [/hash/sha1/foo](https://q.seedno.de/hash/sha1/foo)
+- [/hash/sha224/foo](https://q.seedno.de/hash/sha224/foo)
+- [/hash/sha256/foo](https://q.seedno.de/hash/sha256/foo)
+- [/hash/sha384/foo](https://q.seedno.de/hash/sha384/foo)
+- [/hash/sha512/foo](https://q.seedno.de/hash/sha512/foo)
+- [/hash/sha512-224/foo](https://q.seedno.de/hash/sha512-224/foo)
+- [/hash/sha512-256/foo](https://q.seedno.de/hash/sha512-256/foo)
 
 In addition to providing the value to be hashed in the URL, you can submit it as the body of a GET request, so long as no value is provided in the URL.
 
@@ -66,15 +66,15 @@ For example, `curl -X GET https://q.seedno.de/hash/sha512-224/ -d "test"` will r
 Receive the requested HTTP response status code.
 
 Examples:
-- `/http/status/200`
-- `/http/status/404`
-- `/http/status/500`
+- [/http/status/200](https://q.seedno.de/http/status/200)
+- [/http/status/404](https://q.seedno.de/http/status/404)
+- [/http/status/500](https://q.seedno.de/http/status/500)
 
 ### IP address
 View your current public IP.
 
 Examples:
-- `/ip/`
+- [/ip/](https://q.seedno.de/ip/)
 
 ### MAC Lookup
 Look up the vendor associated with any MAC address.
@@ -82,16 +82,16 @@ Look up the vendor associated with any MAC address.
 The [Wireshark manufacturer database](https://www.wireshark.org/download/automated/data/manuf) is embedded in the generated binary, but a local version can be used instead by providing the `--oui-file` argument.
 
 Examples:
-- `/mac/3c-7c-3f-1e-b9-a0`
-- `/mac/e0:00:84:aa:aa:bb`
-- `/mac/4C445BAABBCC`
+- [/mac/3c-7c-3f-1e-b9-a0](https://q.seedno.de/mac/3c-7c-3f-1e-b9-a0)
+- [/mac/e0:00:84:aa:aa:bb](https://q.seedno.de/mac/e0:00:84:aa:aa:bb)
+- [/mac/4C445BAABBCC](https://q.seedno.de/mac/4C445BAABBCC)
 
 ### QR Codes
 Encode a string as a QR code (either a PNG or an ASCII string).
 
 Examples:
-- `/qr/Test`
-- `/qr/Test?string`
+- [/qr/Test](https://q.seedno.de/qr/Test)
+- [/qr/Test?string](https://q.seedno.de/qr/Test?string)
 
 ### Time
 Look up the current time in a given timezone and format.
@@ -101,9 +101,9 @@ Values can optionally be formatted via the `?format=` query parameter by specify
 Format values are case-insensitive.
 
 Examples:
-- `/time/America/Chicago`
-- `/time/EST`
-- `/time/UTC?format=kitchen`
+- [/time/America/Chicago](https://q.seedno.de/time/America/Chicago)
+- [/time/EST](https://q.seedno.de/time/EST)
+- [/time/UTC?format=kitchen](https://q.seedno.de/time/UTC?format=kitchen)
 
 ## Usage output
 ```
