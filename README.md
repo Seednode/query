@@ -26,6 +26,8 @@ Examples:
 ### DNS
 Look up DNS records for a given host.
 
+This uses Team Cymru's [IP to ASN mapping service](https://www.team-cymru.com/ip-asn-mapping), so please be considerate about traffic volume.
+
 Examples:
 - `/dns/a/google.com`
 - `/dns/aaaa/google.com`
@@ -112,6 +114,7 @@ Flags:
       --all                    enable all functionality
   -b, --bind string            address to bind to (default "0.0.0.0")
       --dns                    enable DNS lookup functionality
+      --dns-resolver string    DNS server IP and port to query (e.g. 8.8.8.8:53, uses system default if empty)
       --draw                   enable drawing functionality
       --exit-on-error          shut down webserver on error, instead of just printing the error
       --hash                   enable hashing functionality

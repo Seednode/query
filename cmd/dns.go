@@ -26,8 +26,8 @@ func getBulkClient() (*ipisp.BulkClient, error) {
 	return c, nil
 }
 
-func getHostname(host net.IP) (string, error) {
-	hosts, err := net.LookupAddr(host.String())
+func getHostname(host net.IP, resolver *net.Resolver) (string, error) {
+	hosts, err := resolver.LookupAddr(context.Background(), host.String())
 	if err != nil {
 		return "", err
 	}
@@ -35,8 +35,8 @@ func getHostname(host net.IP) (string, error) {
 	return hosts[0], nil
 }
 
-func getIP(host string) (net.IP, error) {
-	hosts, err := net.LookupHost(host)
+func getIP(host string, resolver *net.Resolver) (net.IP, error) {
+	hosts, err := resolver.LookupHost(context.Background(), host)
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +44,8 @@ func getIP(host string) (net.IP, error) {
 	return net.ParseIP(hosts[0]), nil
 }
 
-func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
-	ips, err := net.DefaultResolver.LookupIP(context.Background(), protocol, host)
+func parseHost(host, protocol string, ctx *ipisp.BulkClient, resolver *net.Resolver) (string, error) {
+	ips, err := resolver.LookupIP(context.Background(), protocol, host)
 	if len(ips) == 0 || err != nil {
 		return "", err
 	}
@@ -63,7 +63,7 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 		r := responses[response]
 		ip := r.IP
 
-		hostname, err := getHostname(ip)
+		hostname, err := getHostname(ip, resolver)
 		if err != nil {
 			return "", err
 		}
@@ -79,7 +79,7 @@ func parseHost(ctx *ipisp.BulkClient, host, protocol string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Handle {
+func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -89,14 +89,28 @@ func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Hand
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
 			return
 		}
 
 		host := strings.TrimPrefix(p.ByName("host"), "/")
 
-		parsedHost, err := parseHost(ctx, host, protocol)
+		parsedHost, err := parseHost(host, protocol, ctx, resolver)
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -117,8 +131,8 @@ func serveHostRecord(protocol string, errorChannel chan<- Error) httprouter.Hand
 	}
 }
 
-func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
-	records, err := net.LookupMX(host)
+func parseMX(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string, error) {
+	records, err := resolver.LookupMX(context.Background(), host)
 	if len(records) == 0 || err != nil {
 		return "", err
 	}
@@ -134,7 +148,7 @@ func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
 
 	var ips []net.IP
 	for h := 0; h < len(hosts); h++ {
-		ip, err := getIP(hosts[h])
+		ip, err := getIP(hosts[h], resolver)
 		if err != nil {
 			return "", err
 		}
@@ -164,7 +178,7 @@ func parseMX(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
+func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -174,14 +188,28 @@ func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
 			return
 		}
 
 		host := strings.TrimPrefix(p.ByName("host"), "/")
 
-		parsedHost, err := parseMX(ctx, host)
+		parsedHost, err := parseMX(ctx, resolver, host)
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -202,8 +230,8 @@ func serveMXRecord(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
-	records, err := net.LookupNS(host)
+func parseNS(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string, error) {
+	records, err := resolver.LookupNS(context.Background(), host)
 	if len(records) == 0 || err != nil {
 		return "", err
 	}
@@ -217,7 +245,7 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 
 	var ips []net.IP
 	for h := 0; h < len(hosts); h++ {
-		ip, err := getIP(hosts[h])
+		ip, err := getIP(hosts[h], resolver)
 		if err != nil {
 			return "", err
 		}
@@ -248,7 +276,7 @@ func parseNS(ctx *ipisp.BulkClient, host string) (string, error) {
 	return retVal.String(), nil
 }
 
-func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
+func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -258,14 +286,28 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
 			return
 		}
 
 		host := strings.TrimPrefix(p.ByName("host"), "/")
 
-		parsedHost, err := parseNS(ctx, host)
+		parsedHost, err := parseNS(ctx, resolver, host)
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			w.WriteHeader(http.StatusInternalServerError)
+
+			_, err = w.Write([]byte("Lookup failed.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -289,21 +331,37 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 func registerDNS(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "dns"
 
+	var resolver *net.Resolver
+
+	if dnsResolver != "" {
+		resolver = &net.Resolver{
+			PreferGo: true,
+			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+				d := net.Dialer{
+					Timeout: time.Millisecond * time.Duration(10000),
+				}
+				return d.DialContext(ctx, network, dnsResolver)
+			},
+		}
+	} else {
+		resolver = net.DefaultResolver
+	}
+
 	mux.GET("/dns/", serveUsage(module, usage))
 
-	mux.GET("/dns/a/:host", serveHostRecord("ip4", errorChannel))
+	mux.GET("/dns/a/:host", serveHostRecord("ip4", resolver, errorChannel))
 	mux.GET("/dns/a/", serveUsage(module, usage))
 
-	mux.GET("/dns/aaaa/:host", serveHostRecord("ip6", errorChannel))
+	mux.GET("/dns/aaaa/:host", serveHostRecord("ip6", resolver, errorChannel))
 	mux.GET("/dns/aaaa/", serveUsage(module, usage))
 
-	mux.GET("/dns/host/:host", serveHostRecord("ip", errorChannel))
+	mux.GET("/dns/host/:host", serveHostRecord("ip", resolver, errorChannel))
 	mux.GET("/dns/host/", serveUsage(module, usage))
 
-	mux.GET("/dns/mx/:host", serveMXRecord(errorChannel))
+	mux.GET("/dns/mx/:host", serveMXRecord(resolver, errorChannel))
 	mux.GET("/dns/mx/", serveUsage(module, usage))
 
-	mux.GET("/dns/ns/:host", serveNSRecord(errorChannel))
+	mux.GET("/dns/ns/:host", serveNSRecord(resolver, errorChannel))
 	mux.GET("/dns/ns/", serveUsage(module, usage))
 
 	usage.Store(module, []string{

@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.0.0"
+	ReleaseVersion string = "1.1.0"
 )
 
 var (
-	All            bool
+	all            bool
 	bind           string
 	exitOnError    bool
 	maxDiceRolls   int
@@ -23,18 +23,19 @@ var (
 	maxImageHeight int
 	maxImageWidth  int
 	ouiFile        string
-	DNS            bool
-	Draw           bool
-	Hash           bool
-	HTTPStatus     bool
-	IP             bool
-	MAC            bool
-	QR             bool
-	Roll           bool
-	Time           bool
+	dns            bool
+	dnsResolver    string
+	draw           bool
+	hashing        bool
+	httpStatus     bool
+	ip             bool
+	mac            bool
+	qr             bool
+	qrSize         int
+	roll           bool
+	timezones      bool
 	port           uint16
 	profile        bool
-	qrSize         int
 	verbose        bool
 	version        bool
 
@@ -85,15 +86,16 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVar(&All, "all", false, "enable all functionality")
+	rootCmd.Flags().BoolVar(&all, "all", false, "enable all functionality")
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
-	rootCmd.Flags().BoolVar(&DNS, "dns", false, "enable DNS lookup functionality")
-	rootCmd.Flags().BoolVar(&Draw, "draw", false, "enable drawing functionality")
+	rootCmd.Flags().BoolVar(&dns, "dns", false, "enable DNS lookup functionality")
+	rootCmd.Flags().StringVar(&dnsResolver, "dns-resolver", "", "DNS server IP and port to query (e.g. 8.8.8.8:53, uses system default if empty)")
+	rootCmd.Flags().BoolVar(&draw, "draw", false, "enable drawing functionality")
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
-	rootCmd.Flags().BoolVar(&Hash, "hash", false, "enable hashing functionality")
-	rootCmd.Flags().BoolVar(&HTTPStatus, "http-status", false, "enable HTTP response status code functionality")
-	rootCmd.Flags().BoolVar(&IP, "ip", false, "enable IP lookup functionality")
-	rootCmd.Flags().BoolVar(&MAC, "mac", false, "enable MAC lookup functionality")
+	rootCmd.Flags().BoolVar(&hashing, "hash", false, "enable hashing functionality")
+	rootCmd.Flags().BoolVar(&httpStatus, "http-status", false, "enable HTTP response status code functionality")
+	rootCmd.Flags().BoolVar(&ip, "ip", false, "enable IP lookup functionality")
+	rootCmd.Flags().BoolVar(&mac, "mac", false, "enable MAC lookup functionality")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
@@ -101,10 +103,10 @@ func init() {
 	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
-	rootCmd.Flags().BoolVar(&QR, "qr", false, "enable QR code generation functionality")
+	rootCmd.Flags().BoolVar(&qr, "qr", false, "enable QR code generation functionality")
 	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")
-	rootCmd.Flags().BoolVar(&Roll, "roll", false, "enable dice rolling functionality")
-	rootCmd.Flags().BoolVar(&Time, "time", false, "enable time lookup functionality")
+	rootCmd.Flags().BoolVar(&roll, "roll", false, "enable dice rolling functionality")
+	rootCmd.Flags().BoolVar(&timezones, "time", false, "enable time lookup functionality")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
 

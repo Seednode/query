@@ -223,6 +223,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		case found:
 			colorToUse = c
 		case len(requested) != 6:
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte("Color codes must be six hex characters.\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -239,6 +241,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if colorToUse == EmptyColor {
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte("Failed to parse color.\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -253,6 +257,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte("Failed to parse width.\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -265,6 +271,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte("Failed to parse height.\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -275,6 +283,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 		switch {
 		case width > maxImageWidth:
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte(fmt.Sprintf("Image width must be no greater than %d", maxImageWidth)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -282,6 +292,8 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 			return
 		case height > maxImageHeight:
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte(fmt.Sprintf("Image height must be no greater than %d", maxImageHeight)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -303,11 +315,11 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 		switch format {
 		case "GIF":
-			w.Header().Set("Content-Type", "image/gif")
-
 			err := gif.Encode(w, img, nil)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				w.WriteHeader(http.StatusInternalServerError)
 
 				_, err := w.Write([]byte("Failed to encode GIF.\n"))
 				if err != nil {
@@ -316,12 +328,14 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				return
 			}
-		case "JPEG":
-			w.Header().Set("Content-Type", "image/jpeg")
 
+			w.Header().Set("Content-Type", "image/gif")
+		case "JPEG":
 			err := jpeg.Encode(w, img, nil)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				w.WriteHeader(http.StatusInternalServerError)
 
 				_, err := w.Write([]byte("Failed to encode JPEG.\n"))
 				if err != nil {
@@ -330,12 +344,14 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				return
 			}
-		case "PNG":
-			w.Header().Set("Content-Type", "image/png")
 
+			w.Header().Set("Content-Type", "image/jpeg")
+		case "PNG":
 			err := png.Encode(w, img)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+				w.WriteHeader(http.StatusInternalServerError)
 
 				_, err := w.Write([]byte("Failed to encode PNG.\n"))
 				if err != nil {
@@ -344,7 +360,11 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				return
 			}
+
+			w.Header().Set("Content-Type", "image/png")
 		default:
+			w.WriteHeader(http.StatusBadRequest)
+
 			_, err := w.Write([]byte("Invalid image format requested.\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}

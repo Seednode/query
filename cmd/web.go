@@ -86,27 +86,27 @@ func ServePage(args []string) error {
 
 	usage := sync.Map{}
 
-	if DNS || All {
+	if dns || all {
 		registerDNS(mux, &usage, errorChannel)
 	}
 
-	if Draw || All {
+	if draw || all {
 		registerDraw(mux, &usage, errorChannel)
 	}
 
-	if Hash || All {
+	if hashing || all {
 		registerHash(mux, &usage, errorChannel)
 	}
 
-	if HTTPStatus || All {
+	if httpStatus || all {
 		registerHTTPStatus(mux, &usage, errorChannel)
 	}
 
-	if IP || All {
+	if ip || all {
 		registerIP(mux, &usage, errorChannel)
 	}
 
-	if MAC || All {
+	if mac || all {
 		registerMAC(mux, &usage, errorChannel)
 	}
 
@@ -114,15 +114,15 @@ func ServePage(args []string) error {
 		registerProfile(mux, &usage, errorChannel)
 	}
 
-	if QR || All {
+	if qr || all {
 		registerQR(mux, &usage, errorChannel)
 	}
 
-	if Roll || All {
+	if roll || all {
 		registerRoll(mux, &usage, errorChannel)
 	}
 
-	if Time || All {
+	if timezones || all {
 		registerTime(mux, &usage, errorChannel)
 	}
 
