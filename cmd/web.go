@@ -87,46 +87,46 @@ func ServePage(args []string) error {
 	usage := sync.Map{}
 
 	if !noDNS {
-		usage.Store("dns", registerDNS("dns", mux, &usage, errorChannel))
+		registerDNS(mux, &usage, errorChannel)
 	}
 
 	if !noDraw {
-		usage.Store("draw", registerDraw("draw", mux, &usage, errorChannel))
+		registerDraw(mux, &usage, errorChannel)
 	}
 
 	if !noHash {
-		usage.Store("hash", registerHash("hash", mux, &usage, errorChannel))
+		registerHash(mux, &usage, errorChannel)
 	}
 
 	if !noHTTPStatus {
-		usage.Store("http", registerHTTPStatus("http", mux, &usage, errorChannel))
+		registerHTTPStatus(mux, &usage, errorChannel)
 	}
 
 	if !noIP {
-		usage.Store("ip", registerIP("ip", mux, &usage, errorChannel))
+		registerIP(mux, &usage, errorChannel)
 	}
 
 	if !noMAC {
-		usage.Store("mac", registerMAC("mac", mux, &usage, errorChannel))
+		registerMAC(mux, &usage, errorChannel)
 	}
 
 	if profile {
-		usage.Store("profile", registerProfile("profile", mux, &usage, errorChannel))
+		registerProfile(mux, &usage, errorChannel)
 	}
 
 	if !noQR {
-		usage.Store("qr", registerQR("qr", mux, &usage, errorChannel))
+		registerQR(mux, &usage, errorChannel)
 	}
 
 	if !noRoll {
-		usage.Store("roll", registerRoll("roll", mux, &usage, errorChannel))
+		registerRoll(mux, &usage, errorChannel)
 	}
 
 	if !noTime {
-		usage.Store("time", registerTime("time", mux, &usage, errorChannel))
+		registerTime(mux, &usage, errorChannel)
 	}
 
-	usage.Store("version", registerVersion("version", mux, &usage, errorChannel))
+	registerVersion(mux, &usage, errorChannel)
 
 	registerHelp(mux, &usage, errorChannel)
 

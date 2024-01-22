@@ -182,16 +182,17 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerMAC(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerMAC(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "mac"
+
 	ouis := parseOUIs(errorChannel)
 
 	mux.GET("/mac/:mac", serveMAC(ouis, errorChannel))
 	mux.GET("/mac/", serveUsage(module, usage))
 
-	examples := make([]string, 3)
-	examples[0] = "/mac/3c-7c-3f-1e-b9-a0"
-	examples[1] = "/mac/e0:00:84:aa:aa:bb"
-	examples[2] = "/mac/4C445BAABBCC"
-
-	return examples
+	usage.Store(module, []string{
+		"/mac/3c-7c-3f-1e-b9-a0",
+		"/mac/e0:00:84:aa:aa:bb",
+		"/mac/4C445BAABBCC",
+	})
 }

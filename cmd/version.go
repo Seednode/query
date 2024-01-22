@@ -33,11 +33,12 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerVersion(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerVersion(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "version"
+
 	mux.GET("/version/", serveVersion(errorChannel))
 
-	examples := make([]string, 1)
-	examples[0] = "/version/"
-
-	return examples
+	usage.Store(module, []string{
+		"/version/",
+	})
 }

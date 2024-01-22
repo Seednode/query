@@ -286,7 +286,9 @@ func serveNSRecord(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDNS(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerDNS(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "dns"
+
 	mux.GET("/dns/", serveUsage(module, usage))
 
 	mux.GET("/dns/a/:host", serveHostRecord("ip4", errorChannel))
@@ -304,12 +306,11 @@ func registerDNS(module string, mux *httprouter.Router, usage *sync.Map, errorCh
 	mux.GET("/dns/ns/:host", serveNSRecord(errorChannel))
 	mux.GET("/dns/ns/", serveUsage(module, usage))
 
-	examples := make([]string, 5)
-	examples[0] = "/dns/a/google.com"
-	examples[1] = "/dns/aaaa/google.com"
-	examples[2] = "/dns/host/google.com"
-	examples[3] = "/dns/mx/google.com"
-	examples[4] = "/dns/ns/google.com"
-
-	return examples
+	usage.Store(module, []string{
+		"/dns/a/google.com",
+		"/dns/aaaa/google.com",
+		"/dns/host/google.com",
+		"/dns/mx/google.com",
+		"/dns/ns/google.com",
+	})
 }

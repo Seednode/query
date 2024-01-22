@@ -136,13 +136,14 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerRoll(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerRoll(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "roll"
+
 	mux.GET("/roll/:roll", serveDiceRoll(errorChannel))
 	mux.GET("/roll/", serveUsage(module, usage))
 
-	examples := make([]string, 2)
-	examples[0] = "/roll/5d20"
-	examples[1] = "/roll/d6?verbose"
-
-	return examples
+	usage.Store(module, []string{
+		"/roll/5d20",
+		"/roll/d6?verbose",
+	})
 }

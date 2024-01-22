@@ -93,7 +93,9 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerHash(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerHash(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "hash"
+
 	mux.GET("/hash/", serveUsage(module, usage))
 
 	mux.GET("/hash/md5/*string", serveHash("MD5", errorChannel))
@@ -112,15 +114,14 @@ func registerHash(module string, mux *httprouter.Router, usage *sync.Map, errorC
 
 	mux.GET("/hash/sha512-256/*string", serveHash("SHA-512/256", errorChannel))
 
-	examples := make([]string, 8)
-	examples[0] = "/hash/md5/foo"
-	examples[1] = "/hash/sha1/foo"
-	examples[2] = "/hash/sha224/foo"
-	examples[3] = "/hash/sha256/foo"
-	examples[4] = "/hash/sha384/foo"
-	examples[5] = "/hash/sha512/foo"
-	examples[6] = "/hash/sha512-224/foo"
-	examples[7] = "/hash/sha512-256/foo"
-
-	return examples
+	usage.Store(module, []string{
+		"/hash/md5/foo",
+		"/hash/sha1/foo",
+		"/hash/sha224/foo",
+		"/hash/sha256/foo",
+		"/hash/sha384/foo",
+		"/hash/sha512/foo",
+		"/hash/sha512-224/foo",
+		"/hash/sha512-256/foo",
+	})
 }

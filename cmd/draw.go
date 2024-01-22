@@ -365,7 +365,9 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerDraw(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerDraw(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "draw"
+
 	mux.GET("/draw/", serveUsage(module, usage))
 
 	mux.GET("/draw/gif/:color/:dimensions", drawImage("GIF", errorChannel))
@@ -377,10 +379,9 @@ func registerDraw(module string, mux *httprouter.Router, usage *sync.Map, errorC
 	mux.GET("/draw/png/:color/:dimensions", drawImage("PNG", errorChannel))
 	mux.GET("/draw/png/", serveUsage(module, usage))
 
-	examples := make([]string, 3)
-	examples[0] = "/draw/gif/beige/640x480"
-	examples[1] = "/draw/jpg/white/320x240"
-	examples[2] = "/draw/png/fafafa/1024x768"
-
-	return examples
+	usage.Store(module, []string{
+		"/draw/gif/beige/640x480",
+		"/draw/jpg/white/320x240",
+		"/draw/png/fafafa/1024x768",
+	})
 }

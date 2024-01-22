@@ -64,12 +64,13 @@ func serveIP(errorChannel chan<- Error) httprouter.Handle {
 	}
 }
 
-func registerIP(module string, mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) []string {
+func registerIP(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+	module := "ip"
+
 	mux.GET("/ip/", serveIP(errorChannel))
 	mux.GET("/ip/:ip", serveIP(errorChannel))
 
-	examples := make([]string, 1)
-	examples[0] = "/ip/"
-
-	return examples
+	usage.Store(module, []string{
+		"/ip/",
+	})
 }
