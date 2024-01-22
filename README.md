@@ -20,7 +20,7 @@ Roll a specified number of dice.
 Optionally display individual roll results, as well as total, by appending `?verbose`.
 
 Examples:
-- `/roll/5d20`
+- [`/roll/5d20`](https://q.seedno.de/roll/5d20)
 - `/roll/d6?verbose`
 
 ### DNS
