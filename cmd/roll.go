@@ -85,6 +85,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		var i, total int64
 
+		padTo := len(fmt.Sprintf("%d", count))
+
+		length := 0
+
 		for i = 0; i < count; i++ {
 			v, err := rand.Int(rand.Reader, big.NewInt(die))
 			if err != nil {
@@ -98,13 +102,17 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			v.Add(v, big.NewInt(1))
 
 			if wantsVerbose {
-				_, err = w.Write([]byte(fmt.Sprintf("Rolled d%d, result %d\n", die, v)))
+				written, err := w.Write([]byte(fmt.Sprintf("%0*d | Rolled d%d, got %d\n", padTo, i+1, die, v)))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 					w.WriteHeader(http.StatusInternalServerError)
 
 					return
+				}
+
+				if written > length {
+					length = written
 				}
 			}
 
@@ -128,7 +136,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if wantsVerbose {
-			_, err = w.Write([]byte("\nTotal: "))
+			_, err = w.Write([]byte(fmt.Sprintf("%s\nTotal: ", strings.Repeat("-", length-1))))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
