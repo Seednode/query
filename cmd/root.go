@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.3.1"
+	ReleaseVersion string = "1.3.2"
 )
 
 var (
@@ -89,7 +89,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&all, "all", false, "enable all functionality")
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().BoolVar(&dns, "dns", false, "enable DNS lookup functionality")
-	rootCmd.Flags().StringVar(&dnsResolver, "dns-resolver", "", "DNS server IP and port to query (e.g. 8.8.8.8:53, uses system default if empty)")
+	rootCmd.Flags().StringVar(&dnsResolver, "dns-resolver", "", "custom DNS server IP and port to query (e.g. 8.8.8.8:53)")
 	rootCmd.Flags().BoolVar(&draw, "draw", false, "enable drawing functionality")
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().BoolVar(&hashing, "hash", false, "enable hashing functionality")
@@ -100,7 +100,7 @@ func init() {
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
 	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
 	rootCmd.Flags().IntVar(&maxImageWidth, "max-image-width", 1024, "maximum width of generated images")
-	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)")
+	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
 	rootCmd.Flags().BoolVar(&qr, "qr", false, "enable QR code generation functionality")

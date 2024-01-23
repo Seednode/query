@@ -116,7 +116,7 @@ Flags:
       --all                    enable all functionality
   -b, --bind string            address to bind to (default "0.0.0.0")
       --dns                    enable DNS lookup functionality
-      --dns-resolver string    DNS server IP and port to query (e.g. 1.1.1.1:53, uses system default if empty)
+      --dns-resolver string    custom DNS server IP and port to query (e.g. 8.8.8.8:53)
       --draw                   enable drawing functionality
       --exit-on-error          shut down webserver on error, instead of just printing the error
       --hash                   enable hashing functionality
@@ -128,7 +128,7 @@ Flags:
       --max-dice-sides int     maximum number of sides per die (default 1024)
       --max-image-height int   maximum height of generated images (default 1024)
       --max-image-width int    maximum width of generated images (default 1024)
-      --oui-file string        path to Wireshark manufacturer database file (https://www.wireshark.org/download/automated/data/manuf)
+      --oui-file string        path to Wireshark manufacturer database file
   -p, --port uint16            port to listen on (default 8080)
       --profile                register net/http/pprof handlers
       --qr                     enable QR code generation functionality
