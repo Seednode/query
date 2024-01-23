@@ -210,8 +210,6 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
-
 		requested := p.ByName("color")
 
 		c, found := defaultColors[requested]
