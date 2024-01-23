@@ -83,6 +83,8 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			return
 		}
 
+		w.Header().Set("Cache-Control", "no-store")
+
 		var i, total int64
 
 		padTo := len(fmt.Sprintf("%d", count))
@@ -128,8 +130,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 				w.WriteHeader(http.StatusInternalServerError)
-
-				return
 			}
 
 			return
