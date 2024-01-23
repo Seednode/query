@@ -188,7 +188,7 @@ func registerMAC(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Er
 	ouis := parseOUIs(errorChannel)
 
 	mux.GET("/mac/:mac", serveMAC(ouis, errorChannel))
-	mux.GET("/mac/", serveUsage(module, usage))
+	mux.GET("/mac/", serveUsage(module, usage, errorChannel))
 
 	usage.Store(module, []string{
 		"/mac/3c-7c-3f-1e-b9-a0",

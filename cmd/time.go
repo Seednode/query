@@ -96,7 +96,7 @@ func registerTime(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- E
 
 	mux.GET("/time/:time", serveTime(errorChannel))
 	mux.GET("/time/:time/*rest", serveTime(errorChannel))
-	mux.GET("/time/", serveUsage(module, usage))
+	mux.GET("/time/", serveUsage(module, usage, errorChannel))
 
 	usage.Store(module, []string{
 		"/time/America/Chicago",

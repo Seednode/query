@@ -170,7 +170,7 @@ func registerRoll(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- E
 	const module = "roll"
 
 	mux.GET("/roll/:roll", serveDiceRoll(errorChannel))
-	mux.GET("/roll/", serveUsage(module, usage))
+	mux.GET("/roll/", serveUsage(module, usage, errorChannel))
 
 	usage.Store(module, []string{
 		"/roll/5d20",

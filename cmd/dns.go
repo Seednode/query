@@ -374,22 +374,22 @@ func registerDNS(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Er
 		resolver = net.DefaultResolver
 	}
 
-	mux.GET("/dns/", serveUsage(module, usage))
+	mux.GET("/dns/", serveUsage(module, usage, errorChannel))
 
 	mux.GET("/dns/a/:host", serveHostRecord("ip4", resolver, errorChannel))
-	mux.GET("/dns/a/", serveUsage(module, usage))
+	mux.GET("/dns/a/", serveUsage(module, usage, errorChannel))
 
 	mux.GET("/dns/aaaa/:host", serveHostRecord("ip6", resolver, errorChannel))
-	mux.GET("/dns/aaaa/", serveUsage(module, usage))
+	mux.GET("/dns/aaaa/", serveUsage(module, usage, errorChannel))
 
 	mux.GET("/dns/host/:host", serveHostRecord("ip", resolver, errorChannel))
-	mux.GET("/dns/host/", serveUsage(module, usage))
+	mux.GET("/dns/host/", serveUsage(module, usage, errorChannel))
 
 	mux.GET("/dns/mx/:host", serveMXRecord(resolver, errorChannel))
-	mux.GET("/dns/mx/", serveUsage(module, usage))
+	mux.GET("/dns/mx/", serveUsage(module, usage, errorChannel))
 
 	mux.GET("/dns/ns/:host", serveNSRecord(resolver, errorChannel))
-	mux.GET("/dns/ns/", serveUsage(module, usage))
+	mux.GET("/dns/ns/", serveUsage(module, usage, errorChannel))
 
 	usage.Store(module, []string{
 		"/dns/a/google.com",

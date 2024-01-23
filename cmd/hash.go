@@ -41,7 +41,10 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				w.Write([]byte("Failed to hash string.\n"))
+				_, err := w.Write([]byte("Failed to hash string.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
@@ -108,37 +111,37 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 func registerHash(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "hash"
 
-	mux.GET("/hash/", serveUsage(module, usage))
+	mux.GET("/hash/", serveUsage(module, usage, errorChannel))
 
-	mux.GET("/hash/md5/", serveUsage(module, usage))
+	mux.GET("/hash/md5/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/md5/:string", serveHash("MD5", errorChannel))
 	mux.POST("/hash/md5/", serveHash("MD5", errorChannel))
 
-	mux.GET("/hash/sha1/", serveUsage(module, usage))
+	mux.GET("/hash/sha1/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha1/:string", serveHash("SHA-1", errorChannel))
 	mux.POST("/hash/sha1/", serveHash("SHA-1", errorChannel))
 
-	mux.GET("/hash/sha224/", serveUsage(module, usage))
+	mux.GET("/hash/sha224/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha224/:string", serveHash("SHA-224", errorChannel))
 	mux.POST("/hash/sha224/", serveHash("SHA-224", errorChannel))
 
-	mux.GET("/hash/sha256/", serveUsage(module, usage))
+	mux.GET("/hash/sha256/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha256/:string", serveHash("SHA-256", errorChannel))
 	mux.POST("/hash/sha256/", serveHash("SHA-256", errorChannel))
 
-	mux.GET("/hash/sha384/", serveUsage(module, usage))
+	mux.GET("/hash/sha384/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha384/:string", serveHash("SHA-384", errorChannel))
 	mux.POST("/hash/sha384/", serveHash("SHA-384", errorChannel))
 
-	mux.GET("/hash/sha512/", serveUsage(module, usage))
+	mux.GET("/hash/sha512/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha512/:string", serveHash("SHA-512", errorChannel))
 	mux.POST("/hash/sha512/", serveHash("SHA-512", errorChannel))
 
-	mux.GET("/hash/sha512-224/", serveUsage(module, usage))
+	mux.GET("/hash/sha512-224/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha512-224/:string", serveHash("SHA-512/224", errorChannel))
 	mux.POST("/hash/sha512-224/", serveHash("SHA-512/224", errorChannel))
 
-	mux.GET("/hash/sha512-256/", serveUsage(module, usage))
+	mux.GET("/hash/sha512-256/", serveUsage(module, usage, errorChannel))
 	mux.GET("/hash/sha512-256/:string", serveHash("SHA-512/256", errorChannel))
 	mux.POST("/hash/sha512-256/", serveHash("SHA-512/256", errorChannel))
 

@@ -37,12 +37,24 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				w.Write([]byte("Failed to encode string.\n"))
+				_, err := w.Write([]byte("Failed to encode string.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
 
 			value = string(body)
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+
+			_, err := w.Write([]byte("No string provided to encode.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
+			return
 		}
 
 		qrCode, err := qrcode.New(value, qrcode.Medium)
@@ -51,7 +63,10 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			w.Write([]byte("Failed to encode string.\n"))
+			_, err := w.Write([]byte("Failed to encode string.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
@@ -60,10 +75,6 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 			_, err = w.Write([]byte("\n" + qrCode.ToString(false) + "\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-				w.WriteHeader(http.StatusInternalServerError)
-
-				w.Write([]byte("Failed to encode string.\n"))
 
 				return
 			}
@@ -74,7 +85,10 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				w.Write([]byte("Failed to encode string.\n"))
+				_, err := w.Write([]byte("Failed to encode string.\n"))
+				if err != nil {
+					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+				}
 
 				return
 			}
@@ -84,10 +98,6 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 			_, err = w.Write(png)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-				w.WriteHeader(http.StatusInternalServerError)
-
-				w.Write([]byte("Failed to encode string.\n"))
 
 				return
 			}
@@ -105,7 +115,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 func registerQR(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "qr"
 
-	mux.GET("/qr/", serveUsage(module, usage))
+	mux.GET("/qr/", serveUsage(module, usage, errorChannel))
 	mux.GET("/qr/:string", serveQRCode(errorChannel))
 	mux.POST("/qr/", serveQRCode(errorChannel))
 

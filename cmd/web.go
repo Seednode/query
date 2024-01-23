@@ -53,6 +53,7 @@ func ServePage(args []string) error {
 	timeZone := os.Getenv("TZ")
 	if timeZone != "" {
 		var err error
+
 		time.Local, err = time.LoadLocation(timeZone)
 		if err != nil {
 			return err
@@ -65,12 +66,7 @@ func ServePage(args []string) error {
 			ReleaseVersion)
 	}
 
-	bindHost, err := net.LookupHost(bind)
-	if err != nil {
-		return err
-	}
-
-	bindAddr := net.ParseIP(bindHost[0])
+	bindAddr := net.ParseIP(bind)
 	if bindAddr == nil {
 		return errors.New("invalid bind address provided")
 	}
@@ -163,7 +159,7 @@ func ServePage(args []string) error {
 			srv.Addr)
 	}
 
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

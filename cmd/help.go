@@ -15,7 +15,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func serveUsage(module string, usage *sync.Map) httprouter.Handle {
+func serveUsage(module string, usage *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -41,7 +41,10 @@ func serveUsage(module string, usage *sync.Map) httprouter.Handle {
 			output.WriteString(fmt.Sprintf("- %s\n", line))
 		}
 
-		w.Write([]byte(output.String()))
+		_, err := w.Write([]byte(output.String()))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+		}
 
 		if verbose {
 			fmt.Printf("%s | %s requested usage info for %s\n",
