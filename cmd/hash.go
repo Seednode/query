@@ -29,9 +29,12 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		value := strings.TrimPrefix(p.ByName("string"), "/")
+		value := ""
 
-		if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodGet:
+			value = strings.TrimPrefix(p.ByName("string"), "/")
+		case http.MethodPost:
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}

@@ -25,8 +25,12 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		value := strings.TrimPrefix(p.ByName("string"), "/")
-		if value == "" {
+		value := ""
+
+		switch r.Method {
+		case http.MethodGet:
+			value = strings.TrimPrefix(p.ByName("string"), "/")
+		case http.MethodPost:
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -101,8 +105,9 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 func registerQR(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "qr"
 
-	mux.GET("/qr/:string", serveQRCode(errorChannel))
 	mux.GET("/qr/", serveUsage(module, usage))
+	mux.GET("/qr/:string", serveQRCode(errorChannel))
+	mux.POST("/qr/", serveQRCode(errorChannel))
 
 	usage.Store(module, []string{
 		"/qr/Test",
