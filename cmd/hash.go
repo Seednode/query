@@ -70,7 +70,10 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 
 			w.WriteHeader(http.StatusBadRequest)
 
-			w.Write([]byte("Invalid hash algorithm requested.\n"))
+			_, err := w.Write([]byte("Invalid hash algorithm requested.\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
 			return
 		}
