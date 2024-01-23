@@ -49,7 +49,7 @@ func serverErrorHandler() func(http.ResponseWriter, *http.Request, interface{}) 
 	return serverError
 }
 
-func ServePage(args []string) error {
+func servePage(args []string) error {
 	timeZone := os.Getenv("TZ")
 	if timeZone != "" {
 		var err error

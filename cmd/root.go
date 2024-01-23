@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.5.1"
+	ReleaseVersion string = "1.5.2"
 )
 
 var (
@@ -39,7 +39,7 @@ var (
 	verbose        bool
 	version        bool
 
-	RequiredArgs = []string{
+	requiredArgs = []string{
 		"all",
 		"dns",
 		"draw",
@@ -68,7 +68,7 @@ var (
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := ServePage(args)
+			err := servePage(args)
 			if err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func init() {
 
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 
-	rootCmd.MarkFlagsOneRequired(RequiredArgs...)
+	rootCmd.MarkFlagsOneRequired(requiredArgs...)
 
 	rootCmd.SilenceErrors = true
 	rootCmd.SetHelpCommand(&cobra.Command{

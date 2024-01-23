@@ -36,23 +36,23 @@ func getColor(requestedColor string) (color.Color, error) {
 
 	for _, val := range r {
 		if !isValidHex(val) {
-			return EmptyColor, nil
+			return emptyColor, nil
 		}
 	}
 
 	red, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[0]))
 	if err != nil {
-		return EmptyColor, err
+		return emptyColor, err
 	}
 
 	green, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[1]))
 	if err != nil {
-		return EmptyColor, err
+		return emptyColor, err
 	}
 
 	blue, err := strconv.Atoi(fmt.Sprintf("%x", "0x"+r[2]))
 	if err != nil {
-		return EmptyColor, err
+		return emptyColor, err
 	}
 
 	return color.RGBA{uint8(red), uint8(blue), uint8(green), 0xff}, nil
@@ -90,7 +90,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 			requested = "#" + requested
 		}
 
-		if colorToUse == EmptyColor {
+		if colorToUse == emptyColor {
 			w.WriteHeader(http.StatusBadRequest)
 
 			_, err := w.Write([]byte("Failed to parse color.\n"))
@@ -257,7 +257,7 @@ func registerDraw(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- E
 }
 
 var (
-	EmptyColor = color.RGBA{0, 0, 0, 0x0}
+	emptyColor = color.RGBA{0, 0, 0, 0x0}
 
 	defaultColors = map[string]color.Color{
 		"aliceblue":            color.RGBA{240, 248, 255, 0xff},
