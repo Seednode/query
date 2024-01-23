@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -26,13 +27,17 @@ func getBulkClient() (*ipisp.BulkClient, error) {
 	return c, nil
 }
 
-func getHostname(host net.IP, resolver *net.Resolver) (string, error) {
+func getHostnames(host net.IP, resolver *net.Resolver) ([]string, error) {
 	hosts, err := resolver.LookupAddr(context.Background(), host.String())
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
-	return hosts[0], nil
+	sort.SliceStable(hosts, func(i, j int) bool {
+		return hosts[i] < hosts[j]
+	})
+
+	return hosts, nil
 }
 
 func getIP(host string, resolver *net.Resolver) (net.IP, error) {
@@ -55,25 +60,39 @@ func parseHost(host, protocol string, ctx *ipisp.BulkClient, resolver *net.Resol
 		return "", err
 	}
 
+	sort.SliceStable(responses, func(i, j int) bool {
+		return responses[i].IP.String() < responses[j].IP.String()
+	})
+
 	var retVal strings.Builder
 
 	retVal.WriteString(fmt.Sprintf("%s:\n\n", host))
 
 	for response := 0; response < len(responses); response++ {
-		r := responses[response]
-		ip := r.IP
+		var h strings.Builder
 
-		hostname, err := getHostname(ip, resolver)
+		hostnames, err := getHostnames(responses[response].IP, resolver)
 		if err != nil {
 			return "", err
 		}
 
-		retVal.WriteString(fmt.Sprintf("  %v:\n    Provider: %v (%v)\n    Hostname: %v\n    Range: %v\n\n",
-			ip,
-			r.ASN,
-			r.ISPName,
-			strings.TrimRight(hostname, "."),
-			r.Range))
+		switch {
+		case len(hostnames) < 1:
+			h.WriteString("n/a")
+		case len(hostnames) == 1:
+			h.WriteString(strings.TrimRight(hostnames[0], "."))
+		default:
+			for i := 0; i < len(hostnames); i++ {
+				h.WriteString(strings.TrimRight(hostnames[i], ".") + ", ")
+			}
+		}
+
+		retVal.WriteString(fmt.Sprintf("  %v:\n    Provider: %v (%v)\n    Hostname(s): %v\n    Range: %v\n\n",
+			responses[response].IP,
+			responses[response].ASN,
+			responses[response].ISPName,
+			h.String(),
+			responses[response].Range))
 	}
 
 	return retVal.String(), nil
@@ -137,23 +156,28 @@ func parseMX(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 		return "", err
 	}
 
-	var hosts []string
-	var priorities []uint16
-
-	for h := 0; h < len(records); h++ {
-		record := records[h]
-		hosts = append(hosts, record.Host)
-		priorities = append(priorities, record.Pref)
+	if len(records) > 1 {
+		sort.SliceStable(records, func(i, j int) bool {
+			return records[i].Host < records[j].Host
+		})
 	}
 
-	var ips []net.IP
+	hosts := make([]string, len(records))
+	priorities := make([]uint16, len(records))
+	ips := make([]net.IP, len(records))
+
+	for h := 0; h < len(records); h++ {
+		hosts[h] = records[h].Host
+		priorities[h] = records[h].Pref
+	}
+
 	for h := 0; h < len(hosts); h++ {
 		ip, err := getIP(hosts[h], resolver)
 		if err != nil {
 			return "", err
 		}
 
-		ips = append(ips, ip)
+		ips[h] = ip
 	}
 
 	responses, err := ctx.LookupIPs(ips...)
@@ -166,13 +190,12 @@ func parseMX(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 
 	for response := 0; response < len(responses); response++ {
-		r := responses[response]
 		retVal.WriteString(fmt.Sprintf("\n  (%v) %v:\n    IP: %v\n    Provider: %v (%v)\n",
 			priorities[response],
 			strings.TrimRight(hosts[response], "."),
-			r.IP,
-			r.ASN,
-			r.ISPName))
+			responses[response].IP,
+			responses[response].ASN,
+			responses[response].ISPName))
 	}
 
 	return retVal.String(), nil
@@ -235,6 +258,10 @@ func parseNS(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 	if len(records) == 0 || err != nil {
 		return "", err
 	}
+
+	sort.SliceStable(records, func(i, j int) bool {
+		return records[i].Host < records[j].Host
+	})
 
 	var hosts []string
 
