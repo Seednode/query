@@ -61,10 +61,15 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			_, err = w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
-				w.WriteHeader(http.StatusInternalServerError)
+			return
+		case count < 1:
+			w.WriteHeader(http.StatusBadRequest)
 
-				return
+			_, err = w.Write([]byte("Cannot roll zero dice"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
 
 			return
@@ -74,10 +79,15 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			_, err = w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
 
-				w.WriteHeader(http.StatusInternalServerError)
+			return
+		case die < 1:
+			w.WriteHeader(http.StatusBadRequest)
 
-				return
+			_, err = w.Write([]byte("Dice cannot have zero sides"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
 
 			return
@@ -104,7 +114,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			v.Add(v, big.NewInt(1))
 
 			if wantsVerbose {
-				written, err := w.Write([]byte(fmt.Sprintf("%0*d | Rolled d%d, got %d\n", padTo, i+1, die, v)))
+				written, err := w.Write([]byte(fmt.Sprintf("%*d | d%d -> %d\n", padTo, i+1, die, v)))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
@@ -128,8 +138,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			_, err = w.Write([]byte("An error occurred while calculating sum of all rolls\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-				w.WriteHeader(http.StatusInternalServerError)
 			}
 
 			return
@@ -140,8 +148,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-				w.WriteHeader(http.StatusInternalServerError)
-
 				return
 			}
 		}
@@ -149,8 +155,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		_, err = w.Write([]byte(result + "\n"))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-			w.WriteHeader(http.StatusInternalServerError)
 
 			return
 		}
