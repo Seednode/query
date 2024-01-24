@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.5.3"
+	ReleaseVersion string = "1.6.0"
 )
 
 var (
@@ -25,7 +25,6 @@ var (
 	ouiFile        string
 	dns            bool
 	dnsResolver    string
-	draw           bool
 	hashing        bool
 	httpStatus     bool
 	ip             bool
@@ -42,7 +41,6 @@ var (
 	requiredArgs = []string{
 		"all",
 		"dns",
-		"draw",
 		"hash",
 		"http-status",
 		"ip",
@@ -90,7 +88,6 @@ func init() {
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().BoolVar(&dns, "dns", false, "enable DNS lookup functionality")
 	rootCmd.Flags().StringVar(&dnsResolver, "dns-resolver", "", "custom DNS server IP and port to query (e.g. 8.8.8.8:53)")
-	rootCmd.Flags().BoolVar(&draw, "draw", false, "enable drawing functionality")
 	rootCmd.Flags().BoolVar(&exitOnError, "exit-on-error", false, "shut down webserver on error, instead of just printing the error")
 	rootCmd.Flags().BoolVar(&hashing, "hash", false, "enable hashing functionality")
 	rootCmd.Flags().BoolVar(&httpStatus, "http-status", false, "enable HTTP response status code functionality")

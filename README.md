@@ -37,14 +37,6 @@ Examples:
 - [/dns/mx/google.com](https://q.seedno.de/dns/mx/google.com)
 - [/dns/ns/google.com](https://q.seedno.de/dns/ns/google.com)
 
-### Draw
-Outputs a rectangle with the specified width and height. The color can be specified as either a hex value (without the leading `#`) or any [HTML color name](https://www.w3schools.com/tags/ref_colornames.asp).
-
-Examples:
-- [/draw/gif/beige/640x480](https://q.seedno.de/draw/gif/beige/640x480)
-- [/draw/jpg/white/320x240](https://q.seedno.de/draw/jpg/white/320x240)
-- [/draw/png/fafafa/1024x768](https://q.seedno.de/draw/png/fafafa/1024x768)
-
 ### Hashing
 Hash the provided string using the requested algorithm.
 
@@ -117,7 +109,6 @@ Flags:
   -b, --bind string            address to bind to (default "0.0.0.0")
       --dns                    enable DNS lookup functionality
       --dns-resolver string    custom DNS server IP and port to query (e.g. 8.8.8.8:53)
-      --draw                   enable drawing functionality
       --exit-on-error          shut down webserver on error, instead of just printing the error
       --hash                   enable hashing functionality
   -h, --help                   help for query

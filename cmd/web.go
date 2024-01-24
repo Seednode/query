@@ -113,10 +113,6 @@ func servePage(args []string) error {
 		registerDNS(mux, &usage, errorChannel)
 	}
 
-	if draw || all {
-		registerDraw(mux, &usage, errorChannel)
-	}
-
 	if hashing || all {
 		registerHash(mux, &usage, errorChannel)
 	}
