@@ -37,7 +37,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to encode string.\n"))
+				_, err := w.Write([]byte("Failed to encode string\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -49,7 +49,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 		default:
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("No string provided to encode.\n"))
+			_, err := w.Write([]byte("No string provided to encode\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -63,7 +63,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err := w.Write([]byte("Failed to encode string.\n"))
+			_, err := w.Write([]byte("Failed to encode string\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -85,7 +85,7 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to encode string.\n"))
+				_, err := w.Write([]byte("Failed to encode string\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}

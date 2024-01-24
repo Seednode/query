@@ -75,7 +75,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		case len(requested) != 6:
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Color codes must be six hex characters.\n"))
+			_, err := w.Write([]byte("Color codes must be six hex characters\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -93,7 +93,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		if colorToUse == emptyColor {
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Failed to parse color.\n"))
+			_, err := w.Write([]byte("Failed to parse color\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -103,13 +103,24 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 		dimensions := strings.SplitN(p.ByName("dimensions"), "x", 2)
 
+		if len(dimensions) != 2 {
+			w.WriteHeader(http.StatusBadRequest)
+
+			_, err := w.Write([]byte("You must provide both a width and a height (e.g. 640x480)\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
+			return
+		}
+
 		width, err := strconv.Atoi(dimensions[0])
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Failed to parse width.\n"))
+			_, err := w.Write([]byte("Failed to parse width\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -123,7 +134,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Failed to parse height.\n"))
+			_, err := w.Write([]byte("Failed to parse height\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -135,7 +146,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		case width > maxImageWidth:
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte(fmt.Sprintf("Image width must be no greater than %d", maxImageWidth)))
+			_, err := w.Write([]byte(fmt.Sprintf("Width must be no greater than %d", maxImageWidth)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -144,7 +155,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		case height > maxImageHeight:
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte(fmt.Sprintf("Image height must be no greater than %d", maxImageHeight)))
+			_, err := w.Write([]byte(fmt.Sprintf("Height must be no greater than %d", maxImageHeight)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -171,7 +182,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to encode GIF.\n"))
+				_, err := w.Write([]byte("Failed to encode GIF\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -187,7 +198,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to encode JPEG.\n"))
+				_, err := w.Write([]byte("Failed to encode JPEG\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -203,7 +214,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to encode PNG.\n"))
+				_, err := w.Write([]byte("Failed to encode PNG\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -215,7 +226,7 @@ func drawImage(format string, errorChannel chan<- Error) httprouter.Handle {
 		default:
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Invalid image format requested.\n"))
+			_, err := w.Write([]byte("Invalid image format requested\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}

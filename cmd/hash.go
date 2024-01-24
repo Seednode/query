@@ -41,7 +41,7 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusInternalServerError)
 
-				_, err := w.Write([]byte("Failed to hash string.\n"))
+				_, err := w.Write([]byte("Failed to hash string\n"))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -76,7 +76,7 @@ func serveHash(algorithm string, errorChannel chan<- Error) httprouter.Handle {
 
 			w.WriteHeader(http.StatusBadRequest)
 
-			_, err := w.Write([]byte("Invalid hash algorithm requested.\n"))
+			_, err := w.Write([]byte("Invalid hash algorithm requested\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}

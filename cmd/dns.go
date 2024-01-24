@@ -110,7 +110,7 @@ func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -126,7 +126,7 @@ func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -213,7 +213,7 @@ func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -229,7 +229,7 @@ func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -315,7 +315,7 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}
@@ -331,7 +331,7 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 
 			w.WriteHeader(http.StatusInternalServerError)
 
-			_, err = w.Write([]byte("Lookup failed.\n"))
+			_, err = w.Write([]byte("Lookup failed\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 			}

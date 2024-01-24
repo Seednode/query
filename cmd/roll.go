@@ -125,7 +125,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "serveDiceRoll()"}
 
-			_, err = w.Write([]byte("An error occurred while calculating sum of all rolls.\n"))
+			_, err = w.Write([]byte("An error occurred while calculating sum of all rolls\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
