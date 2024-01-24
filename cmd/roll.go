@@ -153,7 +153,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			}
 		}
 
-		_, err = w.Write([]byte(result + "\n"))
+		_, err = w.Write([]byte(fmt.Sprintf("%*s\n", length-8, result)))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
