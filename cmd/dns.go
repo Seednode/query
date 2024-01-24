@@ -91,7 +91,7 @@ func parseHost(host, protocol string, ctx *ipisp.BulkClient, resolver *net.Resol
 			responses[response].IP,
 			responses[response].ASN,
 			responses[response].ISPName,
-			h.String(),
+			strings.TrimRight(h.String(), ","),
 			responses[response].Range))
 	}
 
