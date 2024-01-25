@@ -40,4 +40,4 @@ EXPOSE 8080
 
 # run application
 ENTRYPOINT ["/query"]
-CMD ["-r","/data"]
+CMD ["--all","--verbose"]
