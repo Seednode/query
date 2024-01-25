@@ -147,13 +147,13 @@ func parseOUIs(errorChannel chan<- Error) *sync.Map {
 		}
 	}()
 
-	scanner := bufio.NewScanner(f)
-	buffer := make([]byte, 0, 64*1024)
-	scanner.Buffer(buffer, 1024*1024)
-	scanner.Split(bufio.ScanLines)
+	s := bufio.NewScanner(f)
+	b := make([]byte, 0, 64*1024)
+	s.Buffer(b, 1024*1024)
+	s.Split(bufio.ScanLines)
 
-	for scanner.Scan() {
-		line := scanner.Text()
+	for s.Scan() {
+		line := s.Text()
 
 		oui, vendor := format(line, whiteSpace)
 
