@@ -122,18 +122,18 @@ func parseOUIs(errorChannel chan<- Error) *sync.Map {
 
 	retVal := sync.Map{}
 
-	var readFile fs.File
+	var f fs.File
 	var err error
 
 	if ouiFile == "" {
-		readFile, err = ouis.Open("oui.txt")
+		f, err = ouis.Open("oui.txt")
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
 
 			return &retVal
 		}
 	} else {
-		readFile, err = os.Open(ouiFile)
+		f, err = os.Open(ouiFile)
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
 
@@ -141,13 +141,13 @@ func parseOUIs(errorChannel chan<- Error) *sync.Map {
 		}
 	}
 	defer func() {
-		err = readFile.Close()
+		err = f.Close()
 		if err != nil {
 			errorChannel <- Error{Message: err, Path: "parseOUIs()"}
 		}
 	}()
 
-	scanner := bufio.NewScanner(readFile)
+	scanner := bufio.NewScanner(f)
 	buffer := make([]byte, 0, 64*1024)
 	scanner.Buffer(buffer, 1024*1024)
 	scanner.Split(bufio.ScanLines)
@@ -156,6 +156,10 @@ func parseOUIs(errorChannel chan<- Error) *sync.Map {
 		line := scanner.Text()
 
 		oui, vendor := format(line, whiteSpace)
+
+		if len(oui) < 1 || vendor == "" {
+			continue
+		}
 
 		for i := 0; i < len(oui); i++ {
 			retVal.Store(oui[i], vendor)
