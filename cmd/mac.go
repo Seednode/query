@@ -199,18 +199,18 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 			val = fmt.Sprintf("No OUI found for MAC %q", mac)
 		}
 
-		_, err := w.Write([]byte(val + "\n"))
-		if err != nil {
-			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-			return
-		}
-
 		if verbose {
 			fmt.Printf("%s | %s requested vendor info for MAC %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				mac)
+		}
+
+		_, err := w.Write([]byte(val + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
 		}
 	}
 }

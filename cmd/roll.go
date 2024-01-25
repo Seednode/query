@@ -153,13 +153,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			}
 		}
 
-		_, err = w.Write([]byte(fmt.Sprintf("%*s\n", length-8, result)))
-		if err != nil {
-			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-			return
-		}
-
 		if verbose {
 			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",
 				startTime.Format(timeFormats["RFC3339"]),
@@ -167,6 +160,13 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 				count,
 				die,
 				total)
+		}
+
+		_, err = w.Write([]byte(fmt.Sprintf("%*s\n", length-8, result)))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
 		}
 	}
 }

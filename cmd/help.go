@@ -41,16 +41,16 @@ func serveUsage(module string, usage *sync.Map, errorChannel chan<- Error) httpr
 			output.WriteString(fmt.Sprintf("- %s\n", line))
 		}
 
-		_, err := w.Write([]byte(output.String()))
-		if err != nil {
-			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-		}
-
 		if verbose {
 			fmt.Printf("%s | %s requested usage info for %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				module)
+		}
+
+		_, err := w.Write([]byte(output.String()))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 		}
 	}
 }

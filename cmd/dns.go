@@ -339,18 +339,18 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 			return
 		}
 
-		_, err = w.Write([]byte(parsedHost + "\n"))
-		if err != nil {
-			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-			return
-		}
-
 		if verbose {
 			fmt.Printf("%s | %s requested NS records for %q\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
 				host)
+		}
+
+		_, err = w.Write([]byte(parsedHost + "\n"))
+		if err != nil {
+			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+
+			return
 		}
 	}
 }

@@ -22,15 +22,15 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
-		_, err := w.Write(data)
-		if err != nil {
-			errorChannel <- Error{Message: err, Path: "serveVersion()"}
-		}
-
 		if verbose {
 			fmt.Printf("%s | %s requested version info\n",
 				time.Now().Format(timeFormats["RFC3339"]),
 				realIP(r, true))
+		}
+
+		_, err := w.Write(data)
+		if err != nil {
+			errorChannel <- Error{Message: err, Path: "serveVersion()"}
 		}
 	}
 }

@@ -49,17 +49,17 @@ func serveIP(errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
+		if verbose {
+			fmt.Printf("%s | %s requested their IP\n",
+				startTime.Format(timeFormats["RFC3339"]),
+				realIP(r, true))
+		}
+
 		_, err := w.Write([]byte(realIP(r, false) + "\n"))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
 			return
-		}
-
-		if verbose {
-			fmt.Printf("%s | %s requested their IP\n",
-				startTime.Format(timeFormats["RFC3339"]),
-				realIP(r, true))
 		}
 	}
 }
