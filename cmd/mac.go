@@ -175,7 +175,7 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 

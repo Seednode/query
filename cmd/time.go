@@ -72,7 +72,7 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 			adjustedStartTime = adjustedStartTime.In(tz)
 		}
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		_, err = w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
 		if err != nil {

@@ -72,6 +72,8 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if r.URL.Query().Has("string") {
+			w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
 			_, err = w.Write([]byte("\n" + qrCode.ToString(false) + "\n"))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}

@@ -102,7 +102,7 @@ func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		ctx, err := getBulkClient()
 		if err != nil {
@@ -205,7 +205,7 @@ func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		ctx, err := getBulkClient()
 		if err != nil {
@@ -307,7 +307,7 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		ctx, err := getBulkClient()
 		if err != nil {

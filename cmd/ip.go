@@ -47,7 +47,7 @@ func serveIP(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		_, err := w.Write([]byte(realIP(r, false) + "\n"))
 		if err != nil {

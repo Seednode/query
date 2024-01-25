@@ -18,6 +18,8 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		data := []byte(fmt.Sprintf("query v%s\n", ReleaseVersion))
 
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
 		_, err := w.Write(data)

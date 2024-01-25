@@ -29,7 +29,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		wantsVerbose := r.URL.Query().Has("verbose")
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		c, d, _ := strings.Cut(strings.TrimPrefix(p.ByName("roll"), "/"), "d")
 		if c == "" {
