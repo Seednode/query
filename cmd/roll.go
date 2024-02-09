@@ -21,6 +21,7 @@ import (
 )
 
 var (
+	// re regexp.Regexp = regexp.MustCompile('\d+') TODO
 	ErrInvalidMaxDiceCount = errors.New("max dice roll count must be a positive integer")
 	ErrInvalidMaxDiceSides = errors.New("max dice side count must be a positive integer")
 )
