@@ -16,6 +16,8 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 var (
@@ -29,12 +31,31 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		wantsVerbose := r.URL.Query().Has("verbose")
 
+		foo := r.Header.Get("Accept-Language")
+		bar := strings.Split(foo, ",")
+
+		lang := language.Tag{}
+
+		for _, possibility := range bar {
+			i, _ := language.Parse(possibility)
+
+			if (i != language.Tag{}) {
+				lang = i
+				break
+			}
+		}
+
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		c, d, _ := strings.Cut(strings.TrimPrefix(p.ByName("roll"), "/"), "d")
 		if c == "" {
 			c = "1"
 		}
+
+		c = strings.Replace(c, ",", "", -1)
+		d = strings.Replace(d, ",", "", -1)
+
+		pr := message.NewPrinter(lang)
 
 		count, err := strconv.ParseInt(c, 10, 64)
 		if err != nil {
@@ -115,7 +136,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			v.Add(v, big.NewInt(1))
 
 			if wantsVerbose {
-				written, err := w.Write([]byte(fmt.Sprintf("%*d | d%d -> %*d\n", padCountTo, i+1, die, padValueTo, v)))
+				written, err := w.Write([]byte(fmt.Sprintf("%*d | d%d -> %*s\n", padCountTo, i+1, die, padValueTo, v)))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
@@ -162,7 +183,9 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 				total)
 		}
 
-		_, err = w.Write([]byte(fmt.Sprintf("%*s\n", length-8, result)))
+		result2, _ := strconv.Atoi(result)
+
+		_, err = w.Write([]byte(pr.Sprintf("%*d\n", length-8, result2)))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 

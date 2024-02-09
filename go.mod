@@ -7,6 +7,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/cobra v1.8.0
+	golang.org/x/text v0.14.0
 )
 
 require (
