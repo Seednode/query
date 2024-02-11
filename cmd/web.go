@@ -91,11 +91,12 @@ func servePage(args []string) error {
 				err.Host = "local"
 			}
 
-			fmt.Printf("%s | Error: `%v` (%s => %s)\n",
+			// fmt.Printf("%s | Error: `%v` (%s => %s)\n",
+			fmt.Printf("%s | %s => %s (error: `%v`)\n",
 				time.Now().Format(timeFormats["RFC3339"]),
-				err.Message,
 				err.Host,
-				err.Path)
+				err.Path,
+				err.Message)
 
 			if exitOnError {
 				fmt.Printf("%s | Error: Shutting down...\n", time.Now().Format(timeFormats["RFC3339"]))

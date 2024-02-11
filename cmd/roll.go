@@ -78,6 +78,14 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		switch {
 		case count > int64(maxDiceRolls):
+			if verbose {
+				fmt.Printf("%s | %s requested %dd%d, too many dice\n",
+					startTime.Format(timeFormats["RFC3339"]),
+					realIP(r, true),
+					count,
+					die)
+			}
+
 			w.WriteHeader(http.StatusBadRequest)
 
 			_, err = w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
@@ -87,6 +95,14 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 			return
 		case count < 1:
+			if verbose {
+				fmt.Printf("%s | %s requested %dd%d, too few dice\n",
+					startTime.Format(timeFormats["RFC3339"]),
+					realIP(r, true),
+					count,
+					die)
+			}
+
 			w.WriteHeader(http.StatusBadRequest)
 
 			_, err = w.Write([]byte("Cannot roll zero dice"))
@@ -96,6 +112,14 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 			return
 		case die > int64(maxDiceSides):
+			if verbose {
+				fmt.Printf("%s | %s requested %dd%d, too many sides\n",
+					startTime.Format(timeFormats["RFC3339"]),
+					realIP(r, true),
+					count,
+					die)
+			}
+
 			w.WriteHeader(http.StatusBadRequest)
 
 			_, err = w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
@@ -105,6 +129,14 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 			return
 		case die < 1:
+			if verbose {
+				fmt.Printf("%s | %s requested %dd%d, too few sides\n",
+					startTime.Format(timeFormats["RFC3339"]),
+					realIP(r, true),
+					count,
+					die)
+			}
+
 			w.WriteHeader(http.StatusBadRequest)
 
 			_, err = w.Write([]byte("Dice cannot have zero sides"))
@@ -140,8 +172,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 				written, err := w.Write([]byte(fmt.Sprintf("%*d | d%d -> %*s\n", padCountTo, i+1, die, padValueTo, v)))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-
-					w.WriteHeader(http.StatusInternalServerError)
 
 					return
 				}
