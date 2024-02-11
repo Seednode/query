@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -21,7 +22,7 @@ import (
 )
 
 var (
-	// re regexp.Regexp = regexp.MustCompile('\d+') TODO
+	number                 = regexp.MustCompile(`\d+`)
 	ErrInvalidMaxDiceCount = errors.New("max dice roll count must be a positive integer")
 	ErrInvalidMaxDiceSides = errors.New("max dice side count must be a positive integer")
 )
@@ -32,13 +33,12 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		wantsVerbose := r.URL.Query().Has("verbose")
 
-		foo := r.Header.Get("Accept-Language")
-		bar := strings.Split(foo, ",")
+		langHeaders := strings.Split(r.Header.Get("Accept-Language"), ",")
 
 		lang := language.Tag{}
 
-		for _, possibility := range bar {
-			i, _ := language.Parse(possibility)
+		for _, value := range langHeaders {
+			i, _ := language.Parse(value)
 
 			if (i != language.Tag{}) {
 				lang = i
@@ -53,8 +53,8 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			c = "1"
 		}
 
-		c = strings.Replace(c, ",", "", -1)
-		d = strings.Replace(d, ",", "", -1)
+		c = strings.Join(number.FindAllString(c, -1), "")
+		d = strings.Join(number.FindAllString(d, -1), "")
 
 		pr := message.NewPrinter(lang)
 
