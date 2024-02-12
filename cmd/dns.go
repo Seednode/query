@@ -142,10 +142,10 @@ func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested host records for %q\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				host)
+				r.RequestURI)
 		}
 	}
 }
@@ -245,10 +245,10 @@ func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested MX records for %q\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				host)
+				r.RequestURI)
 		}
 	}
 }
@@ -340,10 +340,10 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested NS records for %q\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				host)
+				r.RequestURI)
 		}
 
 		_, err = w.Write([]byte(parsedHost + "\n"))

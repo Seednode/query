@@ -200,10 +200,10 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested vendor info for MAC %q\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				mac)
+				r.RequestURI)
 		}
 
 		_, err := w.Write([]byte(val + "\n"))

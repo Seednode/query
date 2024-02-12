@@ -23,9 +23,10 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
 		if verbose {
-			fmt.Printf("%s | %s requested version info\n",
+			fmt.Printf("%s | %s => %s\n",
 				time.Now().Format(timeFormats["RFC3339"]),
-				realIP(r, true))
+				realIP(r, true),
+				r.RequestURI)
 		}
 
 		_, err := w.Write(data)

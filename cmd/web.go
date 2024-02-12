@@ -18,10 +18,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const (
-	redirectStatusCode int = http.StatusSeeOther
-)
-
 type Error struct {
 	Message error
 	Host    string
@@ -29,14 +25,11 @@ type Error struct {
 }
 
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
-	startTime := time.Now()
-
 	if verbose {
-		fmt.Printf("%s | Invalid request for %s from %s\n",
-			startTime.Format(timeFormats["RFC3339"]),
-			r.URL.Path,
-			r.RemoteAddr,
-		)
+		fmt.Printf("%s | %s => %s (Invalid request)\n",
+			time.Now().Format(timeFormats["RFC3339"]),
+			realIP(r, true),
+			r.RequestURI)
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
@@ -91,8 +84,7 @@ func servePage(args []string) error {
 				err.Host = "local"
 			}
 
-			// fmt.Printf("%s | Error: `%v` (%s => %s)\n",
-			fmt.Printf("%s | %s => %s (error: `%v`)\n",
+			fmt.Printf("%s | %s => %s (Error: `%v`)\n",
 				time.Now().Format(timeFormats["RFC3339"]),
 				err.Host,
 				err.Path,

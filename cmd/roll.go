@@ -79,11 +79,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		switch {
 		case count > int64(maxDiceRolls):
 			if verbose {
-				fmt.Printf("%s | %s requested %dd%d, too many dice\n",
+				fmt.Printf("%s | %s => %s (too many dice)\n",
 					startTime.Format(timeFormats["RFC3339"]),
 					realIP(r, true),
-					count,
-					die)
+					r.URL.Path)
 			}
 
 			w.WriteHeader(http.StatusBadRequest)
@@ -96,11 +95,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			return
 		case count < 1:
 			if verbose {
-				fmt.Printf("%s | %s requested %dd%d, too few dice\n",
+				fmt.Printf("%s | %s => %s (too few dice)\n",
 					startTime.Format(timeFormats["RFC3339"]),
 					realIP(r, true),
-					count,
-					die)
+					r.URL.Path)
 			}
 
 			w.WriteHeader(http.StatusBadRequest)
@@ -113,11 +111,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			return
 		case die > int64(maxDiceSides):
 			if verbose {
-				fmt.Printf("%s | %s requested %dd%d, too many sides\n",
+				fmt.Printf("%s | %s => %s (too many sides)\n",
 					startTime.Format(timeFormats["RFC3339"]),
 					realIP(r, true),
-					count,
-					die)
+					r.URL.Path)
 			}
 
 			w.WriteHeader(http.StatusBadRequest)
@@ -130,11 +127,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			return
 		case die < 1:
 			if verbose {
-				fmt.Printf("%s | %s requested %dd%d, too few sides\n",
+				fmt.Printf("%s | %s => %s (too few sides)\n",
 					startTime.Format(timeFormats["RFC3339"]),
 					realIP(r, true),
-					count,
-					die)
+					r.URL.Path)
 			}
 
 			w.WriteHeader(http.StatusBadRequest)
@@ -206,12 +202,10 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s rolled %dd%d, resulting in %d\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				count,
-				die,
-				total)
+				r.RequestURI)
 		}
 
 		result2, _ := strconv.Atoi(result)

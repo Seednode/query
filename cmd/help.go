@@ -42,10 +42,10 @@ func serveUsage(module string, usage *sync.Map, errorChannel chan<- Error) httpr
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested usage info for %s\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				module)
+				r.RequestURI)
 		}
 
 		_, err := w.Write([]byte(output.String()))
@@ -89,9 +89,10 @@ func serveHelp(usage *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested usage info\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
-				realIP(r, true))
+				realIP(r, true),
+				r.RequestURI)
 		}
 	}
 }

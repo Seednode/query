@@ -29,10 +29,10 @@ func serveHTTPStatusCode(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if verbose {
-			fmt.Printf("%s | %s requested status code %q\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				trimmed)
+				r.RequestURI)
 		}
 
 		if text == "" {

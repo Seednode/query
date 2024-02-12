@@ -67,7 +67,14 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
-			http.Redirect(w, r, "/time/", redirectStatusCode)
+			w.WriteHeader(http.StatusBadRequest)
+
+			_, err = w.Write([]byte("Invalid timezone requested\n"))
+			if err != nil {
+				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
+			}
+
+			return
 		} else {
 			adjustedStartTime = adjustedStartTime.In(tz)
 		}
@@ -75,11 +82,10 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		if verbose {
-			fmt.Printf("%s | %s requested the current time for %q in %s format\n",
+			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
 				realIP(r, true),
-				location,
-				requestedFormat)
+				r.RequestURI)
 		}
 
 		_, err = w.Write([]byte(adjustedStartTime.Format(format) + "\n"))
