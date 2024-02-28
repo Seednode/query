@@ -180,18 +180,6 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			total += v.Int64()
 		}
 
-		result := strconv.FormatInt(total, 10)
-		if err != nil {
-			errorChannel <- Error{Message: err, Path: "serveDiceRoll()"}
-
-			_, err = w.Write([]byte("An error occurred while calculating sum of all rolls\n"))
-			if err != nil {
-				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
-			}
-
-			return
-		}
-
 		if wantsVerbose {
 			_, err = w.Write([]byte(fmt.Sprintf("%s\nTotal: ", strings.Repeat("-", length-1))))
 			if err != nil {
@@ -208,9 +196,9 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 				r.RequestURI)
 		}
 
-		result2, _ := strconv.Atoi(result)
+		result, _ := strconv.Atoi(strconv.FormatInt(total, 10))
 
-		_, err = w.Write([]byte(pr.Sprintf("%*d\n", length-8, result2)))
+		_, err = w.Write([]byte(pr.Sprintf("%*d\n", length-8, result)))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 

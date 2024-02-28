@@ -42,7 +42,7 @@ func serverErrorHandler() func(http.ResponseWriter, *http.Request, interface{}) 
 	return serverError
 }
 
-func servePage(args []string) error {
+func servePage() error {
 	timeZone := os.Getenv("TZ")
 	if timeZone != "" {
 		var err error
@@ -123,7 +123,7 @@ func servePage(args []string) error {
 	}
 
 	if profile {
-		registerProfile(mux, &usage, errorChannel)
+		registerProfile(mux, &usage)
 	}
 
 	if qr || all {

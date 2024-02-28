@@ -11,7 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func registerProfile(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
+func registerProfile(mux *httprouter.Router, usage *sync.Map) {
 	const module = "profile"
 
 	mux.Handler("GET", "/pprof/allocs", pprof.Handler("allocs"))
