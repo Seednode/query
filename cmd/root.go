@@ -11,32 +11,30 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.11.1"
+	ReleaseVersion string = "1.12.0"
 )
 
 var (
-	all            bool
-	bind           string
-	exitOnError    bool
-	maxDiceRolls   int
-	maxDiceSides   int
-	maxImageHeight int
-	maxImageWidth  int
-	ouiFile        string
-	dns            bool
-	dnsResolver    string
-	hashing        bool
-	httpStatus     bool
-	ip             bool
-	mac            bool
-	qr             bool
-	qrSize         int
-	roll           bool
-	timezones      bool
-	port           uint16
-	profile        bool
-	verbose        bool
-	version        bool
+	all          bool
+	bind         string
+	exitOnError  bool
+	maxDiceRolls int
+	maxDiceSides int
+	ouiFile      string
+	dns          bool
+	dnsResolver  string
+	hashing      bool
+	httpStatus   bool
+	ip           bool
+	mac          bool
+	qr           bool
+	qrSize       int
+	roll         bool
+	timezones    bool
+	port         uint16
+	profile      bool
+	verbose      bool
+	version      bool
 
 	requiredArgs = []string{
 		"all",
@@ -92,8 +90,6 @@ func init() {
 	rootCmd.Flags().BoolVar(&mac, "mac", false, "enable MAC lookup functionality")
 	rootCmd.Flags().IntVar(&maxDiceRolls, "max-dice-rolls", 1024, "maximum number of dice per roll")
 	rootCmd.Flags().IntVar(&maxDiceSides, "max-dice-sides", 1024, "maximum number of sides per die")
-	rootCmd.Flags().IntVar(&maxImageHeight, "max-image-height", 1024, "maximum height of generated images")
-	rootCmd.Flags().IntVar(&maxImageWidth, "max-image-width", 1024, "maximum width of generated images")
 	rootCmd.Flags().StringVar(&ouiFile, "oui-file", "", "path to Wireshark manufacturer database file")
 	rootCmd.Flags().Uint16VarP(&port, "port", "p", 8080, "port to listen on")
 	rootCmd.Flags().BoolVar(&profile, "profile", false, "register net/http/pprof handlers")
