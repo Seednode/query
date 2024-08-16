@@ -36,597 +36,601 @@ var timeFormats = map[string]string{
 	"UnixDate":    `Mon Jan _2 15:04:05 MST 2006`,
 }
 
-var timeAbbrevations = map[string][]*time.Location{
-	"ACDT": {
+func getTimeAbbrevations() *sync.Map {
+	retVal := sync.Map{}
+
+	retVal.Store("ACDT", []*time.Location{
 		time.FixedZone("Australian Central Daylight Saving Time", 10.5*60*60),
-	},
-	"ACST": {
+	})
+	retVal.Store("ACST", []*time.Location{
 		time.FixedZone("Australian Central Standard Time", 9.5*60*60),
-	},
-	"ACT": {
+	})
+	retVal.Store("ACT", []*time.Location{
 		time.FixedZone("Acre Time", -5*60*60),
 		time.FixedZone("ASEAN Common Time", 8*60*60),
-	},
-	"ACWST": {
+	})
+	retVal.Store("ACWST", []*time.Location{
 		time.FixedZone("Australian Central Western Standard Time", 8.75*60*60),
-	},
-	"ADT": {
+	})
+	retVal.Store("ADT", []*time.Location{
 		time.FixedZone("Atlantic Daylight Time", -3*60*60),
-	},
-	"AEDT": {
+	})
+	retVal.Store("AEDT", []*time.Location{
 		time.FixedZone("Australian Eastern Daylight Saving Time", 11*60*60),
-	},
-	"AEST": {
+	})
+	retVal.Store("AEST", []*time.Location{
 		time.FixedZone("Australian Eastern Standard Time", 10*60*60),
-	},
-	"AFT": {
+	})
+	retVal.Store("AFT", []*time.Location{
 		time.FixedZone("Afghanistan Time", 4.5*60*60),
-	},
-	"AKDT": {
+	})
+	retVal.Store("AKDT", []*time.Location{
 		time.FixedZone("Alaska Daylight Time", -8*60*60),
-	},
-	"AKST": {
+	})
+	retVal.Store("AKST", []*time.Location{
 		time.FixedZone("Alaska Standard Time", -9*60*60),
-	},
-	"ALMT": {
+	})
+	retVal.Store("ALMT", []*time.Location{
 		time.FixedZone("Alma-Ata Time", 6*60*60),
-	},
-	"AMST": {
+	})
+	retVal.Store("AMST", []*time.Location{
 		time.FixedZone("Amazon Summer Time", -3*60*60),
-	},
-	"AMT": {
+	})
+	retVal.Store("AMT", []*time.Location{
 		time.FixedZone("Amazon Time", -4*60*60),
 		time.FixedZone("Armenia Time", 4*60*60),
-	},
-	"ANAT": {
+	})
+	retVal.Store("ANAT", []*time.Location{
 		time.FixedZone("Anadyr Time", 12*60*60),
-	},
-	"AQTT": {
+	})
+	retVal.Store("AQTT", []*time.Location{
 		time.FixedZone("Aqtobe Time", 5*60*60),
-	},
-	"ART": {
+	})
+	retVal.Store("ART", []*time.Location{
 		time.FixedZone("Argentina Time", -3*60*60),
-	},
-	"AST": {
+	})
+	retVal.Store("AST", []*time.Location{
 		time.FixedZone("Arabia Standard Time", 3*60*60),
 		time.FixedZone("Atlantic Standard Time", -4*60*60),
-	},
-	"AWST": {
+	})
+	retVal.Store("AWST", []*time.Location{
 		time.FixedZone("Australian Western Standard Time", 8*60*60),
-	},
-	"AZOST": {
-		time.FixedZone("Azores Summer Time", 0*60*60),
-	},
-	"AZOT": {
+	})
+	retVal.Store("AZOST", []*time.Location{
+		time.FixedZone("Azores Summer Time", 0),
+	})
+	retVal.Store("AZOT", []*time.Location{
 		time.FixedZone("Azores Standard Time", -1*60*60),
-	},
-	"AZT": {
+	})
+	retVal.Store("AZT", []*time.Location{
 		time.FixedZone("Azerbaijan Time", 4*60*60),
-	},
-	"BNT": {
+	})
+	retVal.Store("BNT", []*time.Location{
 		time.FixedZone("Brunei Time", 8*60*60),
-	},
-	"BIOT": {
+	})
+	retVal.Store("BIOT", []*time.Location{
 		time.FixedZone("British Indian Ocean Time", 6*60*60),
-	},
-	"BIT": {
+	})
+	retVal.Store("BIT", []*time.Location{
 		time.FixedZone("Baker Island Time", -12*60*60),
-	},
-	"BOT": {
+	})
+	retVal.Store("BOT", []*time.Location{
 		time.FixedZone("Bolivia Time", -4*60*60),
-	},
-	"BRST": {
+	})
+	retVal.Store("BRST", []*time.Location{
 		time.FixedZone("Brasília Summer Time", -2*60*60),
-	},
-	"BRT": {
+	})
+	retVal.Store("BRT", []*time.Location{
 		time.FixedZone("Brasília Time", -3*60*60),
-	},
-	"BST": {
+	})
+	retVal.Store("BST", []*time.Location{
 		time.FixedZone("Bangladesh Standard Time", 6*60*60),
 		time.FixedZone("Bougainville Standard Time", 11*60*60),
 		time.FixedZone("British Summer Time", 1*60*60),
-	},
-	"BTT": {
+	})
+	retVal.Store("BTT", []*time.Location{
 		time.FixedZone("Bhutan Time", 6*60*60),
-	},
-	"CAT": {
+	})
+	retVal.Store("CAT", []*time.Location{
 		time.FixedZone("Central Africa Time", 2*60*60),
-	},
-	"CCT": {
+	})
+	retVal.Store("CCT", []*time.Location{
 		time.FixedZone("Cocos Islands Time", 6.5*60*60),
-	},
-	"CDT": {
+	})
+	retVal.Store("CDT", []*time.Location{
 		time.FixedZone("Central Daylight Time", -5*60*60),
 		time.FixedZone("Cuba Daylight Time", -4*60*60),
-	},
-	"CEST": {
+	})
+	retVal.Store("CEST", []*time.Location{
 		time.FixedZone("Central European Summer Time", 2*60*60),
-	},
-	"CET": {
+	})
+	retVal.Store("CET", []*time.Location{
 		time.FixedZone("Central European Time", 1*60*60),
-	},
-	"CHADT": {
+	})
+	retVal.Store("CHADT", []*time.Location{
 		time.FixedZone("Chatham Daylight Time", 13.75*60*60),
-	},
-	"CHAST": {
+	})
+	retVal.Store("CHAST", []*time.Location{
 		time.FixedZone("Chatham Standard Time", 12.75*60*60),
-	},
-	"CHOT": {
+	})
+	retVal.Store("CHOT", []*time.Location{
 		time.FixedZone("Choibalsan Standard Time", 8*60*60),
-	},
-	"CHOST": {
+	})
+	retVal.Store("CHOST", []*time.Location{
 		time.FixedZone("Choibalsan Summer Time", 9*60*60),
-	},
-	"CHST": {
+	})
+	retVal.Store("CHST", []*time.Location{
 		time.FixedZone("Chamorro Standard Time", 10*60*60),
-	},
-	"CHUT": {
+	})
+	retVal.Store("CHUT", []*time.Location{
 		time.FixedZone("Chuuk Time", 10*60*60),
-	},
-	"CIST": {
+	})
+	retVal.Store("CIST", []*time.Location{
 		time.FixedZone("Clipperton Island Standard Time", -8*60*60),
-	},
-	"CKT": {
+	})
+	retVal.Store("CKT", []*time.Location{
 		time.FixedZone("Cook Island Time", -10*60*60),
-	},
-	"CLST": {
+	})
+	retVal.Store("CLST", []*time.Location{
 		time.FixedZone("Chile Summer Time", -3*60*60),
-	},
-	"CLT": {
+	})
+	retVal.Store("CLT", []*time.Location{
 		time.FixedZone("Chile Standard Time", -4*60*60),
-	},
-	"COST": {
+	})
+	retVal.Store("COST", []*time.Location{
 		time.FixedZone("Colombia Summer Time", -4*60*60),
-	},
-	"COT": {
+	})
+	retVal.Store("COT", []*time.Location{
 		time.FixedZone("Colombia Time", -5*60*60),
-	},
-	"CST": {
+	})
+	retVal.Store("CST", []*time.Location{
 		time.FixedZone("Central Standard Time", -6*60*60),
 		time.FixedZone("China Standard Time", 8*60*60),
 		time.FixedZone("Cuba Standard Time", -5*60*60),
-	},
-	"CVT": {
+	})
+	retVal.Store("CVT", []*time.Location{
 		time.FixedZone("Cape Verde Time", -1*60*60),
-	},
-	"CWST": {
+	})
+	retVal.Store("CWST", []*time.Location{
 		time.FixedZone("Central Western Standard Time", 8.75*60*60),
-	},
-	"CXT": {
+	})
+	retVal.Store("CXT", []*time.Location{
 		time.FixedZone("Christmas Island Time", 7*60*60),
-	},
-	"DAVT": {
+	})
+	retVal.Store("DAVT", []*time.Location{
 		time.FixedZone("Davis Time", 7*60*60),
-	},
-	"DDUT": {
+	})
+	retVal.Store("DDUT", []*time.Location{
 		time.FixedZone("Dumont d'Urville Time", 10*60*60),
-	},
-	"DFT": {
+	})
+	retVal.Store("DFT", []*time.Location{
 		time.FixedZone("AIX-specific equivalent of Central European Time", 1*60*60),
-	},
-	"EASST": {
+	})
+	retVal.Store("EASST", []*time.Location{
 		time.FixedZone("Easter Island Summer Time", -5*60*60),
-	},
-	"EAST": {
+	})
+	retVal.Store("EAST", []*time.Location{
 		time.FixedZone("Easter Island Standard Time", -6*60*60),
-	},
-	"EAT": {
+	})
+	retVal.Store("EAT", []*time.Location{
 		time.FixedZone("East Africa Time", 3*60*60),
-	},
-	"ECT": {
+	})
+	retVal.Store("ECT", []*time.Location{
 		time.FixedZone("Eastern Caribbean Time", -4*60*60),
 		time.FixedZone("Ecuador Time", -5*60*60),
-	},
-	"EDT": {
+	})
+	retVal.Store("EDT", []*time.Location{
 		time.FixedZone("Eastern Daylight Time", -4*60*60),
-	},
-	"EEST": {
+	})
+	retVal.Store("EEST", []*time.Location{
 		time.FixedZone("Eastern European Summer Time", 3*60*60),
-	},
-	"EET": {
+	})
+	retVal.Store("EET", []*time.Location{
 		time.FixedZone("Eastern European Time", 2*60*60),
-	},
-	"EGST": {
-		time.FixedZone("Eastern Greenland Summer Time", 0*60*60),
-	},
-	"EGT": {
+	})
+	retVal.Store("EGST", []*time.Location{
+		time.FixedZone("Eastern Greenland Summer Time", 0),
+	})
+	retVal.Store("EGT", []*time.Location{
 		time.FixedZone("Eastern Greenland Time", -1*60*60),
-	},
-	"EST": {
+	})
+	retVal.Store("EST", []*time.Location{
 		time.FixedZone("Eastern Standard Time", -5*60*60),
-	},
-	"FET": {
+	})
+	retVal.Store("FET", []*time.Location{
 		time.FixedZone("Further-eastern European Time", 3*60*60),
-	},
-	"FJT": {
+	})
+	retVal.Store("FJT", []*time.Location{
 		time.FixedZone("Fiji Time", 12*60*60),
-	},
-	"FKST": {
+	})
+	retVal.Store("FKST", []*time.Location{
 		time.FixedZone("Falkland Islands Summer Time", -3*60*60),
-	},
-	"FKT": {
+	})
+	retVal.Store("FKT", []*time.Location{
 		time.FixedZone("Falkland Islands Time", -4*60*60),
-	},
-	"FNT": {
+	})
+	retVal.Store("FNT", []*time.Location{
 		time.FixedZone("Fernando de Noronha Time", -2*60*60),
-	},
-	"GALT": {
+	})
+	retVal.Store("GALT", []*time.Location{
 		time.FixedZone("Galápagos Time", -6*60*60),
-	},
-	"GAMT": {
+	})
+	retVal.Store("GAMT", []*time.Location{
 		time.FixedZone("Gambier Islands Time", -9*60*60),
-	},
-	"GET": {
+	})
+	retVal.Store("GET", []*time.Location{
 		time.FixedZone("Georgia Standard Time", 4*60*60),
-	},
-	"GFT": {
+	})
+	retVal.Store("GFT", []*time.Location{
 		time.FixedZone("French Guiana Time", -3*60*60),
-	},
-	"GILT": {
+	})
+	retVal.Store("GILT", []*time.Location{
 		time.FixedZone("Gilbert Island Time", 12*60*60),
-	},
-	"GIT": {
+	})
+	retVal.Store("GIT", []*time.Location{
 		time.FixedZone("Gambier Island Time", -9*60*60),
-	},
-	"GMT": {
-		time.FixedZone("Greenwich Mean Time", 0*60*60),
-	},
-	"GST": {
+	})
+	retVal.Store("GMT", []*time.Location{
+		time.FixedZone("Greenwich Mean Time", 0),
+	})
+	retVal.Store("GST", []*time.Location{
 		time.FixedZone("South Georgia and the South Sandwich Islands Time", -2*60*60),
 		time.FixedZone("Gulf Standard Time", 4*60*60),
-	},
-	"GYT": {
+	})
+	retVal.Store("GYT", []*time.Location{
 		time.FixedZone("Guyana Time", -4*60*60),
-	},
-	"HDT": {
+	})
+	retVal.Store("HDT", []*time.Location{
 		time.FixedZone("Hawaii–Aleutian Daylight Time", -9*60*60),
-	},
-	"HAEC": {
+	})
+	retVal.Store("HAEC", []*time.Location{
 		time.FixedZone("Heure Avancée d'Europe Centrale", 2*60*60),
-	},
-	"HST": {
+	})
+	retVal.Store("HST", []*time.Location{
 		time.FixedZone("Hawaii–Aleutian Standard Time", -10*60*60),
-	},
-	"HKT": {
+	})
+	retVal.Store("HKT", []*time.Location{
 		time.FixedZone("Hong Kong Time", 8*60*60),
-	},
-	"HMT": {
+	})
+	retVal.Store("HMT", []*time.Location{
 		time.FixedZone("Heard and McDonald Islands Time", 5*60*60),
-	},
-	"HOVST": {
+	})
+	retVal.Store("HOVST", []*time.Location{
 		time.FixedZone("Hovd Summer Time", 8*60*60),
-	},
-	"HOVT": {
+	})
+	retVal.Store("HOVT", []*time.Location{
 		time.FixedZone("Hovd Time", 7*60*60),
-	},
-	"ICT": {
+	})
+	retVal.Store("ICT", []*time.Location{
 		time.FixedZone("Indochina Time", 7*60*60),
-	},
-	"IDLW": {
+	})
+	retVal.Store("IDLW", []*time.Location{
 		time.FixedZone("International Date Line West", -12*60*60),
-	},
-	"IDT": {
+	})
+	retVal.Store("IDT", []*time.Location{
 		time.FixedZone("Israel Daylight Time", 3*60*60),
-	},
-	"IOT": {
+	})
+	retVal.Store("IOT", []*time.Location{
 		time.FixedZone("Indian Ocean Time", 6*60*60),
-	},
-	"IRDT": {
+	})
+	retVal.Store("IRDT", []*time.Location{
 		time.FixedZone("Iran Daylight Time", 4.5*60*60),
-	},
-	"IRKT": {
+	})
+	retVal.Store("IRKT", []*time.Location{
 		time.FixedZone("Irkutsk Time", 8*60*60),
-	},
-	"IRST": {
+	})
+	retVal.Store("IRST", []*time.Location{
 		time.FixedZone("Iran Standard Time", 3.5*60*60),
-	},
-	"IST": {
+	})
+	retVal.Store("IST", []*time.Location{
 		time.FixedZone("Indian Standard Time", 5.5*60*60),
 		time.FixedZone("Irish Standard Time", 1*60*60),
 		time.FixedZone("Israel Standard Time", 2*60*60),
-	},
-	"JST": {
+	})
+	retVal.Store("JST", []*time.Location{
 		time.FixedZone("Japan Standard Time", 9*60*60),
-	},
-	"KALT": {
+	})
+	retVal.Store("KALT", []*time.Location{
 		time.FixedZone("Kaliningrad Time", 2*60*60),
-	},
-	"KGT": {
+	})
+	retVal.Store("KGT", []*time.Location{
 		time.FixedZone("Kyrgyzstan Time", 6*60*60),
-	},
-	"KOST": {
+	})
+	retVal.Store("KOST", []*time.Location{
 		time.FixedZone("Kosrae Time", 11*60*60),
-	},
-	"KRAT": {
+	})
+	retVal.Store("KRAT", []*time.Location{
 		time.FixedZone("Krasnoyarsk Time", 7*60*60),
-	},
-	"KST": {
+	})
+	retVal.Store("KST", []*time.Location{
 		time.FixedZone("Korea Standard Time", 9*60*60),
-	},
-	"LHST": {
+	})
+	retVal.Store("LHST", []*time.Location{
 		time.FixedZone("Lord Howe Standard Time", 10.5*60*60),
 		time.FixedZone("Lord Howe Summer Time", 11*60*60),
-	},
-	"LINT": {
+	})
+	retVal.Store("LINT", []*time.Location{
 		time.FixedZone("Line Islands Time", 14*60*60),
-	},
-	"MAGT": {
+	})
+	retVal.Store("MAGT", []*time.Location{
 		time.FixedZone("Magadan Time", 12*60*60),
-	},
-	"MART": {
+	})
+	retVal.Store("MART", []*time.Location{
 		time.FixedZone("Marquesas Islands Time", -9.5*60*60),
-	},
-	"MAWT": {
+	})
+	retVal.Store("MAWT", []*time.Location{
 		time.FixedZone("Mawson Station Time", 5*60*60),
-	},
-	"MDT": {
+	})
+	retVal.Store("MDT", []*time.Location{
 		time.FixedZone("Mountain Daylight Time", -6*60*60),
-	},
-	"MET": {
+	})
+	retVal.Store("MET", []*time.Location{
 		time.FixedZone("Middle European Time", 1*60*60),
-	},
-	"MEST": {
+	})
+	retVal.Store("MEST", []*time.Location{
 		time.FixedZone("Middle European Summer Time", 2*60*60),
-	},
-	"MHT": {
+	})
+	retVal.Store("MHT", []*time.Location{
 		time.FixedZone("Marshall Islands Time", 12*60*60),
-	},
-	"MIST": {
+	})
+	retVal.Store("MIST", []*time.Location{
 		time.FixedZone("Macquarie Island Station Time", 11*60*60),
-	},
-	"MIT": {
+	})
+	retVal.Store("MIT", []*time.Location{
 		time.FixedZone("Marquesas Islands Time", -9.5*60*60),
-	},
-	"MMT": {
+	})
+	retVal.Store("MMT", []*time.Location{
 		time.FixedZone("Myanmar Standard Time", 6.5*60*60),
-	},
-	"MSK": {
+	})
+	retVal.Store("MSK", []*time.Location{
 		time.FixedZone("Moscow Time", 3*60*60),
-	},
-	"MST": {
+	})
+	retVal.Store("MST", []*time.Location{
 		time.FixedZone("Malaysia Standard Time", 8*60*60),
 		time.FixedZone("Mountain Standard Time", -7*60*60),
-	},
-	"MUT": {
+	})
+	retVal.Store("MUT", []*time.Location{
 		time.FixedZone("Mauritius Time", 4*60*60),
-	},
-	"MVT": {
+	})
+	retVal.Store("MVT", []*time.Location{
 		time.FixedZone("Maldives Time", 5*60*60),
-	},
-	"MYT": {
+	})
+	retVal.Store("MYT", []*time.Location{
 		time.FixedZone("Malaysia Time", 8*60*60),
-	},
-	"NCT": {
+	})
+	retVal.Store("NCT", []*time.Location{
 		time.FixedZone("New Caledonia Time", 11*60*60),
-	},
-	"NDT": {
+	})
+	retVal.Store("NDT", []*time.Location{
 		time.FixedZone("Newfoundland Daylight Time", -2.5*60*60),
-	},
-	"NFT": {
+	})
+	retVal.Store("NFT", []*time.Location{
 		time.FixedZone("Norfolk Island Time", 11*60*60),
-	},
-	"NOVT": {
+	})
+	retVal.Store("NOVT", []*time.Location{
 		time.FixedZone("Novosibirsk Time", 7*60*60),
-	},
-	"NPT": {
+	})
+	retVal.Store("NPT", []*time.Location{
 		time.FixedZone("Nepal Time", 5.75*60*60),
-	},
-	"NST": {
+	})
+	retVal.Store("NST", []*time.Location{
 		time.FixedZone("Newfoundland Standard Time", -3.5*60*60),
-	},
-	"NT": {
+	})
+	retVal.Store("NT", []*time.Location{
 		time.FixedZone("Newfoundland Time", -3.5*60*60),
-	},
-	"NUT": {
+	})
+	retVal.Store("NUT", []*time.Location{
 		time.FixedZone("Niue Time", -11*60*60),
-	},
-	"NZDT": {
+	})
+	retVal.Store("NZDT", []*time.Location{
 		time.FixedZone("New Zealand Daylight Time", 13*60*60),
-	},
-	"NZST": {
+	})
+	retVal.Store("NZST", []*time.Location{
 		time.FixedZone("New Zealand Standard Time", 12*60*60),
-	},
-	"OMST": {
+	})
+	retVal.Store("OMST", []*time.Location{
 		time.FixedZone("Omsk Time", 6*60*60),
-	},
-	"ORAT": {
+	})
+	retVal.Store("ORAT", []*time.Location{
 		time.FixedZone("Oral Time", 5*60*60),
-	},
-	"PDT": {
+	})
+	retVal.Store("PDT", []*time.Location{
 		time.FixedZone("Pacific Daylight Time", -7*60*60),
-	},
-	"PET": {
+	})
+	retVal.Store("PET", []*time.Location{
 		time.FixedZone("Peru Time", -5*60*60),
-	},
-	"PETT": {
+	})
+	retVal.Store("PETT", []*time.Location{
 		time.FixedZone("Kamchatka Time", 12*60*60),
-	},
-	"PGT": {
+	})
+	retVal.Store("PGT", []*time.Location{
 		time.FixedZone("Papua New Guinea Time", 10*60*60),
-	},
-	"PHOT": {
+	})
+	retVal.Store("PHOT", []*time.Location{
 		time.FixedZone("Phoenix Island Time", 13*60*60),
-	},
-	"PHT": {
+	})
+	retVal.Store("PHT", []*time.Location{
 		time.FixedZone("Philippine Time", 8*60*60),
-	},
-	"PHST": {
+	})
+	retVal.Store("PHST", []*time.Location{
 		time.FixedZone("Philippine Standard Time", 8*60*60),
-	},
-	"PKT": {
+	})
+	retVal.Store("PKT", []*time.Location{
 		time.FixedZone("Pakistan Standard Time", 5*60*60),
-	},
-	"PMDT": {
+	})
+	retVal.Store("PMDT", []*time.Location{
 		time.FixedZone("Saint Pierre and Miquelon Daylight Time", -2*60*60),
-	},
-	"PMST": {
+	})
+	retVal.Store("PMST", []*time.Location{
 		time.FixedZone("Saint Pierre and Miquelon Standard Time", -3*60*60),
-	},
-	"PONT": {
+	})
+	retVal.Store("PONT", []*time.Location{
 		time.FixedZone("Pohnpei Standard Time", 11*60*60),
-	},
-	"PST": {
+	})
+	retVal.Store("PST", []*time.Location{
 		time.FixedZone("Pacific Standard Time", -8*60*60),
-	},
-	"PWT": {
+	})
+	retVal.Store("PWT", []*time.Location{
 		time.FixedZone("Palau Time", 9*60*60),
-	},
-	"PYST": {
+	})
+	retVal.Store("PYST", []*time.Location{
 		time.FixedZone("Paraguay Summer Time", -3*60*60),
-	},
-	"PYT": {
+	})
+	retVal.Store("PYT", []*time.Location{
 		time.FixedZone("Paraguay Time", -4*60*60),
-	},
-	"RET": {
+	})
+	retVal.Store("RET", []*time.Location{
 		time.FixedZone("Réunion Time", 4*60*60),
-	},
-	"ROTT": {
+	})
+	retVal.Store("ROTT", []*time.Location{
 		time.FixedZone("Rothera Research Station Time", -3*60*60),
-	},
-	"SAKT": {
+	})
+	retVal.Store("SAKT", []*time.Location{
 		time.FixedZone("Sakhalin Island Time", 11*60*60),
-	},
-	"SAMT": {
+	})
+	retVal.Store("SAMT", []*time.Location{
 		time.FixedZone("Samara Time", 4*60*60),
-	},
-	"SAST": {
+	})
+	retVal.Store("SAST", []*time.Location{
 		time.FixedZone("South African Standard Time", 2*60*60),
-	},
-	"SBT": {
+	})
+	retVal.Store("SBT", []*time.Location{
 		time.FixedZone("Solomon Islands Time", 11*60*60),
-	},
-	"SCT": {
+	})
+	retVal.Store("SCT", []*time.Location{
 		time.FixedZone("Seychelles Time", 4*60*60),
-	},
-	"SDT": {
+	})
+	retVal.Store("SDT", []*time.Location{
 		time.FixedZone("Samoa Daylight Time", -10*60*60),
-	},
-	"SGT": {
+	})
+	retVal.Store("SGT", []*time.Location{
 		time.FixedZone("Singapore Time", 8*60*60),
-	},
-	"SLST": {
+	})
+	retVal.Store("SLST", []*time.Location{
 		time.FixedZone("Sri Lanka Standard Time", 5.5*60*60),
-	},
-	"SRET": {
+	})
+	retVal.Store("SRET", []*time.Location{
 		time.FixedZone("Srednekolymsk Time", 11*60*60),
-	},
-	"SRT": {
+	})
+	retVal.Store("SRT", []*time.Location{
 		time.FixedZone("Suriname Time", -3*60*60),
-	},
-	"SST": {
+	})
+	retVal.Store("SST", []*time.Location{
 		time.FixedZone("Samoa Standard Time", -11*60*60),
-	},
-	"SYOT": {
+	})
+	retVal.Store("SYOT", []*time.Location{
 		time.FixedZone("Showa Station Time", 3*60*60),
-	},
-	"TAHT": {
+	})
+	retVal.Store("TAHT", []*time.Location{
 		time.FixedZone("Tahiti Time", -10*60*60),
-	},
-	"THA": {
+	})
+	retVal.Store("THA", []*time.Location{
 		time.FixedZone("Thailand Standard Time", 7*60*60),
-	},
-	"TFT": {
+	})
+	retVal.Store("TFT", []*time.Location{
 		time.FixedZone("French Southern and Antarctic Time", 5*60*60),
-	},
-	"TJT": {
+	})
+	retVal.Store("TJT", []*time.Location{
 		time.FixedZone("Tajikistan Time", 5*60*60),
-	},
-	"TKT": {
+	})
+	retVal.Store("TKT", []*time.Location{
 		time.FixedZone("Tokelau Time", 13*60*60),
-	},
-	"TLT": {
+	})
+	retVal.Store("TLT", []*time.Location{
 		time.FixedZone("Timor Leste Time", 9*60*60),
-	},
-	"TMT": {
+	})
+	retVal.Store("TMT", []*time.Location{
 		time.FixedZone("Turkmenistan Time", 5*60*60),
-	},
-	"TRT": {
+	})
+	retVal.Store("TRT", []*time.Location{
 		time.FixedZone("Turkey Time", 3*60*60),
-	},
-	"TOT": {
+	})
+	retVal.Store("TOT", []*time.Location{
 		time.FixedZone("Tonga Time", 13*60*60),
-	},
-	"TST": {
+	})
+	retVal.Store("TST", []*time.Location{
 		time.FixedZone("Taiwan Standard Time", 8*60*60),
-	},
-	"TVT": {
+	})
+	retVal.Store("TVT", []*time.Location{
 		time.FixedZone("Tuvalu Time", 12*60*60),
-	},
-	"ULAST": {
+	})
+	retVal.Store("ULAST", []*time.Location{
 		time.FixedZone("Ulaanbaatar Summer Time", 9*60*60),
-	},
-	"ULAT": {
+	})
+	retVal.Store("ULAT", []*time.Location{
 		time.FixedZone("Ulaanbaatar Standard Time", 8*60*60),
-	},
-	"UTC": {
-		time.FixedZone("Coordinated Universal Time", 0*60*60),
-	},
-	"UYST": {
+	})
+	retVal.Store("UTC", []*time.Location{
+		time.FixedZone("Coordinated Universal Time", 0),
+	})
+	retVal.Store("UYST", []*time.Location{
 		time.FixedZone("Uruguay Summer Time", -2*60*60),
-	},
-	"UYT": {
+	})
+	retVal.Store("UYT", []*time.Location{
 		time.FixedZone("Uruguay Standard Time", -3*60*60),
-	},
-	"UZT": {
+	})
+	retVal.Store("UZT", []*time.Location{
 		time.FixedZone("Uzbekistan Time", 5*60*60),
-	},
-	"VET": {
+	})
+	retVal.Store("VET", []*time.Location{
 		time.FixedZone("Venezuelan Standard Time", -4*60*60),
-	},
-	"VLAT": {
+	})
+	retVal.Store("VLAT", []*time.Location{
 		time.FixedZone("Vladivostok Time", 10*60*60),
-	},
-	"VOLT": {
+	})
+	retVal.Store("VOLT", []*time.Location{
 		time.FixedZone("Volgograd Time", 3*60*60),
-	},
-	"VOST": {
+	})
+	retVal.Store("VOST", []*time.Location{
 		time.FixedZone("Vostok Station Time", 6*60*60),
-	},
-	"VUT": {
+	})
+	retVal.Store("VUT", []*time.Location{
 		time.FixedZone("Vanuatu Time", 11*60*60),
-	},
-	"WAKT": {
+	})
+	retVal.Store("WAKT", []*time.Location{
 		time.FixedZone("Wake Island Time", 12*60*60),
-	},
-	"WAST": {
+	})
+	retVal.Store("WAST", []*time.Location{
 		time.FixedZone("West Africa Summer Time", 2*60*60),
-	},
-	"WAT": {
+	})
+	retVal.Store("WAT", []*time.Location{
 		time.FixedZone("West Africa Time", 1*60*60),
-	},
-	"WEST": {
+	})
+	retVal.Store("WEST", []*time.Location{
 		time.FixedZone("Western European Summer Time", 1*60*60),
-	},
-	"WET": {
-		time.FixedZone("Western European Time", 0*60*60),
-	},
-	"WIB": {
+	})
+	retVal.Store("WET", []*time.Location{
+		time.FixedZone("Western European Time", 0),
+	})
+	retVal.Store("WIB", []*time.Location{
 		time.FixedZone("Western Indonesian Time", 7*60*60),
-	},
-	"WIT": {
+	})
+	retVal.Store("WIT", []*time.Location{
 		time.FixedZone("Eastern Indonesian Time", 9*60*60),
-	},
-	"WITA": {
+	})
+	retVal.Store("WITA", []*time.Location{
 		time.FixedZone("Central Indonesia Time", 8*60*60),
-	},
-	"WGST": {
+	})
+	retVal.Store("WGST", []*time.Location{
 		time.FixedZone("West Greenland Summer Time", -2*60*60),
-	},
-	"WGT": {
+	})
+	retVal.Store("WGT", []*time.Location{
 		time.FixedZone("West Greenland Time", -3*60*60),
-	},
-	"WST": {
+	})
+	retVal.Store("WST", []*time.Location{
 		time.FixedZone("Western Standard Time", 8*60*60),
-	},
-	"YAKT": {
+	})
+	retVal.Store("YAKT", []*time.Location{
 		time.FixedZone("Yakutsk Time", 9*60*60),
-	},
-	"YEKT": {
+	})
+	retVal.Store("YEKT", []*time.Location{
 		time.FixedZone("Yekaterinburg Time", 5*60*60),
-	},
+	})
+
+	return &retVal
 }
 
-func serveTime(errorChannel chan<- Error) httprouter.Handle {
+func serveTime(timeAbbrevations *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		startTime := time.Now()
 
@@ -655,9 +659,11 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 
 		zones := []*time.Location{}
 
-		abbrev, exists := timeAbbrevations[location]
+		abbrev, exists := timeAbbrevations.Load(location)
 		if exists {
-			zones = append(zones, abbrev...)
+			val := abbrev.([]*time.Location)
+
+			zones = append(zones, val...)
 		} else {
 			tz, err := time.LoadLocation(location)
 			if err != nil {
@@ -701,8 +707,10 @@ func serveTime(errorChannel chan<- Error) httprouter.Handle {
 func registerTime(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "time"
 
-	mux.GET("/time/:time", serveTime(errorChannel))
-	mux.GET("/time/:time/*rest", serveTime(errorChannel))
+	timeAbbreviations := getTimeAbbrevations()
+
+	mux.GET("/time/:time", serveTime(timeAbbreviations, errorChannel))
+	mux.GET("/time/:time/*rest", serveTime(timeAbbreviations, errorChannel))
 	mux.GET("/time/", serveUsage(module, usage, errorChannel))
 
 	usage.Store(module, []string{
