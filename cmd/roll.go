@@ -254,5 +254,6 @@ func registerRoll(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- E
 	usage.Store(module, []string{
 		"/roll/5d20",
 		"/roll/d6?verbose",
+                "/roll/4d6,5d8,d4?verbose",
 	})
 }
