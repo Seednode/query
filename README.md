@@ -8,7 +8,7 @@ Static binary builds available [here](https://cdn.seedno.de/builds/query).
 
 x86_64 and ARM Docker images of latest version: `oci.seedno.de/seednode/query:latest`.
 
-Dockerfile available [here](https://git.seedno.de/seednode/query/raw/branch/master/docker/Dockerfile).
+Dockerfile available [here](https://raw.githubusercontent.com/Seednode/query/master/docker/Dockerfile).
 
 An example instance with all features enabled can be found [here](https://q.seedno.de/).
 
@@ -22,6 +22,7 @@ Optionally display individual roll results, as well as total, by appending `?ver
 Examples:
 - [/roll/5d20](https://q.seedno.de/roll/5d20)
 - [/roll/d6?verbose](https://q.seedno.de/roll/d6?verbose)
+- [/roll/4d6,5d8,d4?verbose](https://q.seedno.de/roll/4d6,5d8,d4?verbose)
 
 ### DNS
 Look up DNS records for a given host.
