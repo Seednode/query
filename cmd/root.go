@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.14.1"
+	ReleaseVersion string = "1.15.0"
 )
 
 var (
@@ -30,6 +30,7 @@ var (
 	qr           bool
 	qrSize       int
 	roll         bool
+	subnet       bool
 	timezones    bool
 	port         uint16
 	profile      bool
@@ -96,6 +97,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&qr, "qr", false, "enable QR code generation functionality")
 	rootCmd.Flags().IntVar(&qrSize, "qr-size", 256, "height/width of PNG-encoded QR codes (in pixels)")
 	rootCmd.Flags().BoolVar(&roll, "roll", false, "enable dice rolling functionality")
+	rootCmd.Flags().BoolVar(&subnet, "subnet", false, "enable subnet calculator functionality")
 	rootCmd.Flags().BoolVar(&timezones, "time", false, "enable time lookup functionality")
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")

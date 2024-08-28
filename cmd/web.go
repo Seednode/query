@@ -134,6 +134,10 @@ func servePage() error {
 		registerRoll(mux, &usage, errorChannel)
 	}
 
+	if subnet || all {
+		registerSubnetting(mux, &usage, errorChannel)
+	}
+
 	if timezones || all {
 		registerTime(mux, &usage, errorChannel)
 	}
