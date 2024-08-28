@@ -230,6 +230,7 @@ func serveV6Subnet(errorChannel chan<- Error) httprouter.Handle {
 func registerSubnetting(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Error) {
 	const module = "subnet"
 
+	mux.GET("/subnet/", serveUsage(module, usage, errorChannel))
 	mux.GET("/subnet/v4/*v4", serveV4Subnet(errorChannel))
 	mux.GET("/subnet/v6/*v6", serveV6Subnet(errorChannel))
 
