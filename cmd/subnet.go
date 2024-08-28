@@ -88,7 +88,7 @@ func invert(b []byte) net.IP {
 }
 
 func multiFormat(b []byte) string {
-	return fmt.Sprintf("%s | %s | %s", toBinary(b), toColonedHex(b), b)
+	return fmt.Sprintf("%s | %s", toBinary(b), toColonedHex(b))
 }
 
 func toColonedHex(b []byte) string {
@@ -195,11 +195,11 @@ func calculateV6Subnet(cidr string, r *http.Request, errorChannel chan<- Error) 
 		return ""
 	}
 
-	return fmt.Sprintf("Address: %s\nMask:    %s\nFirst:   %s\nLast:    %s\nTotal:   %s\n",
-		multiFormat(ip),
-		multiFormat(net.Mask),
-		multiFormat(first),
-		multiFormat(last),
+	return fmt.Sprintf("Address: %s | %s\nMask:    %s | %s\nFirst:   %s | %s\nLast:    %s | %s\nTotal:   %s\n",
+		multiFormat(ip), ip.String(),
+		multiFormat(net.Mask), net.Mask.String(),
+		multiFormat(first), first.String(),
+		multiFormat(last), last.String(),
 		subtract(first, last))
 }
 
@@ -236,5 +236,7 @@ func registerSubnetting(mux *httprouter.Router, usage *sync.Map, errorChannel ch
 	usage.Store(module, []string{
 		"/subnet/v4/192.168.0.1/24",
 		"/subnet/v4/10.10.100.0/22",
+		"/subnet/v6/fdd8:0c61:bf60:590f::/64",
+		"/subnet/v6/2606:4700:a560::/48",
 	})
 }
