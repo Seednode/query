@@ -5,6 +5,7 @@ Copyright © 2024 Seednode <seednode@seedno.de>
 package cmd
 
 import (
+	"encoding/binary"
 	"fmt"
 	"math/big"
 	"net"
@@ -103,12 +104,38 @@ func toColonedHex(b []byte) string {
 		b[12], b[13], b[14], b[15])
 }
 
-func toDottedDecimal(b []byte) string {
-	if len(b) != 4 {
-		return ""
+func toDottedDecimalUint16(b []byte) string {
+	var s strings.Builder
+
+	for i := 0; i < len(b); i += 1 {
+		if i%2 != 0 {
+			continue
+		}
+
+		data := binary.BigEndian.Uint16(b[i : i+2])
+
+		s.WriteString(fmt.Sprintf("%d", data))
+
+		if i != len(b)-2 {
+			s.WriteString(".")
+		}
 	}
 
-	return fmt.Sprintf("%d.%d.%d.%d", b[0], b[1], b[2], b[3])
+	return s.String()
+}
+
+func toDottedDecimalUint8(b []byte) string {
+	var s strings.Builder
+
+	for i := 0; i < len(b); i++ {
+		s.WriteString(fmt.Sprintf("%d", b[i]))
+
+		if i != len(b)-1 {
+			s.WriteString(".")
+		}
+	}
+
+	return s.String()
 }
 
 func calculateV4Subnet(cidr string, r *http.Request, errorChannel chan<- Error) string {
@@ -139,7 +166,7 @@ func calculateV4Subnet(cidr string, r *http.Request, errorChannel chan<- Error) 
 
 	return fmt.Sprintf("Address: %s | %s\nMask:    %s | %s\nFirst:   %s | %s\nLast:    %s | %s\nTotal:   %s\n",
 		toBinary(as4), as4,
-		toBinary(net.Mask), toDottedDecimal(net.Mask),
+		toBinary(net.Mask), toDottedDecimalUint8(net.Mask),
 		toBinary(first), first,
 		toBinary(last), last,
 		subtract(first, last))
@@ -195,11 +222,11 @@ func calculateV6Subnet(cidr string, r *http.Request, errorChannel chan<- Error) 
 		return ""
 	}
 
-	return fmt.Sprintf("Address: %s | %s\nMask:    %s | %s\nFirst:   %s | %s\nLast:    %s | %s\nTotal:   %s\n",
-		multiFormat(ip), ip.String(),
-		multiFormat(net.Mask), net.Mask.String(),
-		multiFormat(first), first.String(),
-		multiFormat(last), last.String(),
+	return fmt.Sprintf("Address: %s | %s | %s\nMask:    %s | %s | %s\nFirst:   %s | %s | %s\nLast:    %s | %s | %s\nTotal:   %s\n",
+		multiFormat(ip), toDottedDecimalUint16(ip), ip.String(),
+		multiFormat(net.Mask), toDottedDecimalUint16(net.Mask), net.Mask.String(),
+		multiFormat(first), toDottedDecimalUint16(first), first.String(),
+		multiFormat(last), toDottedDecimalUint16(last), last.String(),
 		subtract(first, last))
 }
 
