@@ -146,6 +146,8 @@ func servePage() error {
 
 	registerHelp(mux, &usage, errorChannel)
 
+	registerCss(mux, errorChannel)
+
 	if verbose {
 		fmt.Printf("%s | Listening on http://%s/\n",
 			time.Now().Format(timeFormats["RFC3339"]),

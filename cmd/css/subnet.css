@@ -1,0 +1,40 @@
+:root {
+    --background: #0d1117;
+    --foreground: #c9d1d9;
+}
+
+html, body, div, p, a, button {
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+html {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: clamp(var(--min), var(--val), var(--max));
+    --max: 2.5em;
+    --min: 1em;
+    --val: 2.5vw;
+    padding-top: 2rem;
+    text-align: center;
+    touch-action: manipulation;
+}
+
+a {
+    all: unset;
+}
+
+table, th, td {
+    border: 1px solid;
+    padding: .25em;
+}
+
+#table {
+    margin: 2em;
+    padding: 1em;
+}
