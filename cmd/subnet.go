@@ -319,7 +319,7 @@ func serveV4Subnet(template *template.Template, errorChannel chan<- Error) httpr
 		if verbose {
 			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
-				realIP(r, false),
+				realIP(r, true),
 				r.RequestURI)
 		}
 	}
@@ -388,7 +388,7 @@ func serveV6Subnet(template *template.Template, errorChannel chan<- Error) httpr
 		if verbose {
 			fmt.Printf("%s | %s => %s\n",
 				startTime.Format(timeFormats["RFC3339"]),
-				realIP(r, false),
+				realIP(r, true),
 				r.RequestURI)
 		}
 	}

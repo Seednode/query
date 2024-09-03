@@ -1,8 +1,3 @@
-:root {
-    --background: #0d1117;
-    --foreground: #c9d1d9;
-}
-
 html, body, div, p, a, button {
   border: 0;
   font: inherit;
@@ -13,8 +8,8 @@ html, body, div, p, a, button {
 }
 
 html {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #0d1117;
+    color: #c9d1d9;
     font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     font-size: clamp(var(--min), var(--val), var(--max));
     --max: 2.5em;
@@ -22,7 +17,6 @@ html {
     --val: 2.5vw;
     padding-top: 2rem;
     text-align: center;
-    touch-action: manipulation;
 }
 
 a {
