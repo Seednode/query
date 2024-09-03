@@ -234,7 +234,7 @@ func invert(b []byte) net.IP {
 	return inverted
 }
 
-func toColonedHex(b []byte) string {
+func toHex(b []byte) string {
 	if len(b) != 16 {
 		return ""
 	}
@@ -246,7 +246,7 @@ func toColonedHex(b []byte) string {
 		b[12], b[13], b[14], b[15])
 }
 
-func toDottedDecimal(b []byte) string {
+func toDecimal(b []byte) string {
 	var s strings.Builder
 
 	for i := 0; i < len(b); i++ {
@@ -285,13 +285,13 @@ func calculateV4Subnet(cidr string) (Template4, error) {
 	return Template4{
 		Version:         ReleaseVersion,
 		Address_Binary:  toBinary(as4),
-		Address_Decimal: toDottedDecimal(as4),
+		Address_Decimal: toDecimal(as4),
 		Mask_Binary:     toBinary(net.Mask),
-		Mask_Decimal:    toDottedDecimal(net.Mask),
+		Mask_Decimal:    toDecimal(net.Mask),
 		First_Binary:    toBinary(first),
-		First_Decimal:   toDottedDecimal(first),
+		First_Decimal:   toDecimal(first),
 		Last_Binary:     toBinary(last),
-		Last_Decimal:    toDottedDecimal(last),
+		Last_Decimal:    toDecimal(last),
 		Total:           subtract(first, last),
 	}, nil
 }
@@ -350,16 +350,16 @@ func calculateV6Subnet(cidr string) (Template6, error) {
 	return Template6{
 		Version:        ReleaseVersion,
 		Address_Binary: toBinary(ip),
-		Address_Hex:    toColonedHex(ip),
+		Address_Hex:    toHex(ip),
 		Address_Short:  ip.String(),
 		Mask_Binary:    toBinary(net.Mask),
-		Mask_Hex:       toColonedHex(net.Mask),
+		Mask_Hex:       toHex(net.Mask),
 		Mask_Short:     "n/a",
 		First_Binary:   toBinary(first),
-		First_Hex:      toColonedHex(first),
+		First_Hex:      toHex(first),
 		First_Short:    first.String(),
 		Last_Binary:    toBinary(last),
-		Last_Hex:       toColonedHex(last),
+		Last_Hex:       toHex(last),
 		Last_Short:     last.String(),
 		Total:          subtract(first, last),
 	}, nil
