@@ -354,7 +354,7 @@ func calculateV6Subnet(cidr string) (Template6, error) {
 		Address_Short:  ip.String(),
 		Mask_Binary:    toBinary(net.Mask),
 		Mask_Hex:       toColonedHex(net.Mask),
-		Mask_Short:     net.Mask.String(),
+		Mask_Short:     "n/a",
 		First_Binary:   toBinary(first),
 		First_Hex:      toColonedHex(first),
 		First_Short:    first.String(),
