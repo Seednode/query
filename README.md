@@ -124,9 +124,16 @@ PORT: 5050
 ```
 
 ### Environment variables
-Almost all options configurable via flags can also be configured via environment variables. The associated environment variable is the prefix `QUERY_` plus the flag name (minus leading hyphens, converted to upper-case, and with all internal hyphens converted to underscores). 
+Almost all options configurable via flags can also be configured via environment variables. 
 
-For example, `--dns-resolver` becomes `QUERY_DNS_RESOLVER`, and `--max-dice-rolls` becomes `QUERY_MAX_DICE_ROLLS`.
+The associated environment variable is the prefix `QUERY_` plus the flag name, with the following changes:
+- Leading hyphens removed
+- Converted to upper-case
+- All internal hyphens converted to underscores
+
+For example:
+- `--dns-resolver 1.1.1.1:53` becomes `QUERY_DNS_RESOLVER=1.1.1.1:53`
+- `--max-dice-rolls 256` becomes `QUERY_MAX_DICE_ROLLS=256`.
 
 ## Usage output
 ```
