@@ -5,13 +5,16 @@ Copyright © 2024 Seednode <seednode@seedno.de>
 package cmd
 
 import (
-	"log"
+	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 const (
-	ReleaseVersion string = "1.18.4"
+	ReleaseVersion string = "1.19.0"
 )
 
 var (
@@ -48,10 +51,15 @@ var (
 		"roll",
 		"time",
 	}
+)
 
-	rootCmd = &cobra.Command{
+func NewRootCommand() *cobra.Command {
+	rootCmd := &cobra.Command{
 		Use:   "query",
 		Short: "Serves a variety of web-based utilities.",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return initializeConfig(cmd)
+		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			switch {
 			case qrSize < 256 || qrSize > 2048:
@@ -70,16 +78,7 @@ var (
 			return err
 		},
 	}
-)
 
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func init() {
 	rootCmd.Flags().BoolVar(&all, "all", false, "enable all features")
 	rootCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "address to bind to")
 	rootCmd.Flags().BoolVar(&dns, "dns", false, "enable DNS lookup")
@@ -115,4 +114,45 @@ func init() {
 
 	rootCmd.SetVersionTemplate("query v{{.Version}}\n")
 	rootCmd.Version = ReleaseVersion
+
+	return rootCmd
+}
+
+func initializeConfig(cmd *cobra.Command) error {
+	v := viper.New()
+
+	v.SetConfigName("config")
+
+	v.SetConfigType("yaml")
+
+	v.AddConfigPath("/etc/query/")
+	v.AddConfigPath("$HOME/.config/query")
+	v.AddConfigPath(".")
+
+	if err := v.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return err
+		}
+	}
+
+	v.SetEnvPrefix("query")
+
+	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+
+	v.AutomaticEnv()
+
+	bindFlags(cmd, v)
+
+	return nil
+}
+
+func bindFlags(cmd *cobra.Command, v *viper.Viper) {
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		configName := strings.ReplaceAll(f.Name, "-", "_")
+
+		if !f.Changed && v.IsSet(configName) {
+			val := v.Get(configName)
+			cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+		}
+	})
 }
