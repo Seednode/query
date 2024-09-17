@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.20.0"
+	ReleaseVersion string = "1.20.1"
 )
 
 var (
@@ -73,9 +73,7 @@ func NewRootCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := servePage()
-
-			return err
+			return servePage()
 		},
 	}
 
