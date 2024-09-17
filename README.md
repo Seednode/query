@@ -104,7 +104,7 @@ Examples:
 - [/time/EST](https://q.seedno.de/time/EST)
 - [/time/UTC?format=kitchen](https://q.seedno.de/time/UTC?format=kitchen)
 
-#### Config files
+### Config files
 Almost all options configurable via flags can also be configured via YAML files. Query looks for config files in the following paths:
 - `/etc/query/config.yaml`
 - `$HOME/.config/query/config.yaml`
@@ -123,7 +123,7 @@ EXIT_ON_ERROR: true
 PORT: 5050
 ```
 
-#### Environment variables
+### Environment variables
 Almost all options configurable via flags can also be configured via environment variables. The associated environment variable is the prefix `QUERY_` plus the flag name (minus leading hyphens, converted to upper-case, and with all internal hyphens converted to underscores). 
 
 For example, `--dns-resolver` becomes `QUERY_DNS_RESOLVER`, and `--max-dice-rolls` becomes `QUERY_MAX_DICE_ROLLS`.
