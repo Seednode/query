@@ -12,6 +12,12 @@ Dockerfile available [here](https://raw.githubusercontent.com/Seednode/query/mas
 
 An example instance with all features enabled can be found [here](https://q.seedno.de/).
 
+### Configuration
+The following configuration methods are accepted, in order of highest to lowest priority:
+- Command-line flags
+- Environment variables
+- Config files
+
 ## Currently available tools
 
 ### Dice roll
@@ -97,6 +103,30 @@ Examples:
 - [/time/America/Chicago](https://q.seedno.de/time/America/Chicago)
 - [/time/EST](https://q.seedno.de/time/EST)
 - [/time/UTC?format=kitchen](https://q.seedno.de/time/UTC?format=kitchen)
+
+#### Config files
+Almost all options configurable via flags can also be configured via YAML files. Query looks for config files in the following paths:
+- `/etc/query/config.yaml`
+- `$HOME/.config/query/config.yaml`
+- `./config.yaml`
+
+All key names are case-insensitive, and a value of `true` can be used for boolean flags.
+
+For example, the file `~/.config/query/config.yaml` might contain the following lines:
+```
+DNS: true
+HASH: true
+MAC: true
+VERBOSE: true
+PROFILE: true
+EXIT_ON_ERROR: true
+PORT: 5050
+```
+
+#### Environment variables
+Almost all options configurable via flags can also be configured via environment variables. The associated environment variable is the prefix `QUERY_` plus the flag name (minus leading hyphens, converted to upper-case, and with all internal hyphens converted to underscores). 
+
+For example, `--dns-resolver` becomes `QUERY_DNS_RESOLVER`, and `--max-dice-rolls` becomes `QUERY_MAX_DICE_ROLLS`.
 
 ## Usage output
 ```
