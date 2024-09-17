@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.19.0"
+	ReleaseVersion string = "1.20.0"
 )
 
 var (
@@ -120,20 +120,6 @@ func NewRootCommand() *cobra.Command {
 
 func initializeConfig(cmd *cobra.Command) error {
 	v := viper.New()
-
-	v.SetConfigName("config")
-
-	v.SetConfigType("yaml")
-
-	v.AddConfigPath("/etc/query/")
-	v.AddConfigPath("$HOME/.config/query")
-	v.AddConfigPath(".")
-
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return err
-		}
-	}
 
 	v.SetEnvPrefix("query")
 
