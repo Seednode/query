@@ -57,8 +57,8 @@ func NewRootCommand() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "query",
 		Short: "Serves a variety of web-based utilities.",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return initializeConfig(cmd)
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			initializeConfig(cmd)
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			switch {
@@ -118,7 +118,7 @@ func NewRootCommand() *cobra.Command {
 	return rootCmd
 }
 
-func initializeConfig(cmd *cobra.Command) error {
+func initializeConfig(cmd *cobra.Command) {
 	v := viper.New()
 
 	v.SetEnvPrefix("query")
@@ -128,8 +128,6 @@ func initializeConfig(cmd *cobra.Command) error {
 	v.AutomaticEnv()
 
 	bindFlags(cmd, v)
-
-	return nil
 }
 
 func bindFlags(cmd *cobra.Command, v *viper.Viper) {
