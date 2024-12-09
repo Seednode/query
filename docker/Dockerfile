@@ -2,7 +2,7 @@
 ARG app=query
 
 # create build stage
-ARG TAG
+ARG TAG=alpine
 FROM --platform=$BUILDPLATFORM golang:$TAG AS build
 ARG app
 
