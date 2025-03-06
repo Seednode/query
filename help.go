@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"fmt"
@@ -20,6 +20,8 @@ func serveUsage(module string, usage *sync.Map, errorChannel chan<- Error) httpr
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
+		securityHeaders(w)
 
 		var output strings.Builder
 

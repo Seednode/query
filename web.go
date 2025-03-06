@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"context"
@@ -24,6 +24,17 @@ type Error struct {
 	Path    string
 }
 
+func securityHeaders(w http.ResponseWriter) {
+	w.Header().Set("Cross-Origin-Embedder-Policy", "require-corp")
+	w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
+	w.Header().Set("Cross-Origin-Resource-Policy", "same-site")
+	w.Header().Set("Permissions-Policy", "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=()")
+	w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Frame-Options", "SAMEORIGIN")
+	w.Header().Set("X-Xss-Protection", "1; mode=block")
+}
+
 func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	if verbose {
 		fmt.Printf("%s | %s => %s (Invalid request)\n",
@@ -34,6 +45,8 @@ func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Add("Content-Type", "text/plain")
+
+	securityHeaders(w)
 
 	w.Write([]byte("500 Internal Server Error\n"))
 }
@@ -148,13 +161,27 @@ func servePage() error {
 
 	registerCss(mux, errorChannel)
 
+	var err error
+
 	if verbose {
-		fmt.Printf("%s | Listening on http://%s/\n",
-			time.Now().Format(timeFormats["RFC3339"]),
-			srv.Addr)
+		if tlsKey != "" && tlsCert != "" {
+			fmt.Printf("%s | Listening on https://%s/\n",
+				time.Now().Format(timeFormats["RFC3339"]),
+				srv.Addr)
+
+			err = srv.ListenAndServeTLS(tlsCert, tlsKey)
+		} else {
+			fmt.Printf("%s | Listening on http://%s/\n",
+				time.Now().Format(timeFormats["RFC3339"]),
+				srv.Addr)
+
+			err = srv.ListenAndServe()
+		}
 	}
 
-	err := srv.ListenAndServe()
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
 
-	return err
+	return nil
 }

@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"errors"
@@ -302,6 +302,8 @@ func serveV4Subnet(template *template.Template, errorChannel chan<- Error) httpr
 
 		w.Header().Set("Content-Type", "text/html;charset=UTF-8")
 
+		securityHeaders(w)
+
 		data, err := calculateV4Subnet(strings.TrimPrefix(p.ByName("v4"), "/"))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -370,6 +372,8 @@ func serveV6Subnet(template *template.Template, errorChannel chan<- Error) httpr
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/html;charset=UTF-8")
+
+		securityHeaders(w)
 
 		data, err := calculateV6Subnet(strings.TrimPrefix(p.ByName("v6"), "/"))
 		if err != nil {

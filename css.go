@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"embed"
@@ -29,6 +29,8 @@ func serveCss(errorChannel chan<- Error) httprouter.Handle {
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+
+		securityHeaders(w)
 
 		_, err = w.Write(data)
 		if err != nil {

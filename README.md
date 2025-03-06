@@ -123,29 +123,30 @@ Usage:
   query [flags]
 
 Flags:
-      --all                    enable all functionality
-  -b, --bind string            address to bind to (default "0.0.0.0")
-      --dns                    enable DNS lookup functionality
-      --dns-resolver string    custom DNS server IP and port to query (e.g. 8.8.8.8:53)
-      --exit-on-error          shut down webserver on error, instead of just printing the error
-      --hash                   enable hashing functionality
-  -h, --help                   help for query
-      --http-status            enable HTTP response status code functionality
-      --ip                     enable IP lookup functionality
-      --mac                    enable MAC lookup functionality
-      --max-dice-rolls int     maximum number of dice per roll (default 1024)
-      --max-dice-sides int     maximum number of sides per die (default 1024)
-      --max-image-height int   maximum height of generated images (default 1024)
-      --max-image-width int    maximum width of generated images (default 1024)
-      --oui-file string        path to Wireshark manufacturer database file
-  -p, --port uint16            port to listen on (default 8080)
-      --profile                register net/http/pprof handlers
-      --qr                     enable QR code generation functionality
-      --qr-size int            height/width of PNG-encoded QR codes (in pixels) (default 256)
-      --roll                   enable dice rolling functionality
-      --time                   enable time lookup functionality
-  -v, --verbose                log tool usage to stdout
-  -V, --version                display version and exit
+      --all                   enable all features
+  -b, --bind string           address to bind to (default "0.0.0.0")
+      --dns                   enable DNS lookup
+      --dns-resolver string   custom DNS server IP and port to query (e.g. 8.8.8.8:53)
+      --exit-on-error         shut down webserver on error, instead of just printing the error
+      --hash                  enable hashing
+  -h, --help                  help for query
+      --http-status           enable HTTP response status codes
+      --ip                    enable IP lookups
+      --mac                   enable MAC lookups
+      --max-dice-rolls int    maximum number of dice per roll (default 1024)
+      --max-dice-sides int    maximum number of sides per die (default 1024)
+      --oui-file string       path to Wireshark manufacturer database file
+  -p, --port uint16           port to listen on (default 8080)
+      --profile               register net/http/pprof handlers
+      --qr                    enable QR code generation
+      --qr-size int           height/width of PNG-encoded QR codes (in pixels) (default 256)
+      --roll                  enable dice rolls
+      --subnet                enable subnet calculator
+      --time                  enable time lookup
+      --tls-cert string       path to TLS certificate
+      --tls-key string        path to TLS keyfile
+  -v, --verbose               log tool usage to stdout
+  -V, --version               display version and exit
 ```
 
 ## Building the Docker image

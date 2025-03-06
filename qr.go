@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"errors"
@@ -26,6 +26,8 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 		startTime := time.Now()
 
 		value := ""
+
+		securityHeaders(w)
 
 		switch r.Method {
 		case http.MethodGet:

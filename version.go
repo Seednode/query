@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"fmt"
@@ -21,6 +21,8 @@ func serveVersion(errorChannel chan<- Error) httprouter.Handle {
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
 		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
+
+		securityHeaders(w)
 
 		if verbose {
 			fmt.Printf("%s | %s => %s\n",

@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"bufio"
@@ -180,6 +180,8 @@ func serveMAC(ouis *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
+		securityHeaders(w)
 
 		mac := strings.TrimPrefix(p.ByName("mac"), "/")
 

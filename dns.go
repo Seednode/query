@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"context"
@@ -103,6 +103,8 @@ func serveHostRecord(protocol string, resolver *net.Resolver, errorChannel chan<
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
+		securityHeaders(w)
 
 		ctx, err := getBulkClient()
 		if err != nil {
@@ -207,6 +209,8 @@ func serveMXRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
+		securityHeaders(w)
+
 		ctx, err := getBulkClient()
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
@@ -308,6 +312,8 @@ func serveNSRecord(resolver *net.Resolver, errorChannel chan<- Error) httprouter
 		startTime := time.Now()
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
+		securityHeaders(w)
 
 		ctx, err := getBulkClient()
 		if err != nil {

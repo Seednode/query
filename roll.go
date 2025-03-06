@@ -1,8 +1,8 @@
 /*
-Copyright © 2024 Seednode <seednode@seedno.de>
+Copyright © 2025 Seednode <seednode@seedno.de>
 */
 
-package cmd
+package main
 
 import (
 	"crypto/rand"
@@ -69,6 +69,8 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+
+		securityHeaders(w)
 
 		pr := message.NewPrinter(lang)
 
@@ -254,6 +256,6 @@ func registerRoll(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- E
 	usage.Store(module, []string{
 		"/roll/5d20",
 		"/roll/d6?verbose",
-                "/roll/4d6,5d8,d4?verbose",
+		"/roll/4d6,5d8,d4?verbose",
 	})
 }
