@@ -63,6 +63,8 @@ func serveHelp(usage *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 
 		w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
 
+		securityHeaders(w)
+
 		var output strings.Builder
 
 		output.WriteString(fmt.Sprintf("query v%s\n\n", ReleaseVersion))
