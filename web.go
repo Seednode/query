@@ -155,6 +155,10 @@ func servePage() error {
 		registerTime(mux, &usage, errorChannel)
 	}
 
+	if whoami || all {
+		registerWhoAmI(mux, &usage, errorChannel)
+	}
+
 	registerVersion(mux, &usage, errorChannel)
 
 	registerHelp(mux, &usage, errorChannel)

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	ReleaseVersion string = "1.21.1"
+	ReleaseVersion string = "1.22.0"
 )
 
 var (
@@ -41,6 +41,7 @@ var (
 	tlsKey       string
 	port         uint16
 	profile      bool
+	whoami       bool
 	verbose      bool
 	version      bool
 
@@ -54,6 +55,7 @@ var (
 		"qr",
 		"roll",
 		"time",
+		"whoami",
 	}
 )
 
@@ -106,6 +108,7 @@ func main() {
 	cmd.Flags().StringVar(&tlsKey, "tls-key", "", "path to TLS keyfile")
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "log tool usage to stdout")
 	cmd.Flags().BoolVarP(&version, "version", "V", false, "display version and exit")
+	cmd.Flags().BoolVar(&whoami, "whoami", false, "enable whoami endpoint")
 
 	cmd.Flags().SetInterspersed(true)
 
