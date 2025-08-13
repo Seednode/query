@@ -1,6 +1,6 @@
 module seedno.de/seednode/query
 
-go 1.24
+go 1.25
 
 require (
 	github.com/ammario/ipisp/v2 v2.0.1
