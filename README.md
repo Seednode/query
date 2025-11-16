@@ -153,3 +153,7 @@ Flags:
 From inside the cloned repository, build the image using the following command:
 
 `REGISTRY=<registry url> LATEST=yes TAG=alpine ./build-docker.sh`
+
+## Run the container from local image repo
+
+`docker run --rm -d -p 8080:8080/tcp localhost:5000/query:1.23.1-debug`
