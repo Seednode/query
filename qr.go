@@ -32,6 +32,9 @@ func serveQRCode(errorChannel chan<- Error) httprouter.Handle {
 		switch r.Method {
 		case http.MethodGet:
 			value = strings.TrimPrefix(p.ByName("string"), "/")
+			if r.URL.Query().Has("url") {
+				value = "https://" + value
+			}
 		case http.MethodPost:
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
@@ -126,5 +129,6 @@ func registerQR(mux *httprouter.Router, usage *sync.Map, errorChannel chan<- Err
 	usage.Store(module, []string{
 		"/qr/Test",
 		"/qr/Test?string",
+		"/qr/google.com?url",
 	})
 }

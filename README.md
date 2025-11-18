@@ -85,11 +85,12 @@ Examples:
 - [/mac/4C445BAABBCC](https://q.seedno.de/mac/4C445BAABBCC)
 
 ### QR Codes
-Encode a string as a QR code (either a PNG or an ASCII string).
+Encode a string as a QR code (either a PNG or an ASCII string). Add `url` parm to prepend `https://` to string value.
 
 Examples:
 - [/qr/Test](https://q.seedno.de/qr/Test)
 - [/qr/Test?string](https://q.seedno.de/qr/Test?string)
+- [/qr/google.com?url](https://q.seedno.de/qr/google.com?url)
 
 ### Time
 Look up the current time in a given timezone and format.
@@ -153,3 +154,7 @@ Flags:
 From inside the cloned repository, build the image using the following command:
 
 `REGISTRY=<registry url> LATEST=yes TAG=alpine ./build-docker.sh`
+
+## Run the container from local image repo
+
+`docker run --rm -d -p 8080:8080/tcp localhost:5000/query:1.23.1-debug`
