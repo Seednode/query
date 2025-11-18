@@ -85,7 +85,7 @@ Examples:
 - [/mac/4C445BAABBCC](https://q.seedno.de/mac/4C445BAABBCC)
 
 ### QR Codes
-Encode a string as a QR code (either a PNG or an ASCII string). Add `url` parm to prepend `https://` to string value.
+Encode a string as a QR code (either a PNG or an ASCII string). Add a `?url` query parameter to prepend `https://` to string value.
 
 Examples:
 - [/qr/Test](https://q.seedno.de/qr/Test)
