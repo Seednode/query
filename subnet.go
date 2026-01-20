@@ -166,7 +166,7 @@ type Template6 struct {
 func toBinary(b []byte) string {
 	var s strings.Builder
 
-	for i := 0; i < len(b); i++ {
+	for i := range b {
 		s.WriteString(fmt.Sprintf("%08b", b[i]))
 
 		if i < (len(b) - 1) {
@@ -203,7 +203,7 @@ func and(a, b []byte) (net.IP, error) {
 
 	result := make([]byte, len(a))
 
-	for i := 0; i < len(a); i++ {
+	for i := range a {
 		result[i] = a[i] & b[i]
 	}
 
@@ -217,7 +217,7 @@ func or(a, b []byte) (net.IP, error) {
 
 	result := make([]byte, len(a))
 
-	for i := 0; i < len(a); i++ {
+	for i := range a {
 		result[i] = a[i] | b[i]
 	}
 
@@ -227,7 +227,7 @@ func or(a, b []byte) (net.IP, error) {
 func invert(b []byte) net.IP {
 	inverted := make([]byte, len(b))
 
-	for i := 0; i < len(b); i++ {
+	for i := range b {
 		inverted[i] = b[i] ^ ((2 << 7) - 1)
 	}
 
@@ -249,7 +249,7 @@ func toHex(b []byte) string {
 func toDecimal(b []byte) string {
 	var s strings.Builder
 
-	for i := 0; i < len(b); i++ {
+	for i := range b {
 		s.WriteString(fmt.Sprintf("%d", b[i]))
 
 		if i != len(b)-1 {

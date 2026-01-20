@@ -33,7 +33,7 @@ func rollDice(count, die int64) ([]int64, []int64, error) {
 	rolls := make([]int64, count)
 	results := make([]int64, count)
 
-	for i = 0; i < count; i++ {
+	for i = range count {
 		v, err := rand.Int(rand.Reader, big.NewInt(die))
 		if err != nil {
 			return rolls, results, err
@@ -129,7 +129,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusBadRequest)
 
-				_, err = w.Write([]byte(fmt.Sprintf("Dice roll count must be no greater than %d", maxDiceRolls)))
+				_, err = w.Write(fmt.Appendf(nil, "Dice roll count must be no greater than %d", maxDiceRolls))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -161,7 +161,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 				w.WriteHeader(http.StatusBadRequest)
 
-				_, err = w.Write([]byte(fmt.Sprintf("Dice side count must be no greater than %d", maxDiceSides)))
+				_, err = w.Write(fmt.Appendf(nil, "Dice side count must be no greater than %d", maxDiceSides))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 				}
@@ -207,7 +207,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 			total += rolledResults[i]
 
 			if wantsVerbose {
-				written, err := w.Write([]byte(fmt.Sprintf("%*d | %*s -> %*d\n", padCountTo, i+1, padDiceTo, fmt.Sprintf("d%d", rolledDice[i]), padValueTo, rolledResults[i])))
+				written, err := w.Write(fmt.Appendf(nil, "%*d | %*s -> %*d\n", padCountTo, i+1, padDiceTo, fmt.Sprintf("d%d", rolledDice[i]), padValueTo, rolledResults[i]))
 				if err != nil {
 					errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 
@@ -221,7 +221,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 		}
 
 		if wantsVerbose {
-			_, err := w.Write([]byte(fmt.Sprintf("%s\nTotal: ", strings.Repeat("-", length-1))))
+			_, err := w.Write(fmt.Appendf(nil, "%s\nTotal: ", strings.Repeat("-", length-1)))
 			if err != nil {
 				errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 

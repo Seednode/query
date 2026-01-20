@@ -29,7 +29,7 @@ func serveUsage(module string, usage *sync.Map, errorChannel chan<- Error) httpr
 
 		output.WriteString("Examples:\n")
 
-		usage.Range(func(key, value interface{}) bool {
+		usage.Range(func(key, value any) bool {
 			if key == module {
 				help = append(help, value.([]string)...)
 			}
@@ -73,7 +73,7 @@ func serveHelp(usage *sync.Map, errorChannel chan<- Error) httprouter.Handle {
 
 		var help []string
 
-		usage.Range(func(key, value interface{}) bool {
+		usage.Range(func(key, value any) bool {
 			help = append(help, value.([]string)...)
 
 			return true

@@ -99,7 +99,7 @@ func format(line string, re *regexp.Regexp) ([]string, string) {
 	oui, _, isRange := strings.Cut(strings.TrimSpace(words[0]), "/")
 
 	if isRange {
-		for i := 0; i < 16; i++ {
+		for i := range 16 {
 			s := strings.Split(oui, "")
 			s[len(s)-1] = fmt.Sprintf("%X", i)
 			ouis = append(ouis, strings.Join(s, ""))
@@ -161,7 +161,7 @@ func parseOUIs(errorChannel chan<- Error) *sync.Map {
 			continue
 		}
 
-		for i := 0; i < len(oui); i++ {
+		for i := range oui {
 			retVal.Store(oui[i], vendor)
 		}
 	}

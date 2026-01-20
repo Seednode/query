@@ -68,7 +68,7 @@ func parseHost(host, protocol string, ctx *ipisp.BulkClient, resolver *net.Resol
 
 	retVal.WriteString(fmt.Sprintf("%s:\n\n", host))
 
-	for response := 0; response < len(responses); response++ {
+	for response := range responses {
 		var h strings.Builder
 
 		hostnames, err := getHostnames(responses[response].IP, resolver)
@@ -82,7 +82,7 @@ func parseHost(host, protocol string, ctx *ipisp.BulkClient, resolver *net.Resol
 		case len(hostnames) == 1:
 			h.WriteString(strings.TrimRight(hostnames[0], "."))
 		default:
-			for i := 0; i < len(hostnames); i++ {
+			for i := range hostnames {
 				h.WriteString(strings.TrimRight(hostnames[i], ".") + ", ")
 			}
 		}
@@ -168,12 +168,12 @@ func parseMX(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 	priorities := make([]uint16, len(records))
 	ips := make([]net.IP, len(records))
 
-	for h := 0; h < len(records); h++ {
+	for h := range records {
 		hosts[h] = records[h].Host
 		priorities[h] = records[h].Pref
 	}
 
-	for h := 0; h < len(hosts); h++ {
+	for h := range hosts {
 		ip, err := getIP(hosts[h], resolver)
 		if err != nil {
 			return "", err
@@ -191,7 +191,7 @@ func parseMX(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 
 	retVal.WriteString(fmt.Sprintf("%v:\n", host))
 
-	for response := 0; response < len(responses); response++ {
+	for response := range responses {
 		retVal.WriteString(fmt.Sprintf("\n  (%v) %v:\n    IP: %v\n    Provider: %v (%v)\n",
 			priorities[response],
 			strings.TrimRight(hosts[response], "."),
@@ -269,7 +269,7 @@ func parseNS(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 
 	var hosts []string
 
-	for h := 0; h < len(records); h++ {
+	for h := range records {
 		record := records[h]
 		hosts = append(hosts, record.Host)
 	}
@@ -296,7 +296,7 @@ func parseNS(ctx *ipisp.BulkClient, resolver *net.Resolver, host string) (string
 		return "", err
 	}
 
-	for response := 0; response < len(responses); response++ {
+	for response := range responses {
 		retVal.WriteString(fmt.Sprintf("\n  %v:\n    IP: %v\n    Provider: %v (%v)\n",
 			strings.TrimRight(hosts[response], "."),
 			responses[response].IP,

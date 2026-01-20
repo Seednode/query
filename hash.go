@@ -113,7 +113,7 @@ func serveHash(algorithm HashAlgorithm, errorChannel chan<- Error) httprouter.Ha
 				r.RequestURI)
 		}
 
-		_, err = w.Write([]byte(fmt.Sprintf("%x\n", h.Sum(nil))))
+		_, err = w.Write(fmt.Appendf(nil, "%x\n", h.Sum(nil)))
 		if err != nil {
 			errorChannel <- Error{err, realIP(r, true), r.URL.Path}
 

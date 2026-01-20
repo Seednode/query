@@ -35,7 +35,7 @@ func securityHeaders(w http.ResponseWriter) {
 	w.Header().Set("X-Xss-Protection", "1; mode=block")
 }
 
-func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
+func serverError(w http.ResponseWriter, r *http.Request, i any) {
 	if verbose {
 		fmt.Printf("%s | %s => %s (Invalid request)\n",
 			time.Now().Format(timeFormats["RFC3339"]),
@@ -51,7 +51,7 @@ func serverError(w http.ResponseWriter, r *http.Request, i interface{}) {
 	w.Write([]byte("500 Internal Server Error\n"))
 }
 
-func serverErrorHandler() func(http.ResponseWriter, *http.Request, interface{}) {
+func serverErrorHandler() func(http.ResponseWriter, *http.Request, any) {
 	return serverError
 }
 
