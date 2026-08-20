@@ -86,7 +86,7 @@ func serveDiceRoll(errorChannel chan<- Error) httprouter.Handle {
 
 		rolls := strings.Split(trimmed, ",")
 
-		for roll := 0; roll < len(rolls); roll += 1 {
+		for roll := range rolls {
 			c, d, _ := strings.Cut(rolls[roll], "d")
 			if c == "" {
 				c = "1"
