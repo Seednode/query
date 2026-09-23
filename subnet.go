@@ -28,7 +28,7 @@ const (
     <meta charset="utf-8" />
 	<title>Query v{{.Version}}</title>
     <link rel="stylesheet" href="/css/subnet.css" />
-    <meta property="og:site_name" content="https://github.com/Seednode/trivia"/>
+    <meta property="og:site_name" content="https://github.com/Seednode/query"/>
     <meta property="og:title" content="Query v{{.Version}}"/>
     <meta property="og:description" content="Serves a variety of web-based utilities."/>
     <meta property="og:url" content="https://github.com/Seednode/query"/>
@@ -82,7 +82,7 @@ const (
     <meta charset="utf-8" />
 	<title>Query v{{.Version}}</title>
     <link rel="stylesheet" href="/css/subnet.css" />
-    <meta property="og:site_name" content="https://github.com/Seednode/trivia"/>
+    <meta property="og:site_name" content="https://github.com/Seednode/query"/>
     <meta property="og:title" content="Query v{{.Version}}"/>
     <meta property="og:description" content="Serves a variety of web-based utilities."/>
     <meta property="og:url" content="https://github.com/Seednode/query"/>
